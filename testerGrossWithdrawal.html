@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gross Withdrawals Calculator - Tester</title>
+    <script src="parameters.js"></script>
+    <script src="grossWithdrawals.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; margin: 0; color: #333; }
+        .header { background-color: #003a5d; color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 1.8em; }
+        .dashboard { display: flex; flex-wrap: wrap; max-width: 1400px; margin: 20px auto; padding: 0 20px; gap: 20px; }
+        .input-panel { flex: 1; min-width: 350px; max-width: 400px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: fit-content; }
+        .input-panel h2 { margin-top: 0; color: #003a5d; font-size: 1.2em;}
+        .input-item { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.9em; }
+        .input-item-col { display: flex; flex-direction: column; align-items: flex-start; margin-top: 15px; font-size: 0.9em; }
+        .input-item label, .input-item-col label { flex: 1; padding-right: 10px; font-weight: bold;}
+        .input-item-col small { font-weight: normal; color: #666; margin-bottom: 5px; }
+        .input-item input, .input-item select { width: 100px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; text-align: right; }
+        textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; resize: vertical; box-sizing: border-box; }
+        button.calc-btn { width: 100%; padding: 12px; background: #003a5d; color: white; border: none; border-radius: 5px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.3s; }
+        button.calc-btn:hover { background: #002640; }
+        .results-panel { flex: 3; min-width: 600px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; text-align: right; }
+        th, td { border: 1px solid #ddd; padding: 6px 10px; white-space: nowrap; }
+        th { background-color: #003a5d; color: white; text-align: right; position: sticky; top: 0; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        .highlight { font-weight: bold; color: #003a5d; background-color: #eaf3f8 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Gross Withdrawals - Module Tester</h1>
+    </div>
+
+    <div class="dashboard">
+        <div class="input-panel">
+            <h2>Test Inputs</h2>
+            <p style="font-size: 0.8em; color: #666; margin-bottom: 15px;">Simulate required net withdrawals and other income to see how the engine grosses up the withdrawal for tax.</p>
+            
+            <div class="input-item">
+                <label>Spend TFC Upfront?</label>
+                <select id="spendTFC">
+                    <option value="Yes">Yes</option>
+                    <option value="No" selected>No</option>
+                </select>
+            </div>
+            
+            <div style="margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #003a5d; font-weight: bold;">Simulated Array Data</div>
+            
+            <div class="input-item-col">
+                <label>Required Net Withdrawal (£/yr)</label>
+                <small>Enter a single number, or a comma-separated list of years to test dynamic changes.</small>
+                <textarea id="simNetReq" rows="3">20000</textarea>
+            </div>
+            <div class="input-item-col">
+                <label>Other Income (e.g. State Pen) (£/yr)</label>
+                <small>Enter a single number, or a comma-separated list of years.</small>
+                <textarea id="simOtherInc" rows="3">12000</textarea>
+            </div>
+
+            <button class="calc-btn" onclick="runTest()">Generate Table</button>
+        </div>
+
+        <div class="results-panel">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">Term</th>
+                        <th>Net Withdrawal Req.</th>
+                        <th>Other Income</th>
+                        <th style="text-align:center;">UFPLS Adj</th>
+                        <th class="highlight">Total Gross Withdrawal</th>
+                        <th>TFC Element Taken</th>
+                        <th>TFC Limit Remaining</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                    <tr><td colspan="7" style="text-align:center;">Click "Generate Table" to run the engine...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const formatMoney = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        function parseInputArray(str, maxTerm) {
+            // Split by comma, clean up strings, convert to numbers
+            let parts = str.split(',').map(s => parseFloat(s.trim().replace(/£/g, '').replace(/,/g, '')) || 0);
+            let arr = [];
+            // If the array is shorter than max_term, just repeat the final value until the end
+            for(let i = 0; i <= maxTerm; i++) {
+                arr.push(i < parts.length ? parts[i] : parts[parts.length - 1]);
+            }
+            return arr;
+        }
+
+        function runTest() {
+            if (typeof globalParams === 'undefined') {
+                alert("Parameters not loaded! Ensure parameters.js is in the same folder.");
+                return;
+            }
+
+            const inputs = {
+                spendTFC: document.getElementById('spendTFC').value
+            };
+
+            const maxTerm = globalParams.general.max_term || 81;
+            
+            const arrays = {
+                netWithdrawalRequired: parseInputArray(document.getElementById('simNetReq').value, maxTerm),
+                otherNetIncome: parseInputArray(document.getElementById('simOtherInc').value, maxTerm)
+            };
+
+            const gwCalc = new GrossWithdrawalsCalculator(globalParams);
+            const results = gwCalc.calculateForLife(inputs, arrays);
+
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            results.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align:center;">${row.term}</td>
+                    <td>${formatMoney.format(row.netWithdrawalRequired)}</td>
+                    <td>${formatMoney.format(row.otherIncome)}</td>
+                    <td style="text-align:center;">${row.ufplsAdjustment}</td>
+                    <td class="highlight">${formatMoney.format(row.totalGrossWithdrawal)}</td>
+                    <td>${formatMoney.format(row.tfcTaken)}</td>
+                    <td>${formatMoney.format(row.tfcLimitEnd)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', runTest);
+    </script>
+</body>
+</html>

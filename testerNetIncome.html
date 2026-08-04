@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Income Calculator - Tester</title>
+    
+    <script src="parameters.js"></script>
+    <script src="netIncome.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            color: #333;
+        }
+        .header {
+            background-color: #003a5d;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 { margin: 0; font-size: 1.8em; }
+        
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1600px;
+            margin: 20px auto;
+            padding: 0 20px;
+            gap: 20px;
+        }
+        
+        /* Input Panel */
+        .input-panel {
+            flex: 1;
+            min-width: 350px;
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+        .input-panel h2 { margin-top: 0; color: #003a5d; }
+        .input-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        .input-item label { flex: 1; padding-right: 10px; }
+        .input-item input, .input-item select { 
+            width: 100px; 
+            padding: 6px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            text-align: right;
+        }
+        button.calc-btn { 
+            width: 100%; 
+            padding: 15px; 
+            background: #003a5d; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 1.1em; 
+            font-weight: bold;
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: background 0.3s;
+        }
+        button.calc-btn:hover { background: #002640; }
+
+        /* Results Panel */
+        .results-panel {
+            flex: 3;
+            min-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow-x: auto; /* Allows table to scroll if it gets too wide */
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+            text-align: right;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #003a5d;
+            color: white;
+            text-align: right;
+            position: sticky;
+            top: 0;
+        }
+        th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) {
+            text-align: center;
+        }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        .highlight { font-weight: bold; color: #003a5d; background-color: #eaf3f8 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Net Income Calculator - Module Tester</h1>
+    </div>
+
+    <div class="dashboard">
+        <div class="input-panel">
+            <h2>Test Inputs</h2>
+            <p style="font-size: 0.85em; color: #666;">Enter the details for a single life to verify the Net Income mechanics against the spreadsheet.</p>
+            
+            <div class="input-item"><label>Current Age</label><input type="number" id="startAge" value="21"></div>
+            <div class="input-item"><label>Retirement Age</label><input type="number" id="retirementAge" value="68"></div>
+            <div class="input-item"><label>State Pension Age</label><input type="number" id="statePensionAge" value="68"></div>
+            <div class="input-item"><label>Gross Salary (£)</label><input type="number" id="salary" value="32000"></div>
+            <div class="input-item"><label>State Pension (£)</label><input type="number" id="statePensionAmount" value="12000"></div>
+            <div class="input-item"><label>EE Pension Cont (%)</label><input type="number" step="0.1" id="eeContRate" value="5"></div>
+            <div class="input-item"><label>ER Pension Cont (%)</label><input type="number" step="0.1" id="erContRate" value="3"></div>
+            <div class="input-item"><label>Student Loan Debt (£)</label><input type="number" id="slAmount" value="53000"></div>
+            <div class="input-item">
+                <label>Student Loan Plan</label>
+                <select id="slPlan">
+                    <option value="">None</option>
+                    <option value="1">Plan 1</option>
+                    <option value="2">Plan 2</option>
+                    <option value="4">Plan 4</option>
+                    <option value="5" selected>Plan 5</option>
+                    <option value="PG">Postgrad</option>
+                </select>
+            </div>
+
+            <button class="calc-btn" onclick="runTest()">Generate Table</button>
+        </div>
+
+        <div class="results-panel">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Term</th>
+                        <th>Age</th>
+                        <th>Gross Salary</th>
+                        <th>EE Cont</th>
+                        <th>ER Cont</th>
+                        <th>State Pension</th>
+                        <th>Taxable Gross</th>
+                        <th>Income Tax</th>
+                        <th>Nat. Ins.</th>
+                        <th>SL Repay</th>
+                        <th>SL Balance</th>
+                        <th class="highlight">Final Net Income</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                    <tr><td colspan="12" style="text-align:center;">Click "Generate Table" to run the engine...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Currency formatter for the table (keeping 2 decimals to check precise math)
+        const formatMoney = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        function runTest() {
+            if (typeof globalParams === 'undefined') {
+                alert("Parameters not loaded! Ensure parameters.js is in the same folder.");
+                return;
+            }
+
+            // Gather inputs from DOM
+            const inputs = {
+                startAge: parseInt(document.getElementById('startAge').value) || 0,
+                retirementAge: parseInt(document.getElementById('retirementAge').value) || 0,
+                statePensionAge: parseInt(document.getElementById('statePensionAge').value) || 0,
+                salary: parseFloat(document.getElementById('salary').value) || 0,
+                statePensionAmount: parseFloat(document.getElementById('statePensionAmount').value) || 0,
+                eeContRate: (parseFloat(document.getElementById('eeContRate').value) || 0) / 100, // Convert to decimal
+                erContRate: (parseFloat(document.getElementById('erContRate').value) || 0) / 100, // Convert to decimal
+                slAmount: parseFloat(document.getElementById('slAmount').value) || 0,
+                slPlan: document.getElementById('slPlan').value
+            };
+
+            // Initialize module and run calculation
+            const netCalc = new NetIncomeCalculator(globalParams);
+            const results = netCalc.calculateForLife(inputs);
+
+            // Populate Table
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = ''; // Clear previous
+
+            results.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.term}</td>
+                    <td>${row.age}</td>
+                    <td>${formatMoney.format(row.grossSalary)}</td>
+                    <td>${formatMoney.format(row.eeContAmount)}</td>
+                    <td>${formatMoney.format(row.erContAmount)}</td>
+                    <td>${formatMoney.format(row.statePension)}</td>
+                    <td>${formatMoney.format(row.taxableGross)}</td>
+                    <td>${formatMoney.format(row.tax)}</td>
+                    <td>${formatMoney.format(row.ni)}</td>
+                    <td>${formatMoney.format(row.slRepayment)}</td>
+                    <td>${formatMoney.format(row.slBalanceEnd)}</td>
+                    <td class="highlight">${formatMoney.format(row.netIncome)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Run automatically on load
+        document.addEventListener('DOMContentLoaded', runTest);
+    </script>
+</body>
+</html>

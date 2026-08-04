@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Final Cash Flow - System Tester</title>
+    <script src="parameters.js"></script>
+    <script src="netIncome.js"></script>
+    <script src="purchaseTiming.js"></script>
+    <script src="grossWithdrawals.js"></script>
+    <script src="engine.js"></script>
+    <style>
+        :root { --ifoa-blue: #003a5d; --ifoa-gold: #bfa15d; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; display: flex; margin: 0; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar Styling */
+        .sidebar { 
+            width: 380px; 
+            background: white; 
+            padding: 20px; 
+            border-right: 1px solid #ddd; 
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .sidebar h2 { color: var(--ifoa-blue); margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid var(--ifoa-gold); padding-bottom: 5px; }
+        .input-group { margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .input-group label { font-size: 0.85rem; color: #555; flex: 1; padding-right: 10px; }
+        .input-group input, .input-group select { width: 120px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: right; }
+
+        /* Main Content Styling */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        /* Table Headers Fix */
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 0.85rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: right; }
+        
+        /* Force dark background for all headers for visibility */
+        th { 
+            background-color: var(--ifoa-blue) !important; 
+            color: white !important; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10;
+        }
+        
+        /* Data Row Highlighting */
+        .buy-col { background: #eaf3f8; font-weight: 600; color: var(--ifoa-blue); }
+        .rent-col { background: #fdfae6; font-weight: 600; color: #856404; }
+        .event-col { text-align: center; font-weight: bold; color: #d9534f; }
+        
+        .btn { 
+            background: var(--ifoa-gold); 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            width: 100%; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #a88d4d; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Case Inputs</h2>
+        
+        <div class="input-group"><label>L1 Current Age</label><input type="number" id="L1_Age" value="21"></div>
+        <div class="input-group"><label>Retirement Age</label><input type="number" id="Ret_Age" value="68"></div>
+        <div class="input-group"><label>L1 Salary (£)</label><input type="number" id="L1_Sal" value="32000"></div>
+        <div class="input-group"><label>L1 SL Debt (£)</label><input type="number" id="L1_SL" value="53000"></div>
+        <div class="input-group"><label>L1 SL Plan</label>
+            <select id="L1_Plan">
+                <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5" selected>Plan 5</option><option value="PG">Postgrad</option>
+            </select>
+        </div>
+        
+        <hr style="width:100%; border:0; border-top:1px solid #eee;">
+        
+        <div class="input-group"><label>Initial Cash (£)</label><input type="number" id="Initial_Cash" value="500"></div>
+        <div class="input-group"><label>House Price (£)</label><input type="number" id="House_Price" value="200000"></div>
+        <div class="input-group"><label>Monthly Rent (£)</label><input type="number" id="Rent_Mo" value="800"></div>
+        <div class="input-group"><label>Rent Increase (% pa)</label><input type="number" step="0.1" id="Rent_Inc" value="0.2"></div>
+        <div class="input-group"><label>Save to Pension (%)</label><input type="number" id="Save_Pens" value="50"></div>
+        
+        <hr style="width:100%; border:0; border-top:1px solid #eee;">
+
+        <div class="input-group"><label>Cash Return (% pa)</label><input type="number" step="0.1" id="Ret_Cash" value="-0.5"></div>
+        <div class="input-group"><label>Pension Return (% pa)</label><input type="number" step="0.1" id="Ret_Pens" value="3.0"></div>
+        <div class="input-group"><label>House Growth (% pa)</label><input type="number" step="0.1" id="Ret_House" value="0.7"></div>
+        <div class="input-group"><label>Inflation (% pa)</label><input type="number" step="0.1" id="Ret_Inf" value="2.5"></div>
+
+        <button onclick="runTest()" class="btn">RUN PROJECTION</button>
+    </div>
+
+    <div class="main-content">
+        <div class="header-flex">
+            <h1 style="margin:0; color: var(--ifoa-blue);">Wealth Accumulation Detail</h1>
+        </div>
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th style="text-align:center; width: 60px;">Term</th>
+                    <th style="text-align:center; width: 60px;">Age</th>
+                    <th>Total Buy Wealth</th>
+                    <th>Total Rent Wealth</th>
+                    <th style="text-align:center;">Key Event</th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody">
+                <tr><td colspan="5" style="text-align:center; padding: 40px; color: #888;">Update inputs and click Run Projection...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const formatMoney = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+
+        function runTest() {
+            // Map inputs from the sidebar
+            const inputs = {
+                Case_Life_1_Current_age: parseInt(document.getElementById('L1_Age').value),
+                Case_Life_1_Retirement_age: parseInt(document.getElementById('Ret_Age').value),
+                Case_Life_1_Plan_end_age: 95,
+                Case_Life_1_Gross_salary: parseFloat(document.getElementById('L1_Sal').value),
+                Case_Life_1_State_pension: 12000,
+                Case_Life_1_Pension_cont_Ee: 5,
+                Case_Life_1_Pension_cont_Er: 3,
+                Case_Life_1_Pension_initial_value: 0,
+                Case_Life_1_Spend_TFC: "No",
+                Case_Life_1_Student_loan: parseFloat(document.getElementById('L1_SL').value),
+                Case_Life_1_Student_loan_plan: document.getElementById('L1_Plan').value,
+                Case_Joint_Savings_initial_value: parseFloat(document.getElementById('Initial_Cash').value),
+                Case_Joint_Save_to_pension: parseFloat(document.getElementById('Save_Pens').value),
+                Case_Joint_Expenses_pre_ret: 8400,
+                Case_Joint_Expenses_in_ret: 8400,
+                Case_Joint_House_price: parseFloat(document.getElementById('House_Price').value),
+                Case_Joint_First_Time_Buyer: "Yes",
+                Case_Joint_House_purchase_costs: 3000,
+                Case_Joint_Mortgage_multiplier: 4.5,
+                Case_Joint_Mortgage_LTV: 95,
+                Case_Joint_Mortgage_term_maximum: 40,
+                Case_Joint_Expenses_house: 3400,
+                Case_Joint_Rent: parseFloat(document.getElementById('Rent_Mo').value) * 12,
+                Case_Joint_Rent_increases: parseFloat(document.getElementById('Rent_Inc').value),
+                Returns_House_price_increase: parseFloat(document.getElementById('Ret_House').value),
+                Returns_cash: parseFloat(document.getElementById('Ret_Cash').value),
+                Returns_pension: parseFloat(document.getElementById('Ret_Pens').value),
+                Returns_inflation: parseFloat(document.getElementById('Ret_Inf').value)
+            };
+
+            const engine = new ActuarialEngine(inputs, globalParams);
+            const res = engine.runFullProjection();
+
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            res.buyWealth.forEach((val, t) => {
+                const tr = document.createElement('tr');
+                const isBought = res.purchaseAge === res.labels[t];
+                
+                tr.innerHTML = `
+                    <td style="text-align:center;">${t}</td>
+                    <td style="text-align:center;">${res.labels[t]}</td>
+                    <td class="buy-col">${formatMoney.format(val)}</td>
+                    <td class="rent-col">${formatMoney.format(res.rentWealth[t])}</td>
+                    <td class="event-col">${isBought ? '🏠 HOUSE PURCHASE' : ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Initial run
+        document.addEventListener('DOMContentLoaded', runTest);
+    </script>
+</body>
+</html>

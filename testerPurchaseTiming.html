@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase Timing Calculator - Tester</title>
+    <script src="parameters.js"></script>
+    <script src="purchaseTiming.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; margin: 0; color: #333; }
+        .header { background-color: #003a5d; color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 1.8em; }
+        .dashboard { display: flex; flex-wrap: wrap; max-width: 1600px; margin: 20px auto; padding: 0 20px; gap: 20px; }
+        .input-panel { flex: 1; min-width: 350px; max-width: 400px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: fit-content; }
+        .input-panel h2 { margin-top: 0; color: #003a5d; font-size: 1.2em;}
+        .section-title { font-weight: bold; margin-top: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #003a5d; }
+        .input-item { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.9em; }
+        .input-item label { flex: 1; padding-right: 10px; }
+        .input-item input, .input-item select { width: 90px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: right; }
+        button.calc-btn { width: 100%; padding: 12px; background: #003a5d; color: white; border: none; border-radius: 5px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.3s; }
+        button.calc-btn:hover { background: #002640; }
+        .results-panel { flex: 3; min-width: 600px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; text-align: right; }
+        th, td { border: 1px solid #ddd; padding: 6px 10px; white-space: nowrap; }
+        th { background-color: #003a5d; color: white; text-align: right; position: sticky; top: 0; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        .highlight { font-weight: bold; color: #003a5d; background-color: #eaf3f8 !important; }
+        .success { background-color: #d4edda !important; color: #155724; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Purchase Timing - Module Tester</h1>
+    </div>
+
+    <div class="dashboard">
+        <div class="input-panel">
+            <h2>Test Inputs</h2>
+            <div class="section-title">Property Target</div>
+            <div class="input-item"><label>House Price (£)</label><input type="number" id="housePrice" value="200000"></div>
+            <div class="input-item"><label>First Time Buyer?</label>
+                <select id="isFTB"><option value="Yes" selected>Yes</option><option value="No">No</option></select>
+            </div>
+            <div class="input-item"><label>House Price Inc (% pa)</label><input type="number" step="0.1" id="houseIncRate" value="0.7"></div>
+            <div class="input-item"><label>Purchase Fees (£)</label><input type="number" id="purchaseFees" value="3000"></div>
+
+            <div class="section-title">Mortgage Parameters</div>
+            <div class="input-item"><label>Salary Multiplier</label><input type="number" step="0.1" id="mortgageMultiplier" value="4.5"></div>
+            <div class="input-item"><label>Max LTV (%)</label><input type="number" id="mortgageLTV" value="95"></div>
+            <div class="input-item"><label>Max Term (Years)</label><input type="number" id="mortgageTerm" value="40"></div>
+            <div class="input-item"><label>Max End Age</label><input type="number" id="mortgageMaxAge" value="75"></div>
+
+            <div class="section-title">Simulated Arrays Data</div>
+            <div class="input-item"><label>Life 1 Age</label><input type="number" id="age1" value="21"></div>
+            <div class="input-item"><label>Life 1 Salary (£)</label><input type="number" id="salary1" value="32000"></div>
+            <div class="input-item"><label>Life 2 Age</label><input type="number" id="age2" value="0"></div>
+            <div class="input-item"><label>Life 2 Salary (£)</label><input type="number" id="salary2" value="0"></div>
+            <div class="input-item"><label>Initial Savings (£)</label><input type="number" id="initialSavings" value="54457"></div>
+            <div class="input-item"><label>Simulated Annual Saving (£)</label><input type="number" id="simAnnualSaving" value="0"></div>
+            <div class="input-item"><label>Avail for Mortgage (£/yr)</label><input type="number" id="simAvailMortgage" value="10000"></div>
+
+            <button class="calc-btn" onclick="runTest()">Generate Table</button>
+        </div>
+
+        <div class="results-panel">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Term</th>
+                        <th>Age 1</th>
+                        <th>Total Cost (inc Fees)</th>
+                        <th>Savings at End of Year</th>
+                        <th>Max Mortgage Possible</th>
+                        <th>House Value Possible</th>
+                        <th>Mortgage Amount</th>
+                        <th>LTV</th>
+                        <th>Mortgage Rate</th>
+                        <th>Mortgage Annual Cost</th>
+                        <th>Mortgage Affordable?</th>
+                        <th class="highlight">Can Buy This Year?</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                    <tr><td colspan="12" style="text-align:center;">Click "Generate Table" to run the engine...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const formatMoney = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+        const formatPct = new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionDigits: 2 });
+
+        function runTest() {
+            if (typeof globalParams === 'undefined') {
+                alert("Parameters not loaded! Ensure parameters.js is in the same folder.");
+                return;
+            }
+
+            const inputs = {
+                housePrice: parseFloat(document.getElementById('housePrice').value) || 0,
+                isFTB: document.getElementById('isFTB').value === "Yes",
+                houseIncRate: (parseFloat(document.getElementById('houseIncRate').value) || 0) / 100,
+                purchaseFees: parseFloat(document.getElementById('purchaseFees').value) || 0,
+                mortgageMultiplier: parseFloat(document.getElementById('mortgageMultiplier').value) || 0,
+                mortgageLTV: (parseFloat(document.getElementById('mortgageLTV').value) || 0) / 100,
+                mortgageTerm: parseInt(document.getElementById('mortgageTerm').value) || 0,
+                mortgageMaxAge: parseInt(document.getElementById('mortgageMaxAge').value) || 0
+            };
+
+            const baseAge1 = parseInt(document.getElementById('age1').value) || 0;
+            const baseAge2 = parseInt(document.getElementById('age2').value) || 0;
+            const salary1 = parseFloat(document.getElementById('salary1').value) || 0;
+            const salary2 = parseFloat(document.getElementById('salary2').value) || 0;
+            const initialSavings = parseFloat(document.getElementById('initialSavings').value) || 0;
+            const simAnnualSaving = parseFloat(document.getElementById('simAnnualSaving').value) || 0;
+            const simAvailMortgage = parseFloat(document.getElementById('simAvailMortgage').value) || 0;
+
+            const arrays = {
+                ageLife1: [], ageLife2: [],
+                grossIncomeLife1: [], grossIncomeLife2: [],
+                savingsAtEndOfYear: [], amountAvailableForMortgage: []
+            };
+
+            for (let t = 0; t <= globalParams.general.max_term; t++) {
+                arrays.ageLife1.push(baseAge1 + t);
+                arrays.ageLife2.push(baseAge2 > 0 ? baseAge2 + t : 0);
+                arrays.grossIncomeLife1.push(salary1); 
+                arrays.grossIncomeLife2.push(salary2);
+                arrays.savingsAtEndOfYear.push(initialSavings + (simAnnualSaving * t));
+                arrays.amountAvailableForMortgage.push(simAvailMortgage);
+            }
+
+            const ptCalc = new PurchaseTimingCalculator(globalParams);
+            const results = ptCalc.calculateTiming(inputs, arrays);
+
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            results.forEach(row => {
+                const tr = document.createElement('tr');
+                if (row.canBuyThisYear) tr.classList.add('success');
+                
+                tr.innerHTML = `
+                    <td style="text-align:center;">${row.term}</td>
+                    <td style="text-align:center;">${row.age1}</td>
+                    <td>${formatMoney.format(row.totalHouseCost)}</td>
+                    <td>${formatMoney.format(row.savingsEnd)}</td>
+                    <td>${formatMoney.format(row.maxMortgage)}</td>
+                    <td>${formatMoney.format(row.houseValuePossible)}</td>
+                    <td><strong>${formatMoney.format(row.loanAmount)}</strong></td>
+                    <td>${formatPct.format(row.ltv)}</td>
+                    <td><strong>${formatPct.format(row.mortgageRate)}</strong></td>
+                    <td>${formatMoney.format(row.mortgageAnnualCost)}</td>
+                    <td>${row.mortgageAffordable}</td>
+                    <td class="highlight">${row.canBuyThisYear ? 'YES' : 'NO'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', runTest);
+    </script>
+</body>
+</html>

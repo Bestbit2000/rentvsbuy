@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Actuarial Engine Bulk Validator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="parameters.js"></script>
+    <script src="engine.js"></script>
+    
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f2f5; margin: 0; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: nowrap; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; font-size: 0.85em; }
+        th { background: #003a5d; color: white; }
+        .pass { background-color: #d4edda; color: #155724; }
+        .fail { background-color: #f8d7da; color: #721c24; }
+        .details { font-size: 0.8em; color: #555; }
+        .summary { margin-bottom: 20px; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Comprehensive Bulk Test Runner</h2>
+        <p>Upload your <b>CSV Test Cases</b> to validate Core Results and Year 0-80 Wealth Arrays.</p>
+        <input type="file" id="csvFile" accept=".csv">
+        <hr>
+        <div id="summary" class="summary"></div>
+        <table id="resultsTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Row</th>
+                    <th>Purchase Age Match</th>
+                    <th>End Wealth (Buy) Match</th>
+                    <th>End Wealth (Rent) Match</th>
+                    <th>Rent Array (0-80) Match</th>
+                    <th>Buy Array (0-80) Match</th>
+                    <th>Overall Status</th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Check if parameters loaded correctly from parameters.js
+        if (typeof globalParams === 'undefined') {
+            alert("Error: globalParams is not defined. Ensure parameters.js is in the same folder and correctly formatted.");
+        }
+
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    runTests(results.data);
+                }
+            });
+        });
+
+        // Helper function to safely find CSV columns even if headers have prefixes
+        function findCsvVal(row, keyFragment) {
+            const key = Object.keys(row).find(k => k.toLowerCase().includes(keyFragment.toLowerCase()));
+            return key ? row[key] : null;
+        }
+
+        function runTests(data) {
+            const body = document.getElementById('resultsBody');
+            const summaryDiv = document.getElementById('summary');
+            body.innerHTML = '';
+            let passed = 0;
+
+            data.forEach((row, index) => {
+                // 1. Map Inputs from CSV to Engine format
+                const inputs = {
+                    Case_Life_1_Current_age: findCsvVal(row, "Life 1 Ages Current age") || row["Current Age"],
+                    Case_Life_1_Retirement_age: findCsvVal(row, "Life 1 Retirement age") || row["Retirement Age"],
+                    Case_Life_1_Plan_end_age: findCsvVal(row, "Plan end age") || 100, // Default to 100 if not in test
+                    Case_Life_1_Gross_salary: findCsvVal(row, "Life 1 Income Gross salary") || row["Gross Salary"],
+                    Case_Life_1_Pension_cont_Ee: findCsvVal(row, "Life 1 Pension cont Ee") || row["Ee 1 %"],
+                    Case_Life_1_Pension_cont_Er: findCsvVal(row, "Life 1 Pension cont Er") || row["Er 1 %"],
+                    Case_Life_1_Pension_initial_value: findCsvVal(row, "Life 1 Pension initial value") || row["Pension 1 Value"],
+                    Case_Life_1_Student_loan: findCsvVal(row, "Life 1 Debts Student loan amount"),
+                    Case_Life_1_Student_loan_plan: findCsvVal(row, "Life 1 Student loan plan"),
+                    
+                    Case_Life_2_Current_age: findCsvVal(row, "Life 2 Ages Current age"),
+                    Case_Life_2_Gross_salary: findCsvVal(row, "Life 2 Income Gross salary"),
+                    Case_Life_2_Pension_cont_Ee: findCsvVal(row, "Life 2 Pension cont Ee"),
+                    Case_Life_2_Pension_cont_Er: findCsvVal(row, "Life 2 Pension cont Er"),
+                    Case_Life_2_Pension_initial_value: findCsvVal(row, "Life 2 Pension initial value"),
+                    Case_Life_2_Student_loan: findCsvVal(row, "Life 2 Debts Student loan amount"),
+                    Case_Life_2_Student_loan_plan: findCsvVal(row, "Life 2 Student loan plan"),
+                    
+                    Case_Joint_Savings_initial_value: findCsvVal(row, "Joint Savings Savings initial value"),
+                    Case_Joint_Save_to_pension: findCsvVal(row, "Joint Save to pension"),
+                    Case_Joint_Expenses_pre_ret: findCsvVal(row, "Expenses before retirement"),
+                    Case_Joint_Expenses_in_ret: findCsvVal(row, "Expenses in retirement"),
+                    Case_Joint_House_price: findCsvVal(row, "Joint House ownership House price"),
+                    Case_Joint_First_Time_Buyer: findCsvVal(row, "First Time Buyer"),
+                    Case_Joint_House_purchase_costs: findCsvVal(row, "House purchase costs"),
+                    Case_Joint_Mortgage_multiplier: findCsvVal(row, "Mortgage salary multiplier"),
+                    Case_Joint_Mortgage_LTV: findCsvVal(row, "Mortgage Loan to Value available"),
+                    Case_Joint_Mortgage_term_maximum: findCsvVal(row, "Mortgage term maximum"),
+                    Case_Joint_Expenses_house: findCsvVal(row, "Expenses house maintenance"),
+                    
+                    Case_Joint_Rent: findCsvVal(row, "Joint Rental Rent"),
+                    Case_Joint_Rent_increases: findCsvVal(row, "Rent increases"),
+                    
+                    Returns_House_price_increase: findCsvVal(row, "House price increase"),
+                    Returns_cash: findCsvVal(row, "Returns Cash"),
+                    Returns_pension: findCsvVal(row, "Returns Pension"),
+                    Returns_inflation: findCsvVal(row, "Returns Inflation")
+                };
+
+                // 2. Run Engine using globalParams from parameters.js
+                const engine = new ActuarialEngine(inputs, globalParams);
+                const results = engine.runFullProjection();
+
+                // 3. Extract Expected Results from CSV
+                const expPurchaseAge = findCsvVal(row, "Purchase age");
+                const expBuyEndWealth = findCsvVal(row, "Buy net wealth at end");
+                const expRentEndWealth = findCsvVal(row, "Rent net wealth at end");
+
+                // 4. Validate Core Metrics
+                const actBuyEndWealth = results.buyWealth[results.buyWealth.length - 1];
+                const actRentEndWealth = results.rentWealth[results.rentWealth.length - 1];
+
+                // Check matches (using Math.round to account for minor JS float differences)
+                const ageMatch = String(expPurchaseAge) === String(results.purchaseAge);
+                const buyEndMatch = Math.round(expBuyEndWealth) === Math.round(actBuyEndWealth);
+                const rentEndMatch = Math.round(expRentEndWealth) === Math.round(actRentEndWealth);
+
+                // 5. Validate Arrays (Year 0 to 80)
+                let rentArrayMatch = true;
+                let rentFailDetail = "";
+                let buyArrayMatch = true;
+                let buyFailDetail = "";
+
+                for (let i = 0; i <= 80; i++) {
+                    if (results.labels.length <= i) break; // Don't check beyond projection length
+
+                    // Rent Check
+                    let expRentYear = findCsvVal(row, `Rent year ${i}`);
+                    if (expRentYear !== null && expRentYear !== undefined && expRentYear !== "") {
+                        if (Math.round(expRentYear) !== Math.round(results.rentWealth[i])) {
+                            rentArrayMatch = false;
+                            rentFailDetail = `Yr ${i}: Exp ${Math.round(expRentYear)} != Act ${Math.round(results.rentWealth[i])}`;
+                            break; 
+                        }
+                    }
+
+                    // Buy Check
+                    let expBuyYear = findCsvVal(row, `Buy year ${i}`);
+                    if (expBuyYear !== null && expBuyYear !== undefined && expBuyYear !== "") {
+                        if (Math.round(expBuyYear) !== Math.round(results.buyWealth[i])) {
+                            buyArrayMatch = false;
+                            buyFailDetail = `Yr ${i}: Exp ${Math.round(expBuyYear)} != Act ${Math.round(results.buyWealth[i])}`;
+                            break;
+                        }
+                    }
+                }
+
+                const overallPass = ageMatch && buyEndMatch && rentEndMatch && rentArrayMatch && buyArrayMatch;
+                if (overallPass) passed++;
+
+                // 6. Output to Table
+                const tr = document.createElement('tr');
+                tr.className = overallPass ? 'pass' : 'fail';
+                tr.innerHTML = `
+                    <td><strong>${index + 1}</strong></td>
+                    <td>${ageMatch ? '✅' : `❌ (Exp: ${expPurchaseAge} | Act: ${results.purchaseAge})`}</td>
+                    <td>${buyEndMatch ? '✅' : `❌ (Exp: ${Math.round(expBuyEndWealth)} | Act: ${Math.round(actBuyEndWealth)})`}</td>
+                    <td>${rentEndMatch ? '✅' : `❌ (Exp: ${Math.round(expRentEndWealth)} | Act: ${Math.round(actRentEndWealth)})`}</td>
+                    <td>${rentArrayMatch ? '✅ Match' : `❌ ${rentFailDetail}`}</td>
+                    <td>${buyArrayMatch ? '✅ Match' : `❌ ${buyFailDetail}`}</td>
+                    <td><strong>${overallPass ? 'PASS' : 'FAIL'}</strong></td>
+                `;
+                body.appendChild(tr);
+            });
+
+            document.getElementById('resultsTable').style.display = 'table';
+            summaryDiv.innerHTML = `<strong>Final Result: ${passed} out of ${data.length} test cases passed.</strong>`;
+            summaryDiv.className = `summary ${passed === data.length ? 'pass' : 'fail'}`;
+            summaryDiv.style.padding = '10px';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulk Validator - Adjusted Tolerance</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="parameters.js"></script>
+    <script src="netIncome.js"></script>
+    <script src="purchaseTiming.js"></script>
+    <script src="grossWithdrawals.js"></script>
+    <script src="engine.js"></script>
+    <style>
+        :root { --blue: #003a5d; --gold: #bfa15d; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
+        .tab { padding: 10px 20px; cursor: pointer; font-weight: bold; color: #666; border-bottom: 3px solid transparent; }
+        .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: right; white-space: nowrap; }
+        th { background: var(--blue); color: white; position: sticky; top: 0; z-index: 10;}
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .val-box { display: flex; flex-direction: column; }
+        
+        .val-box .exp { font-weight: normal; color: #555; font-size: 0.9em; }
+        .val-box .calc { font-weight: bold; font-size: 1.1em; }
+        
+        .center { text-align: center; }
+        .btn { background: var(--gold); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: #a88d4d; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background: white; margin: 2% auto; padding: 20px; width: 98%; max-width: 1900px; max-height: 90vh; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 10px; }
+        .modal-header h3 { margin: 0; color: var(--blue); }
+        .close-btn { background: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .table-container { overflow-y: auto; overflow-x: auto; flex: 1; }
+        .sub-col { background: #f9f9f9; color: #555; font-size: 0.9em; }
+        
+        th.net-col { background-color: var(--blue) !important; color: white !important; border-right: 2px solid var(--gold) !important; }
+        td.net-col { background-color: #eef3f7 !important; color: black !important; font-weight: bold; border-right: 2px solid var(--blue) !important; }
+        
+        .buy-sec { border-right: 2px solid var(--gold) !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Bulk Case Validator</h2>
+        <input type="file" id="csvFile" accept=".csv">
+        <hr>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('summaryTab')">Validation Summary</div>
+            <div class="tab" onclick="switchTab('detailsTab')">Detailed Comp</div>
+        </div>
+
+        <div id="summaryTab" class="tab-content active">
+            <div id="summaryText"></div>
+            <table id="summaryTable">
+                <thead><tr><th class="center">Row</th><th>Purchase Age Match</th><th>Buy Wealth Match</th><th>Rent Wealth Match</th><th class="center">Status</th></tr></thead>
+                <tbody id="summaryBody"></tbody>
+            </table>
+        </div>
+
+        <div id="detailsTab" class="tab-content">
+            <table id="detailsTable">
+                <thead>
+                    <tr>
+                        <th class="center">Row</th>
+                        <th class="center">Status</th>
+                        <th>Purchase Age<br><small>(Exp | Calc)</small></th>
+                        <th>Value for Buyer<br><small>(Exp | Calc)</small></th>
+                        <th>Value for Renter<br><small>(Exp | Calc)</small></th>
+                        <th class="center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="detailsBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="timelineModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Year-by-Year Detail</h3>
+                <button class="close-btn" onclick="closeModal()">Close</button>
+            </div>
+            
+            <div class="table-container">
+                <table id="timelineTable">
+                    <thead>
+                        <tr>
+                            <th class="center">Term</th>
+                            <th class="center">Age</th>
+                            <th class="net-col">Net Income</th>
+                            
+                            <th class="sub-col">Buy Exp</th>
+                            <th class="sub-col">Buy Cash End</th>
+                            
+                            <th class="sub-col" title="Pension 1 Start">B P1 St</th>
+                            <th class="sub-col" title="Pension 2 Start">B P2 St</th>
+                            
+                            <th class="sub-col" title="Pension Split % Life 1">B% 1</th>
+                            <th class="sub-col" title="Pension Split % Life 2">B% 2</th>
+                            
+                            <th class="sub-col" title="Total Net Withdrawal Required">B Wd Req</th>
+                            <th class="sub-col" title="Net Withdrawal Life 1">B NetWd1</th>
+                            <th class="sub-col" title="Net Withdrawal Life 2">B NetWd2</th>
+                            
+                            <th class="sub-col" title="Gross Withdrawal Life 1" style="background:#fcebed;">B GrWd1</th>
+                            <th class="sub-col" title="Gross Withdrawal Life 2" style="background:#fcebed;">B GrWd2</th>
+                            
+                            <th class="sub-col">Buy Pens End</th>
+                            
+                            <th class="sub-col" title="Engine's calculated needed house purchase costs">Eval House Cost</th>
+                            
+                            <th class="sub-col" title="Evaluated Purchase Fees" style="background:#eaf2f8;">Eval Fees</th>
+                            <th class="sub-col" title="Required Mortgage to Buy" style="background:#eaf2f8;">Req Mortg</th>
+                            <th class="sub-col" title="Max Mortgage Bank Will Lend" style="background:#eaf2f8;">Max Avail</th>
+                            
+                            <th class="sub-col" title="Actual required mortgage (Cost minus End Cash)">Eval Mortgage</th>
+                            <th class="sub-col" title="Mortgage balance at start of year">Act Mortg Start</th>
+                            <th class="sub-col" title="Actual mortgage payment made">Mortg Pmt</th>
+                            <th class="sub-col" title="Mortgage Interest Rate">Mortg Rate</th>
+                            <th class="sub-col" title="Actual ongoing asset value">Act House Val</th>
+                            <th class="sub-col" title="Actual ongoing liability">Act Mortg Bal</th>
+                            <th>Exp Buy Total</th>
+                            <th class="buy-sec">Calc Buy Total</th>
+                            
+                            <th class="sub-col">Rent Exp</th>
+                            <th class="sub-col">Rent Cash End</th>
+                            
+                            <th class="sub-col" title="Pension 1 Start">R P1 St</th>
+                            <th class="sub-col" title="Pension 2 Start">R P2 St</th>
+                            
+                            <th class="sub-col" title="Pension Split % Life 1">R% 1</th>
+                            <th class="sub-col" title="Pension Split % Life 2">R% 2</th>
+                            
+                            <th class="sub-col" title="Total Net Withdrawal Required">R Wd Req</th>
+                            <th class="sub-col" title="Net Withdrawal Life 1">R NetWd1</th>
+                            <th class="sub-col" title="Net Withdrawal Life 2">R NetWd2</th>
+
+                            <th class="sub-col" title="Gross Withdrawal Life 1" style="background:#fcebed;">R GrWd1</th>
+                            <th class="sub-col" title="Gross Withdrawal Life 2" style="background:#fcebed;">R GrWd2</th>
+                            
+                            <th class="sub-col">Rent Pens End</th>
+                            <th>Exp Rent Total</th>
+                            <th>Calc Rent Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timelineBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.testCaseData = [];
+        const formatMoney = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+
+        function safeFormat(val) {
+            if (val === undefined || val === null || isNaN(val)) return '-';
+            return formatMoney.format(val);
+        }
+        
+        function parseCurrency(str) {
+            if (str === null || str === undefined || str === "") return null;
+            let clean = String(str).replace(/[^0-9.-]+/g, "");
+            return isNaN(parseFloat(clean)) ? null : parseFloat(clean);
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                const lines = text.split('\n').slice(2).join('\n');
+                let headerCounts = {};
+                Papa.parse(lines, {
+                    header: true, dynamicTyping: true, skipEmptyLines: true,
+                    transformHeader: function(header) {
+                        let h = header.trim();
+                        if (!headerCounts[h]) { headerCounts[h] = 1; return h; } 
+                        else { headerCounts[h]++; return h + "_" + headerCounts[h]; }
+                    },
+                    complete: (results) => runTests(results.data)
+                });
+            };
+            reader.readAsText(file);
+        });
+
+        function cleanStr(s) { return s.toString().toLowerCase().replace(/\s+/g, ''); }
+
+        function getSafe(row, exactMatch, fuzzyMatches = []) {
+            let exactKey = Object.keys(row).find(k => k.trim().toLowerCase() === exactMatch.toLowerCase());
+            if (exactKey && row[exactKey] !== null && row[exactKey] !== undefined) return row[exactKey];
+            
+            for (let f of fuzzyMatches) {
+                let fuzzyKey = Object.keys(row).find(k => cleanStr(k).includes(cleanStr(f)));
+                if (fuzzyKey && row[fuzzyKey] !== null && row[fuzzyKey] !== undefined) return row[fuzzyKey];
+            }
+            return null;
+        }
+
+        function parsePctSafe(row, exactMatch, fuzzyMatches = []) {
+            let val = getSafe(row, exactMatch, fuzzyMatches);
+            if (typeof val === 'string') val = parseFloat(val.replace('%', ''));
+            if (val === null || isNaN(val) || val === 0) return 0;
+            return val;
+        }
+
+        function runTests(data) {
+            const sumBody = document.getElementById('summaryBody');
+            const detBody = document.getElementById('detailsBody');
+            sumBody.innerHTML = ''; detBody.innerHTML = '';
+            window.testCaseData = [];
+            let passedCount = 0;
+
+            const checkYes = (val) => String(val || "").trim().toUpperCase().startsWith("Y") ? "Yes" : "No";
+
+            data.forEach((row, index) => {
+                const inputs = {
+                    Case_Life_1_Current_age: parseCurrency(getSafe(row, "Current age")),
+                    Case_Life_1_Retirement_age: parseCurrency(getSafe(row, "Retirement age")),
+                    Case_Life_1_Plan_end_age: parseCurrency(getSafe(row, "Plan end age")) || 95,
+                    Case_Life_1_Gross_salary: parseCurrency(getSafe(row, "Gross salary")),
+                    Case_Life_1_State_pension: parseCurrency(getSafe(row, "State pension")),
+                    Case_Life_1_Pension_cont_Ee: parsePctSafe(row, "Pension cont Ee"),
+                    Case_Life_1_Pension_cont_Er: parsePctSafe(row, "Pension cont Er"),
+                    Case_Life_1_Pension_initial_value: parseCurrency(getSafe(row, "Pension initial value")),
+                    Case_Life_1_Spend_TFC: checkYes(getSafe(row, "Spend TFC at retirement?")),
+                    Case_Life_1_Student_loan: parseCurrency(getSafe(row, "Student loan amount")),
+                    Case_Life_1_Student_loan_plan: String(getSafe(row, "Student loan plan number", ["Student loan plan"]) || ""),
+
+                    Case_Life_2_Current_age: parseCurrency(getSafe(row, "Current age Life 2")),
+                    Case_Life_2_Gross_salary: parseCurrency(getSafe(row, "Gross salary Life 2")),
+                    Case_Life_2_State_pension: parseCurrency(getSafe(row, "State pension Life 2")),
+                    Case_Life_2_Pension_cont_Ee: parsePctSafe(row, "Pension cont Ee Life 2"),
+                    Case_Life_2_Pension_cont_Er: parsePctSafe(row, "Pension cont Er Life 2"),
+                    Case_Life_2_Pension_initial_value: parseCurrency(getSafe(row, "Pension initial value Life 2")),
+                    Case_Life_2_Spend_TFC: checkYes(getSafe(row, "Spend TFC at retirement? Life 2")),
+                    Case_Life_2_Student_loan: parseCurrency(getSafe(row, "Student loan amount Life 2")),
+                    Case_Life_2_Student_loan_plan: String(getSafe(row, "Student loan plan Life 2", ["Student loan plan number Life 2"]) || ""),
+
+                    Case_Joint_Savings_initial_value: parseCurrency(getSafe(row, "Savings initial value")),
+                    Case_Joint_Save_to_pension: parsePctSafe(row, "Proportion of spare income to save to pension"),
+                    Case_Joint_Expenses_pre_ret: parseCurrency(getSafe(row, "Expenses before retirement (ex rent / house)")),
+                    Case_Joint_Expenses_in_ret: parseCurrency(getSafe(row, "Expenses in retirement (ex rent / house)")),
+                    Case_Joint_House_price: parseCurrency(getSafe(row, "House price")),
+                    Case_Joint_First_Time_Buyer: checkYes(getSafe(row, "First time buyer")),
+                    Case_Joint_House_purchase_costs: parseCurrency(getSafe(row, "House purchase costs")),
+                    Case_Joint_Mortgage_multiplier: parseCurrency(getSafe(row, "Mortgage salary multiplier")),
+                    Case_Joint_Mortgage_LTV: parsePctSafe(row, "Mortgage Loan to Value available"),
+                    Case_Joint_Mortgage_term_maximum: parseCurrency(getSafe(row, "Mortgage term maximum")),
+                    Case_Joint_Expenses_house: parseCurrency(getSafe(row, "Expenses house maintenance")),
+                    Case_Joint_Rent: parseCurrency(getSafe(row, "Rent")), 
+                    Case_Joint_Rent_increases: parsePctSafe(row, "Rent increases above inflation"),
+                    Returns_House_price_increase: parsePctSafe(row, "Real house price increases"),
+                    Returns_cash: parsePctSafe(row, "Real cash returns"),
+                    Returns_pension: parsePctSafe(row, "Real pension returns"),
+                    Returns_inflation: parsePctSafe(row, "Inflation")
+                };
+
+                const engine = new ActuarialEngine(inputs, globalParams);
+                const res = engine.runFullProjection();
+
+                window.testCaseData.push({ rowData: row, results: res, inputs: inputs });
+
+                let targetTerm = Math.max(0, inputs.Case_Life_1_Plan_end_age - inputs.Case_Life_1_Current_age);
+                targetTerm = Math.min(targetTerm, res.buyWealth.length - 1);
+
+                let normBuy1 = `term${targetTerm}-buy`; let normBuy2 = `year${targetTerm}-buy`;
+                let normRent1 = `term${targetTerm}-rent`; let normRent2 = `year${targetTerm}-rent`;
+                
+                let buyKey = Object.keys(row).find(k => { let c = cleanStr(k); return c === normBuy1 || c === normBuy2; });
+                let rentKey = Object.keys(row).find(k => { let c = cleanStr(k); return c === normRent1 || c === normRent2; });
+
+                let expBuyRaw = buyKey ? row[buyKey] : null;
+                let expRentRaw = rentKey ? row[rentKey] : null;
+
+                let expBuy = expBuyRaw !== null ? parseCurrency(expBuyRaw) : parseCurrency(getSafe(row, "Value for buyer at end age")); 
+                let expRent = expRentRaw !== null ? parseCurrency(expRentRaw) : parseCurrency(getSafe(row, "Value for renter at end age"));
+
+                let rawExpAge = getSafe(row, "House purchase age");
+                let expAgeStr = String(rawExpAge).trim().toUpperCase();
+                let expAge = (!rawExpAge || expAgeStr === "N/A" || expAgeStr === "NONE" || expAgeStr === "NULL" || expAgeStr === "") ? "None" : String(rawExpAge).trim();
+                let calcAge = res.purchaseAge === null ? "None" : String(res.purchaseAge);
+
+                const ageMatch = expAge === calcAge;
+
+                // --- UPDATED TOLERANCE CHECK TO 0.0002 ---
+                const expBuyNum = expBuy || 0;
+                const calcBuyNum = res.buyEndWealth || 0;
+                const buyMatch = expBuyNum === 0 ? Math.abs(calcBuyNum) < 1 : (Math.abs(calcBuyNum - expBuyNum) / Math.abs(expBuyNum)) < 0.0002;
+
+                const expRentNum = expRent || 0;
+                const calcRentNum = res.rentEndWealth || 0;
+                const rentMatch = expRentNum === 0 ? Math.abs(calcRentNum) < 1 : (Math.abs(calcRentNum - expRentNum) / Math.abs(expRentNum)) < 0.0002;
+
+                const rowPass = ageMatch && buyMatch && rentMatch;
+                if(rowPass) passedCount++;
+
+                const sTr = document.createElement('tr'); sTr.className = rowPass ? 'pass' : 'fail';
+                sTr.innerHTML = `<td class="center">${index+1}</td><td>${ageMatch?'✅':'❌'}</td><td>${buyMatch?'✅':'❌'}</td><td>${rentMatch?'✅':'❌'}</td><td class="center">${rowPass?'PASS':'FAIL'}</td>`;
+                sumBody.appendChild(sTr);
+
+                const dTr = document.createElement('tr');
+                dTr.innerHTML = `
+                    <td class="center">${index+1}</td>
+                    <td class="center ${rowPass ? 'pass' : 'fail'}" style="font-weight:bold;">${rowPass ? 'PASS' : 'FAIL'}</td>
+                    <td class="${ageMatch ? 'pass' : 'fail'}"><div class="val-box"><span class="exp">${expAge}</span><span class="calc">${calcAge}</span></div></td>
+                    <td class="${buyMatch ? 'pass' : 'fail'}"><div class="val-box"><span class="exp">${formatMoney.format(expBuyNum)}</span><span class="calc">${formatMoney.format(calcBuyNum)}</span></div></td>
+                    <td class="${rentMatch ? 'pass' : 'fail'}"><div class="val-box"><span class="exp">${formatMoney.format(expRentNum)}</span><span class="calc">${formatMoney.format(calcRentNum)}</span></div></td>
+                    <td class="center"><button class="btn" onclick="openModal(${index})">View Timeline</button></td>
+                `;
+                detBody.appendChild(dTr);
+            });
+            document.getElementById('summaryText').innerHTML = `<b>Results: ${passedCount} / ${data.length} passed.</b>`;
+        }
+
+        function openModal(index) {
+            try {
+                const data = window.testCaseData[index];
+                let rawExpAge = getSafe(data.rowData, "House purchase age");
+                let expAgeStr = String(rawExpAge).trim().toUpperCase();
+                let expPurcAge = (!rawExpAge || expAgeStr === "N/A" || expAgeStr === "NONE" || expAgeStr === "NULL" || expAgeStr === "") ? "None" : String(rawExpAge).trim();
+                let calcPurcAge = data.results.purchaseAge === null ? "None" : data.results.purchaseAge;
+                
+                document.getElementById('modalTitle').innerText = `Year-by-Year Detail: Row ${index + 1} (Purchase Age: Exp ${expPurcAge} | Calc ${calcPurcAge})`;
+
+                const tBody = document.getElementById('timelineBody');
+                tBody.innerHTML = '';
+                
+                if (!data.results.buyWealth) return;
+
+                for(let t = 0; t < data.results.buyWealth.length; t++) {
+                    
+                    let normBuy1 = `term${t}-buy`; let normBuy2 = `year${t}-buy`;
+                    let normRent1 = `term${t}-rent`; let normRent2 = `year${t}-rent`;
+                    
+                    let buyKey = Object.keys(data.rowData).find(k => { let c = cleanStr(k); return c === normBuy1 || c === normBuy2; });
+                    let rentKey = Object.keys(data.rowData).find(k => { let c = cleanStr(k); return c === normRent1 || c === normRent2; });
+                    
+                    let expBuyRaw = buyKey ? data.rowData[buyKey] : null;
+                    let expRentRaw = rentKey ? data.rowData[rentKey] : null;
+                    
+                    let expBuy = expBuyRaw !== null ? parseCurrency(expBuyRaw) : null;
+                    let expRent = expRentRaw !== null ? parseCurrency(expRentRaw) : null;
+                    
+                    let calcBuy = data.results.buyWealth[t];
+                    let calcRent = data.results.rentWealth[t];
+
+                    let tr = document.createElement('tr');
+                    
+                    tr.innerHTML = `
+                        <td class="center">${t}</td>
+                        <td class="center">${data.results.labels?.[t] || t}</td>
+                        <td class="net-col">${safeFormat(data.results.netIncome?.[t])}</td>
+                        
+                        <td class="sub-col">${safeFormat(data.results.buyTotalExp?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.buyCash?.[t])}</td>
+                        
+                        <td class="sub-col">${safeFormat(data.results.bPens1Start?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.bPens2Start?.[t])}</td>
+                        
+                        <td class="sub-col">${data.results.bProp1?.[t] !== undefined ? (data.results.bProp1[t]*100).toFixed(1)+'%' : '-'}</td>
+                        <td class="sub-col">${data.results.bProp2?.[t] !== undefined ? (data.results.bProp2[t]*100).toFixed(1)+'%' : '-'}</td>
+                        
+                        <td class="sub-col" style="color:red;">${safeFormat(data.results.bNetWdReq?.[t])}</td>
+                        <td class="sub-col" style="color:red;">${safeFormat(data.results.bNetWd1?.[t])}</td>
+                        <td class="sub-col" style="color:red;">${safeFormat(data.results.bNetWd2?.[t])}</td>
+                        
+                        <td class="sub-col" style="color:#d9534f; font-weight:bold; background:#fcebed;">${safeFormat(data.results.bGrossWd1?.[t])}</td>
+                        <td class="sub-col" style="color:#d9534f; font-weight:bold; background:#fcebed;">${safeFormat(data.results.bGrossWd2?.[t])}</td>
+                        
+                        <td class="sub-col">${safeFormat(data.results.buyPension?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.buyHouseCostEval?.[t])}</td>
+                        
+                        <td class="sub-col" style="background:#eaf2f8; color:#0056b3; font-weight:bold;">${safeFormat(data.results.buyPurchaseFeesEval?.[t])}</td>
+                        <td class="sub-col" style="background:#eaf2f8; color:#0056b3; font-weight:bold;">${safeFormat(data.results.buyReqMortEval?.[t])}</td>
+                        <td class="sub-col" style="background:#eaf2f8; color:#0056b3; font-weight:bold;">${safeFormat(data.results.buyMaxAvailEval?.[t])}</td>
+                        
+                        <td class="sub-col">${safeFormat(data.results.buyMortgageEval?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.buyMortgageStart?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.buyMortgagePmt?.[t])}</td>
+                        <td class="sub-col">${data.results.buyMortgageRate?.[t] ? (data.results.buyMortgageRate[t]*100).toFixed(2)+'%' : '-'}</td>
+                        <td class="sub-col">${safeFormat(data.results.buyHouseVal?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.buyMortgageVal?.[t])}</td>
+                        
+                        <td>${expBuy !== null ? formatMoney.format(expBuy) : '-'}</td>
+                        <td class="buy-sec" style="font-weight:bold;">${formatMoney.format(calcBuy)}</td>
+                        
+                        <td class="sub-col">${safeFormat(data.results.rentTotalExp?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.rentCash?.[t])}</td>
+                        
+                        <td class="sub-col">${safeFormat(data.results.rPens1Start?.[t])}</td>
+                        <td class="sub-col">${safeFormat(data.results.rPens2Start?.[t])}</td>
+                        
+                        <td class="sub-col">${data.results.rProp1?.[t] !== undefined ? (data.results.rProp1[t]*100).toFixed(1)+'%' : '-'}</td>
+                        <td class="sub-col">${data.results.rProp2?.[t] !== undefined ? (data.results.rProp2[t]*100).toFixed(1)+'%' : '-'}</td>
+                        
+                        <td class="sub-col" style="color:red;">${safeFormat(data.results.rNetWdReq?.[t])}</td>
+                        <td class="sub-col" style="color:red;">${safeFormat(data.results.rNetWd1?.[t])}</td>
+                        <td class="sub-col" style="color:red;">${safeFormat(data.results.rNetWd2?.[t])}</td>
+                        
+                        <td class="sub-col" style="color:#d9534f; font-weight:bold; background:#fcebed;">${safeFormat(data.results.rGrossWd1?.[t])}</td>
+                        <td class="sub-col" style="color:#d9534f; font-weight:bold; background:#fcebed;">${safeFormat(data.results.rGrossWd2?.[t])}</td>
+                        
+                        <td class="sub-col">${safeFormat(data.results.rentPension?.[t])}</td>
+                        
+                        <td>${expRent !== null ? formatMoney.format(expRent) : '-'}</td>
+                        <td style="font-weight:bold;">${formatMoney.format(calcRent)}</td>
+                    `;
+                    tBody.appendChild(tr);
+                }
+                document.getElementById('timelineModal').style.display = 'block';
+            } catch (err) {}
+        }
+        function closeModal() { document.getElementById('timelineModal').style.display = 'none'; }
+    </script>
+</body>
+</html>

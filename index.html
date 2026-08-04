@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy or Rent? - Institute and Faculty of Actuaries</title>
+        <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="antialiased scroll-smooth">
+
+    <header class="bg-navy text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo and Text -->
+                <a href="index.html" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
+                    <img class="h-12 w-auto mr-3" src="images/PFP_logo_icon_dark.png" alt="PFP Logo">
+                    <div class="hidden sm:flex flex-col">
+                        <span class="font-bold text-sm leading-tight tracking-wider uppercase">PERSONAL FINANCIAL PLANNING WORKING GROUP</span>
+                        <span class="text-xs text-gray-300">from the Institute and Faculty of Actuaries</span>
+                    </div>
+                    <!-- Mobile abbreviated title -->
+                    <div class="flex sm:hidden flex-col text-left">
+                        <span class="font-bold text-sm leading-tight tracking-wider uppercase">PFP WORKING GROUP</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html#home" class="text-white hover:text-gold transition px-3 py-2 text-sm font-medium">Home</a>
+                    <a href="index.html#calculator-preview" class="text-white hover:text-gold transition px-3 py-2 text-sm font-medium">Discover</a>
+                    <a href="index.html#scenarios" class="text-white hover:text-gold transition px-3 py-2 text-sm font-medium">Scenarios</a>
+                    <a href="index.html#report-summary" class="text-white hover:text-gold transition px-3 py-2 text-sm font-medium">Report</a>
+                </nav>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" type="button" class="text-gray-300 hover:text-white focus:outline-none focus:text-white p-2" aria-label="Toggle menu">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Panel -->
+            <div id="mobile-menu" class="md:hidden mt-2 pb-3 space-y-1">
+                <a href="index.html#home" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Home</a>
+                <a href="index.html#calculator-preview" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Discover</a>
+                <a href="index.html#scenarios" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Scenarios</a>
+                <a href="index.html#report-summary" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Report</a>
+            </div>
+        </div>
+        <div class="header-stripe w-full"></div>
+    </header>
+
+    <main>
+        <section id="home" class="bg-white py-16 sm:py-24 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+                    Buy a Home or Rent (for Life)?
+                </h1>
+                <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-600 mb-10">
+                    Explore the affordability and potential impact on retirement savings in the UK. Should you prioritise buying a house or saving more in your pension?
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="rent_buy_calculator.html" class="btn-primary px-8 py-4 font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        Launch the Calculator
+                    </a>
+                    <a href="index.html#report-summary" class="btn-outline px-8 py-4 font-bold text-lg flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Read the Report
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="calculator-preview" class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">Discover Your Financial Future</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Our interactive tool projects your long-term wealth to help you compare the financial outcomes of buying a home versus renting for life.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col lg:flex-row">
+                    <!-- Text and Features List -->
+                    <div class="p-8 lg:p-12 lg:w-1/2 flex flex-col justify-center">
+                        <h3 class="text-2xl font-bold mb-8 text-navy">What you can do with the calculator</h3>
+                        
+                        <div class="space-y-8">
+                            <!-- Feature 1 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-100 text-navy">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-lg leading-6 font-medium text-gray-900">Plan for just you or include a partner</h4>
+                                    <p class="mt-2 text-base text-gray-500">Model your finances individually or combine incomes and expenses with a partner for a joint view.</p>
+                                </div>
+                            </div>
+
+                            <!-- Feature 2 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-100 text-navy">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-lg leading-6 font-medium text-gray-900">Compare Different Scenarios</h4>
+                                    <p class="mt-2 text-base text-gray-500">Easily see a clear comparison of your lifetime wealth if you buy versus if you continue to rent for life.</p>
+                                </div>
+                            </div>
+
+                            <!-- Feature 3 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-100 text-navy">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-lg leading-6 font-medium text-gray-900">Include Student Loans</h4>
+                                    <p class="mt-2 text-base text-gray-500">Factor in your student loan repayments (Plan 1, 2, etc.) for a realistic view of your net disposable income.</p>
+                                </div>
+                            </div>
+
+                            <!-- Feature 4 -->
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-100 text-navy">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-lg leading-6 font-medium text-gray-900">Adjust Assumptions</h4>
+                                    <p class="mt-2 text-base text-gray-500">Tweak key variables like salary growth, investment returns, and inflation to test how robust your plan is.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-10 flex flex-col xl:flex-row gap-4">
+                            <a href="rent_buy_calculator.html" class="btn-primary px-6 py-3 text-center font-bold flex-1">
+                                Start with my details
+                            </a>
+                            <button class="btn-outline px-6 py-3 text-center font-bold flex-1" onclick="window.location.href='rent_buy_calculator.html?skipWizard=true'">
+                                Try a sample input
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Single Hero Image -->
+                    <div class="lg:w-1/2 relative min-h-[300px] lg:min-h-full bg-gray-100 border-t lg:border-t-0 lg:border-l border-gray-200">
+                        <img src="images/output_image.png" alt="Calculator showing wealth over time on a laptop" class="absolute inset-0 w-full h-full object-cover" onerror="this.src='https://placehold.co/800x800/eef4f8/003a5d?text=Calculator+Preview'">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scenarios" class="py-16 bg-white border-t border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">Real Life Scenarios</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">We modelled different life choices to see how they impact lifetime wealth and the prospects of becoming a homeowner. See how small changes make big differences.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Persona 1: Alex -->
+                    <div class="persona-card bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden flex flex-col h-full">
+                        <div class="h-3 w-full bg-blue-500"></div>
+                        <div class="p-8 flex-grow flex flex-col">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-4">
+                                    <!-- Photo Placeholder for Alex -->
+                                    <div class="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 border-2 border-gray-100">
+                                        <img src="images/headshot_alex.png" alt="Photo of Alex" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-navy">Alex, 21</h3>
+                                        <p class="text-gray-500 italic font-medium">The "Unwilling Boomerang"</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Badges -->
+                            <div class="mb-4">
+                                <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-bold inline-block">Base Outcome: Can Buy at 38</span>
+                            </div>
+                            
+                            <p class="text-gray-700 mb-6 flex-grow">
+                                Alex moved back in with his parents after graduation. He pays low rent (£800/mo) but spends heavily on his lifestyle (£1,250/mo). He wants to buy a £200k flat.
+                            </p>
+
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6 text-sm">
+                                <strong class="block text-navy mb-2">Key Insights from the Model:</strong>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <svg class="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span><strong>Buying is better:</strong> Generates ~£396k more lifetime wealth than renting.</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="h-5 w-5 text-gold mr-2 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        <span><strong>Power of Family Help:</strong> A £10k gift from parents cuts 2 years off purchase time and boosts final wealth by £67k.</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="h-5 w-5 text-gold mr-2 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        <span><strong>Impact of Budgeting:</strong> Cutting expenses to £500/mo means he could buy 11 years earlier (at age 27).</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mt-auto">
+                                <a href="scenario-alex.html" class="btn-outline px-6 py-3 text-center font-bold inline-block w-full sm:w-auto">
+                                    See more
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Persona 2: Becky -->
+                    <div class="persona-card bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden flex flex-col h-full">
+                        <div class="h-3 w-full bg-red-500"></div>
+                        <div class="p-8 flex-grow flex flex-col">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-4">
+                                    <!-- Photo Placeholder for Becky -->
+                                    <div class="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 border-2 border-gray-100">
+                                        <img src="images/headshot_becky.png" alt="Photo of Becky" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-navy">Becky, 24</h3>
+                                        <p class="text-gray-500 italic font-medium">The "Independence Protector"</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Badges -->
+                            <div class="mb-4">
+                                <span class="bg-red-100 text-red-800 text-xs px-3 py-1 rounded-full font-bold inline-block">Base Outcome: The Rent Trap (Buy Age 46)</span>
+                            </div>
+                            
+                            <p class="text-gray-700 mb-6 flex-grow">
+                                Becky values her independence and rents a 1-bed flat alone (£1,150/mo). High rent and lifestyle spending (£1,250/mo) leave little room for saving towards a £160k flat.
+                            </p>
+
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6 text-sm">
+                                <strong class="block text-navy mb-2">Key Insights from the Model:</strong>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <svg class="h-5 w-5 text-red-500 mr-2 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <span><strong>Wealth Depletion:</strong> Continuing to rent into retirement drains her lifetime wealth entirely.</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="h-5 w-5 text-gold mr-2 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        <span><strong>Compromising on Space:</strong> Moving to a flatshare (£800/mo) allows her to buy 16 years earlier (at 30).</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="h-5 w-5 text-gold mr-2 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        <span><strong>Extreme Frugality:</strong> Cutting expenses to £500/mo lets her buy at 28, shaving 18 years off her base outcome.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mt-auto">
+                                <a href="scenario_becky.html" class="btn-outline px-6 py-3 text-center font-bold inline-block w-full sm:w-auto">
+                                    See more
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Report Summary -->
+        <section id="report-summary" class="py-16 bg-navy text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col lg:flex-row gap-12 items-center">
+                    <div class="lg:w-2/3">
+                        <h2 class="text-3xl font-bold mb-8 text-gold">About the Report</h2>
+                        
+                        <div class="space-y-4 text-gray-200">
+                            <p>
+                                The Personal Financial Planning Working Party has developed a financial model to examine the acute trade-offs early-career households face between homeownership and pension saving. 
+                            </p>
+                            <p>
+                                Our analysis suggests that, under plausible economic conditions, <strong>early entry into homeownership is frequently a superior strategy for building net wealth</strong> compared to sustained renting, even with higher pension contributions.
+                            </p>
+                            
+                            <h4 class="text-lg font-bold text-white mt-6 mb-2 border-b border-gray-600 pb-2">Key Drivers Identified:</h4>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>Daily Spending Habits:</strong> Discretionary spending significantly impacts when you can afford a deposit.</li>
+                                <li><strong>Current Rent Levels:</strong> High rent strengthens the financial case for buying. Low rent makes investing elsewhere more competitive.</li>
+                                <li><strong>Family Support ("Bank of Mum & Dad"):</strong> Cash gifts or reduced rent at home materially alter the timing of a purchase and long-term wealth trajectories.</li>
+                            </ul>
+                            
+                            <p class="text-sm italic mt-6 opacity-80">
+                                Note: This model provides a quantitative framework for understanding financial interactions over a lifetime. It is not intended as individual financial or retirement advice.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:w-1/3 flex justify-center">
+                        <div class="bg-white p-6 rounded-lg text-center shadow-2xl max-w-sm w-full">
+                            <div class="text-navy mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <h4 class="text-xl font-bold text-navy mb-2">Read the Full Paper</h4>
+                            <p class="text-gray-600 text-sm mb-6">Dive deep into the methodology, detailed persona breakdowns, and extensive data analysis.</p>
+                            <button class="w-full btn-secondary py-3 font-bold shadow transition flex justify-center items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Download PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="py-20 bg-gray-50 border-t border-gray-200">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-6 text-navy">Ready to see your own projection?</h2>
+                <p class="text-xl text-gray-600 mb-8">Take control of your long-term planning. Use the calculator to explore how your lifestyle choices today impact your wealth tomorrow.</p>
+                <a href="rent_buy_calculator.html" class="btn-primary px-10 py-5 font-bold text-xl shadow-xl transition transform hover:scale-105 inline-flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Launch the Calculator
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('open');
+        });
+
+        // Close mobile menu when a link is clicked
+        const mobileLinks = menu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
