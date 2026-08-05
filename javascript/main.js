@@ -85,6 +85,25 @@ const timingTemplate = (titleText, descText) => `
     </div>
 `;
 
+// Shown in the "When can you buy?" section whenever there is no purchase time
+// to report (unaffordable, or the only affordable date would fall on or after
+// retirement, which the projection engine won't produce as a purchase date).
+const timingUnaffordableTemplate = (descText) => `
+    <div class="timing-hero-card timing-hero-card-warning">
+        <div class="timing-icon-wrapper timing-icon-warning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="32" height="32">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" opacity="0.4"></path>
+                <rect x="9" y="11" width="6" height="8" rx="1" ry="1"></rect>
+                <path d="M10 11V9a2 2 0 0 1 4 0v2"></path>
+            </svg>
+        </div>
+        <div class="timing-text-content">
+            <h3 class="timing-title">A house isn't affordable</h3>
+            <p class="timing-description">${descText}</p>
+        </div>
+    </div>
+`;
+
 // --- GLOBALS ---
 const formatMoney = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
 let currentChart = null;
@@ -94,22 +113,27 @@ let currentWizIndex = 0;
 let stepSequence = [];
 let savedSettings = {}; 
 
-// Compare Mode State
 let isCompareMode = false;
 let baselineInputs = {};
 let baselineResults = null;
 let changedInputsList = [];
 
-// --- UTILS ---
-function formatSigFigDown(val) {
-    if (!val || val === 0) return "£0";
+let lastCalcData = null;
+let currentProjView = 'revised';
+
+function roundSigFigDown(val) {
+    if (!val || val === 0) return 0;
     let absVal = Math.abs(val);
-    if (absVal < 100) return formatMoney.format(val);
+    if (absVal < 100) return val;
     const digits = Math.floor(Math.log10(absVal)) + 1;
     const magnitude = Math.pow(10, digits - 3);
     let rounded = Math.floor(absVal / magnitude) * magnitude;
-    if (val < 0) rounded = -rounded;
-    return formatMoney.format(rounded);
+    return val < 0 ? -rounded : rounded;
+}
+
+function formatSigFigDown(val) {
+    if (!val || val === 0) return "£0";
+    return formatMoney.format(roundSigFigDown(val));
 }
 
 document.querySelectorAll('.comma-format').forEach(item => {
@@ -126,7 +150,6 @@ if(wExPre) {
     });
 }
 
-// --- VALIDATION & DYNAMIC UI ---
 function applyLimits(el) {
     let valStr = String(el.value).replace(/,/g, '').replace(/£/g, '').replace(/%/g, '');
     if(valStr === '') return;
@@ -190,7 +213,6 @@ document.querySelectorAll('.calc-ret-trigger').forEach(input => {
     input.addEventListener('input', updateDynamicUI);
 });
 
-// --- TOGGLES ---
 function toggleSL() {
     const sl1 = document.querySelector('input[name="s_has_sl1"]:checked')?.value === 'Yes';
     const sl2 = document.querySelector('input[name="s_has_sl2"]:checked')?.value === 'Yes';
@@ -200,8 +222,6 @@ function toggleSL() {
     
     if(s_f1) s_f1.style.display = sl1 ? 'block' : 'none';
     if(s_f2) s_f2.style.display = sl2 ? 'block' : 'none';
-
-    handleInputChanged();
 }
 
 function toggleWizSL(personNum) {
@@ -219,8 +239,6 @@ function togglePen() {
     
     if(s_f1) s_f1.style.display = p1 ? 'block' : 'none';
     if(s_f2) s_f2.style.display = p2 ? 'block' : 'none';
-
-    handleInputChanged();
 }
 
 function toggleWizPen(personNum) {
@@ -258,78 +276,41 @@ function switchPerson(person) {
     }
 }
 
-// --- COMPARE MODE LOGIC ---
 function toggleCompareMode() {
     isCompareMode = document.getElementById('compare-switch').checked;
     
     if (isCompareMode) {
         baselineInputs = gatherRawInputs();
-        
         try {
             const engine = new ActuarialEngine(gatherEngineInputs(baselineInputs), globalParams);
             baselineResults = engine.runFullProjection();
         } catch(e) { console.error("Engine failed on baseline snapshot", e); }
 
-        // Unhide the sticky footer instead of individual buttons
         const footer = document.getElementById('compare-actions-footer');
         if(footer) footer.style.display = 'block';
-        
         document.getElementById('compare-summary-block').style.display = 'block';
-        document.getElementById('legend-baseline-buy').style.display = 'flex';
-        document.getElementById('legend-baseline-rent').style.display = 'flex';
-
     } else {
         discardWhatIf();
-        
-        // Hide the sticky footer
         const footer = document.getElementById('compare-actions-footer');
         if(footer) footer.style.display = 'none';
-
         document.getElementById('compare-summary-block').style.display = 'none';
-        document.getElementById('legend-baseline-buy').style.display = 'none';
-        document.getElementById('legend-baseline-rent').style.display = 'none';
-        
         baselineInputs = {};
         baselineResults = null;
     }
-    
-    handleInputChanged();
 }
 
-// Applies current inputs over to the baseline state and recalculates
 function makeBaseScenario() {
     if(!isCompareMode) return;
-    
-    // 1. Update the baseline snapshot to match the current active inputs
     baselineInputs = gatherRawInputs();
-    
-    // 2. Re-run the engine for the new baseline
     try {
         const engine = new ActuarialEngine(gatherEngineInputs(baselineInputs), globalParams);
         baselineResults = engine.runFullProjection();
     } catch(e) { console.error("Engine failed on base snapshot", e); }
-    
-    // 3. Clear out the "What You Changed" modifications list
-    checkCompareModifications();
-    
-    // 4. Update the chart & verdict to reflect the new baseline metrics
     runCalculation();
-    
-    // 5. Visual feedback on the button itself
-    const btn = document.getElementById('make-base-btn');
-    const originalText = btn.innerText;
-    btn.innerText = "Saved as new original scenario!";
-    btn.style.backgroundColor = "var(--success)";
-    
-    setTimeout(() => {
-        btn.innerText = originalText;
-        btn.style.backgroundColor = "var(--ifoa-navy)";
-    }, 2500);
 }
 
 function discardWhatIf() {
     if(!isCompareMode) return;
-    
     Object.keys(baselineInputs).forEach(id => {
         let el = document.getElementById(id);
         if (el) {
@@ -338,7 +319,6 @@ function discardWhatIf() {
             } else {
                 el.value = baselineInputs[id];
             }
-            
             if (el.classList.contains('compare-track')) {
                 let wrapper = el.closest('.input-wrapper') || el.closest('.toggle-container');
                 if (wrapper) wrapper.classList.remove('is-modified');
@@ -348,12 +328,10 @@ function discardWhatIf() {
 
     changedInputsList = [];
     document.getElementById('compare-changes-list').innerHTML = '';
-    
     toggleSL();
     togglePen();
     updateDynamicUI();
-    
-    handleInputChanged();
+    forceCalculation();
 }
 
 function gatherRawInputs() {
@@ -370,16 +348,13 @@ function gatherRawInputs() {
 
 function checkCompareModifications() {
     if(!isCompareMode) return;
-    
     changedInputsList = [];
     const ul = document.getElementById('compare-changes-list');
     ul.innerHTML = '';
-    
     let currentRaw = gatherRawInputs();
     
     document.querySelectorAll('.compare-track').forEach(el => {
         let isChanged = false;
-        
         if (el.type === 'radio' || el.type === 'checkbox') {
             isChanged = (currentRaw[el.id] !== baselineInputs[el.id]);
         } else {
@@ -387,19 +362,17 @@ function checkCompareModifications() {
         }
 
         let wrapper = el.closest('.input-wrapper') || el.closest('.toggle-container');
-        
         if (isChanged) {
             if (wrapper) wrapper.classList.add('is-modified');
-            
             if (el.type !== 'radio' || (el.type === 'radio' && el.checked)) {
                 let labelText = el.getAttribute('data-label') || el.id;
                 let oldVal = baselineInputs[el.id];
                 if(el.type === 'radio') {
-                     oldVal = "Previous";
+                    let group = document.querySelectorAll(`input[name="${el.name}"]`);
+                    let oldRadio = Array.from(group).find(r => baselineInputs[r.id] === true);
+                    oldVal = oldRadio ? oldRadio.value : "Previous";
                 }
-                
                 changedInputsList.push(`${labelText}: ${oldVal} ➔ ${el.value}`);
-                
                 let li = document.createElement('li');
                 li.innerHTML = `<strong>${labelText}:</strong> ${oldVal} ➔ ${el.value}`;
                 ul.appendChild(li);
@@ -408,10 +381,6 @@ function checkCompareModifications() {
             if (wrapper && el.type !== 'radio') wrapper.classList.remove('is-modified');
         }
     });
-
-    if(changedInputsList.length === 0) {
-        ul.innerHTML = '<li style="color: #888; font-style: italic;">No changes made yet. Edit inputs to see what-if differences.</li>';
-    }
 }
 
 function getVal(id) {
@@ -441,7 +410,6 @@ function gatherEngineInputs(sourceDataObj = null) {
     const slp1 = document.getElementById('s_slp1').value;
     const slp2 = document.getElementById('s_slp2').value;
     const m = currentMode === 'couple' ? 1 : 0;
-
     const inflation = fetchVal('set_inf');
     const toReal = (nominalStr) => {
         let nominal = parseFloat(nominalStr) || 0;
@@ -453,44 +421,34 @@ function gatherEngineInputs(sourceDataObj = null) {
         Case_Life_1_Retirement_age: fetchVal('s_ret1'),
         Case_Life_1_Plan_end_age: fetchVal('set_end'),
         Case_Life_1_Gross_salary: fetchVal('s_sal1'),
-        
         Case_Life_1_State_pension: fetchRadio('s_has_pen1') === 'Yes' ? fetchVal('s_sp1') : 0,
         Case_Life_1_Pension_cont_Ee: fetchRadio('s_has_pen1') === 'Yes' ? fetchVal('s_pee1') : 0,
         Case_Life_1_Pension_cont_Er: fetchRadio('s_has_pen1') === 'Yes' ? fetchVal('s_per1') : 0,
         Case_Life_1_Pension_initial_value: fetchRadio('s_has_pen1') === 'Yes' ? fetchVal('s_pval1') : 0,
         Case_Life_1_Spend_TFC: document.getElementById('s_tfc1').value,
-        
         Case_Life_1_Student_loan: fetchRadio('s_has_sl1') === 'Yes' ? fetchVal('s_sl1') : 0,
         Case_Life_1_Student_loan_plan: fetchRadio('s_has_sl1') === 'Yes' ? slp1 : "",
-
         Case_Life_2_Current_age: fetchVal('s_age2') || fetchVal('s_age1'),
         Case_Life_2_Gross_salary: fetchVal('s_sal2') * m,
-        
         Case_Life_2_State_pension: (fetchRadio('s_has_pen2') === 'Yes') ? (fetchVal('s_sp2') * m) : 0,
         Case_Life_2_Pension_cont_Ee: (fetchRadio('s_has_pen2') === 'Yes') ? (fetchVal('s_pee2') * m) : 0,
         Case_Life_2_Pension_cont_Er: (fetchRadio('s_has_pen2') === 'Yes') ? (fetchVal('s_per2') * m) : 0,
         Case_Life_2_Pension_initial_value: (fetchRadio('s_has_pen2') === 'Yes') ? (fetchVal('s_pval2') * m) : 0,
         Case_Life_2_Spend_TFC: document.getElementById('s_tfc2').value,
-        
         Case_Life_2_Student_loan: (fetchRadio('s_has_sl2') === 'Yes') ? (fetchVal('s_sl2') * m) : 0,
         Case_Life_2_Student_loan_plan: (fetchRadio('s_has_sl2') === 'Yes' && m) ? slp2 : "",
-
         Case_Joint_Savings_initial_value: fetchVal('s_cash'),
         Case_Joint_Save_to_pension: fetchVal('s_save_pen'),
-        
         Case_Joint_Expenses_pre_ret: fetchVal('s_ex_pre') * 12,
         Case_Joint_Expenses_in_ret: fetchVal('s_ex_post') * 12,
         Case_Joint_Rent: fetchVal('s_rent') * 12,
-        
         Case_Joint_House_price: fetchVal('s_hp'),
         Case_Joint_First_Time_Buyer: fetchRadio('s_ftb'),
         Case_Joint_House_purchase_costs: fetchVal('s_fees'),
         Case_Joint_Expenses_house: fetchVal('s_maint'),
-        
         Case_Joint_Mortgage_multiplier: fetchVal('set_mult'),
         Case_Joint_Mortgage_LTV: fetchVal('set_ltv'),
         Case_Joint_Mortgage_term_maximum: fetchVal('set_term'),
-        
         Case_Joint_Rent_increases: toReal(document.getElementById('set_rent_inc').value),
         Returns_House_price_increase: toReal(document.getElementById('set_hp_inc').value),
         Returns_cash: toReal(document.getElementById('set_cash').value),
@@ -499,15 +457,11 @@ function gatherEngineInputs(sourceDataObj = null) {
     };
 }
 
-
-// --- WIZARD LOGIC ---
 function updateWizardProgress() {
     const progressContainer = document.getElementById('wizard-progress-container');
     if(!progressContainer) return;
-    
     progressContainer.style.display = currentWizIndex === 0 ? 'none' : 'flex';
     progressContainer.innerHTML = '';
-    
     if(currentWizIndex > 0) {
         for(let i = 1; i < stepSequence.length; i++) {
             let dot = document.createElement('div');
@@ -520,23 +474,14 @@ function updateWizardProgress() {
 function validateStep() {
     const nextBtn = document.getElementById('wiz-next');
     if (!nextBtn) return;
-
     let isValid = true;
     let step = stepSequence[currentWizIndex];
-
-    if (step === 0) {
-        isValid = currentMode !== null;
-    } else if (step === 3) {
-        isValid = document.querySelector('input[name="w_has_sl1"]:checked') !== null;
-    } else if (step === 4) {
-        isValid = document.querySelector('input[name="w_has_sl2"]:checked') !== null;
-    } else if (step === 5) {
-        isValid = document.querySelector('input[name="w_has_pen1"]:checked') !== null;
-    } else if (step === 6) {
-        isValid = document.querySelector('input[name="w_has_pen2"]:checked') !== null;
-    } else if (step === 9) {
-        isValid = document.querySelector('input[name="w_ftb"]:checked') !== null;
-    }
+    if (step === 0) isValid = currentMode !== null;
+    else if (step === 3) isValid = document.querySelector('input[name="w_has_sl1"]:checked') !== null;
+    else if (step === 4) isValid = document.querySelector('input[name="w_has_sl2"]:checked') !== null;
+    else if (step === 5) isValid = document.querySelector('input[name="w_has_pen1"]:checked') !== null;
+    else if (step === 6) isValid = document.querySelector('input[name="w_has_pen2"]:checked') !== null;
+    else if (step === 9) isValid = document.querySelector('input[name="w_ftb"]:checked') !== null;
     
     if (isValid) {
         nextBtn.disabled = false;
@@ -551,7 +496,6 @@ function validateStep() {
 
 function setMode(mode) {
     currentMode = mode;
-    
     document.getElementById('w-mode-single').classList.remove('active');
     document.getElementById('w-mode-couple').classList.remove('active');
     
@@ -570,7 +514,6 @@ function setMode(mode) {
     
     updateWizardProgress();
     validateStep();
-
     if(document.getElementById('wizard-overlay').classList.contains('active') === false) {
         handleInputChanged();
     }
@@ -578,8 +521,6 @@ function setMode(mode) {
 
 function openWizard() {
     currentWizIndex = 0;
-    
-    // Copy current sidebar data into the wizard fields
     const map = [
         ['w_age1','s_age1'], ['w_age2','s_age2'], ['w_ret1','s_ret1'],
         ['w_sal1','s_sal1'], ['w_sal2','s_sal2'], ['w_cash','s_cash'],
@@ -599,7 +540,6 @@ function openWizard() {
     let s_ex_post = document.getElementById('s_ex_post');
     if (w_ex_post && s_ex_post) w_ex_post.value = s_ex_post.value;
 
-    // Sync radios backwards from sidebar to wizard
     const syncRadioReverse = (wName, sName) => {
         let node = document.querySelector(`input[name="${sName}"]:checked`);
         if(node) {
@@ -607,18 +547,14 @@ function openWizard() {
             if(target) target.checked = true;
         }
     };
-    
     syncRadioReverse('w_has_sl1', 's_has_sl1');
     syncRadioReverse('w_has_sl2', 's_has_sl2');
     syncRadioReverse('w_has_pen1', 's_has_pen1');
     syncRadioReverse('w_has_pen2', 's_has_pen2');
     syncRadioReverse('w_ftb', 's_ftb');
 
-    // Set wizard mode based on current state
     let isSingle = document.getElementById('side_single')?.checked;
     setMode(isSingle ? 'single' : 'couple'); 
-
-    // Update visibility of wizard fields
     toggleWizSL(1); toggleWizSL(2);
     toggleWizPen(1); toggleWizPen(2);
 
@@ -643,7 +579,6 @@ function wizardStep(dir) {
         validateStep();
         if (document.getElementById('wiz-next').disabled) return;
     }
-
     let prevStep = stepSequence[currentWizIndex];
     let prevEl = document.getElementById(`step-${prevStep}`);
     if (prevEl) prevEl.classList.remove('active');
@@ -652,13 +587,7 @@ function wizardStep(dir) {
     if (currentWizIndex < 0) currentWizIndex = 0;
     
     if (currentWizIndex >= stepSequence.length) {
-        try {
-            // Modified to call the save function on Finish
-            saveWizardAndClose();
-        } catch(e) {
-            console.error("Error closing wizard: ", e);
-            document.getElementById('wizard-overlay').classList.remove('active');
-        }
+        try { saveWizardAndClose(); } catch(e) { document.getElementById('wizard-overlay').classList.remove('active'); }
         return;
     }
 
@@ -676,17 +605,16 @@ function wizardStep(dir) {
     validateStep();
 }
 
-// Discards changes (used by the X button)
 function closeWizard() {
     let overlay = document.getElementById('wizard-overlay');
     if(overlay) overlay.classList.remove('active');
+    if (!currentMode) currentMode = document.getElementById('side_single')?.checked ? 'single' : 'couple';
+    forceCalculation();
 }
 
-// Applies changes (used by the Finish button)
 function saveWizardAndClose() {
     try {
         if (!currentMode) setMode('couple'); 
-
         const map = [
             ['w_age1','s_age1'], ['w_age2','s_age2'], ['w_ret1','s_ret1'],
             ['w_sal1','s_sal1'], ['w_sal2','s_sal2'], ['w_cash','s_cash'],
@@ -695,7 +623,6 @@ function saveWizardAndClose() {
             ['w_sl1','s_sl1'], ['w_sl2','s_sl2'], ['w_slp1','s_slp1'], ['w_slp2','s_slp2'], 
             ['w_rent','s_rent'], ['w_ex_pre','s_ex_pre'], ['w_hp','s_hp']
         ];
-        
         map.forEach(pair => {
             let el1 = document.getElementById(pair[0]);
             let el2 = document.getElementById(pair[1]);
@@ -730,7 +657,6 @@ function saveWizardAndClose() {
         let s_save_pen = document.getElementById('s_save_pen');
         if(s_save_pen) s_save_pen.value = "0";
 
-        // Handle "No" selections zeroing out nested values
         const hasPen1Node = document.querySelector('input[name="w_has_pen1"]:checked');
         if(!hasPen1Node || hasPen1Node.value !== 'Yes') {
             if(document.getElementById('s_pval1')) document.getElementById('s_pval1').value = "0";
@@ -745,7 +671,6 @@ function saveWizardAndClose() {
             if(document.getElementById('s_per2')) document.getElementById('s_per2').value = "0";
         }
 
-        // Sync Radios
         const syncRadio = (name, idPrefix) => {
             let node = document.querySelector(`input[name="${name}"]:checked`);
             if(node) {
@@ -753,7 +678,6 @@ function saveWizardAndClose() {
                 if(target) target.checked = true;
             }
         };
-        
         syncRadio('w_has_sl1', 's_has_sl1');
         syncRadio('w_has_sl2', 's_has_sl2');
         syncRadio('w_has_pen1', 's_has_pen1');
@@ -778,7 +702,6 @@ function saveWizardAndClose() {
 
         runCalculation(); 
     } catch(e) {
-        console.error("Save Wizard Error: ", e);
         let overlay = document.getElementById('wizard-overlay');
         if(overlay) overlay.classList.remove('active');
     }
@@ -814,7 +737,7 @@ window.onload = function() {
     sidebarInputs.forEach(input => {
         input.addEventListener('input', handleInputChanged);
     });
-    
+
     openWizard();
 
     let resizeTimer;
@@ -822,6 +745,14 @@ window.onload = function() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => { runCalculation() }, 200);
     });
+
+    setTimeout(() => {
+        const overlay = document.getElementById('wizard-overlay');
+        if (!overlay || !overlay.classList.contains('active')) {
+            if (!currentMode) currentMode = document.getElementById('side_single')?.checked ? 'single' : 'couple';
+            forceCalculation();
+        }
+    }, 150);
 };
 
 function handleInputChanged() {
@@ -847,10 +778,7 @@ function runCalculation() {
     try {
         engine = new ActuarialEngine(inputs, globalParams);
         results = engine.runFullProjection();
-    } catch(e) {
-        console.error("Projection engine failed: ", e);
-        return;
-    }
+    } catch(e) { return; }
 
     document.getElementById('results-pane').classList.remove('stale');
     
@@ -863,134 +791,180 @@ function runCalculation() {
     if (targetTerm < 0) targetTerm = 0;
     
     const maxIdx = Math.min(targetTerm + 1, results.labels.length);
-
     const buyEndVal = results.buyWealth[maxIdx - 1] || 0;
     const rentEndVal = results.rentWealth[maxIdx - 1] || 0;
     let benefit = buyEndVal - rentEndVal;
 
-    if (results.purchaseAge === null) {
-        heroContainer.innerHTML = heroTemplates.unaffordable(`£${getVal('s_hp').toLocaleString('en-GB')}`);
+    const canBuyBeforeRetirement = results.purchaseAge !== null && results.purchaseAge < inputs.Case_Life_1_Retirement_age;
+
+    if (!canBuyBeforeRetirement) {
+        if(heroContainer) heroContainer.innerHTML = heroTemplates.unaffordable(`£${getVal('s_hp').toLocaleString('en-GB')}`);
     } else if (benefit > 100) {
-        heroContainer.innerHTML = heroTemplates.buy(formatSigFigDown(benefit));
+        if(heroContainer) heroContainer.innerHTML = heroTemplates.buy(formatSigFigDown(benefit));
     } else if (benefit < -100) {
-        heroContainer.innerHTML = heroTemplates.rent(formatSigFigDown(Math.abs(benefit)));
+        if(heroContainer) heroContainer.innerHTML = heroTemplates.rent(formatSigFigDown(Math.abs(benefit)));
     } else {
-        heroContainer.innerHTML = heroTemplates.tie();
+        if(heroContainer) heroContainer.innerHTML = heroTemplates.tie();
     }
 
-    let purcTerm = results.purchaseAge !== null ? results.purchaseAge - inputs.Case_Life_1_Current_age : -1;
-    
+    let purcTerm = canBuyBeforeRetirement ? results.purchaseAge - inputs.Case_Life_1_Current_age : -1;
+
     if (purcTerm >= 0) {
         const currentYear = new Date().getFullYear();
         const purchaseYear = currentYear + purcTerm;
         const age1AtPurc = inputs.Case_Life_1_Current_age + purcTerm;
-        
         let titleText = `Buy at age ${age1AtPurc}`;
         let descText = `You can afford to buy this home in <strong>${purchaseYear}</strong>.`;
-        
+
         if (currentMode === 'couple') {
             const age2AtPurc = (getVal('s_age2') || getVal('s_age1')) + purcTerm;
             titleText = `Buy at ages ${age1AtPurc} & ${age2AtPurc}`;
             descText = `You can afford to buy this home in <strong>${purchaseYear}</strong>, when your partner would be <strong>${age2AtPurc}</strong>.`;
         }
-        
-        timingContainer.innerHTML = timingTemplate(titleText, descText);
-        timingContainer.style.display = 'flex';
+        if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); timingContainer.style.display = 'flex'; }
     } else {
-        timingContainer.style.display = 'none';
+        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit, income and mortgage limits, this home isn't affordable before retirement. Try increasing your deposit or income, lowering the target house price, or adjusting your retirement age.`); timingContainer.style.display = 'flex'; }
     }
 
     let maxW = Math.max(buyEndVal, rentEndVal, 1);
-    document.getElementById('ui-buy-wealth').innerText = formatSigFigDown(buyEndVal);
-    document.getElementById('ui-buy-bar').style.width = `${(buyEndVal / maxW) * 100}%`;
-    document.getElementById('ui-rent-wealth').innerText = formatSigFigDown(rentEndVal);
-    document.getElementById('ui-rent-bar').style.width = `${(rentEndVal / maxW) * 100}%`;
+    if(document.getElementById('ui-buy-wealth')) document.getElementById('ui-buy-wealth').innerText = formatSigFigDown(buyEndVal);
+    if(document.getElementById('ui-buy-bar')) document.getElementById('ui-buy-bar').style.width = `${(buyEndVal / maxW) * 100}%`;
+    if(document.getElementById('ui-rent-wealth')) document.getElementById('ui-rent-wealth').innerText = formatSigFigDown(rentEndVal);
+    if(document.getElementById('ui-rent-bar')) document.getElementById('ui-rent-bar').style.width = `${(rentEndVal / maxW) * 100}%`;
 
     let benBox = document.getElementById('ui-benefit-box');
-    benBox.classList.remove('negative', 'neutral');
-    
+    if(benBox) benBox.classList.remove('negative', 'neutral');
     let baseDelta = document.getElementById('ui-compare-delta');
     
     if (benefit > 100) {
-        document.getElementById('ui-benefit-val').innerText = "+" + formatSigFigDown(benefit) + " (Buying Wins)";
+        if(document.getElementById('ui-benefit-val')) document.getElementById('ui-benefit-val').innerText = "+" + formatSigFigDown(benefit) + " (buying wins)";
     } else if (benefit < -100) {
-        benBox.classList.add('negative');
-        document.getElementById('ui-benefit-val').innerText = formatSigFigDown(Math.abs(benefit)) + " (Renting Wins)";
+        if(benBox) benBox.classList.add('negative');
+        if(document.getElementById('ui-benefit-val')) document.getElementById('ui-benefit-val').innerText = formatSigFigDown(Math.abs(benefit)) + " (renting wins)";
     } else {
-        benBox.classList.add('neutral');
-        document.getElementById('ui-benefit-val').innerText = "Break-even scenario";
+        if(benBox) benBox.classList.add('neutral');
+        if(document.getElementById('ui-benefit-val')) document.getElementById('ui-benefit-val').innerText = "Break-even scenario";
     }
 
     if (isCompareMode && baselineResults) {
-        baseDelta.style.display = 'block';
-        
+        if(baseDelta) baseDelta.style.display = 'block';
         let currentDiff = buyEndVal - rentEndVal; 
-        
         let baseBuyVal = baselineResults.buyWealth[maxIdx - 1] || 0;
         let baseRentVal = baselineResults.rentWealth[maxIdx - 1] || 0;
         let baseDiff = baseBuyVal - baseRentVal;
-
         let deltaOfDeltas = currentDiff - baseDiff;
 
-        if (Math.abs(deltaOfDeltas) < 100) {
-            baseDelta.innerText = "No change vs baseline";
-            baseDelta.style.color = "#555";
-        } else if (deltaOfDeltas > 0) {
-            baseDelta.innerText = `Buying is +${formatSigFigDown(deltaOfDeltas)} better than baseline`;
-            baseDelta.style.color = "var(--success)";
-        } else {
-            baseDelta.innerText = `Renting is +${formatSigFigDown(Math.abs(deltaOfDeltas))} better than baseline`;
-            baseDelta.style.color = "var(--danger)";
+        if(baseDelta) {
+            if (Math.abs(deltaOfDeltas) < 100) {
+                baseDelta.innerText = "No change vs baseline";
+                baseDelta.style.color = "#555";
+            } else if (deltaOfDeltas > 0) {
+                baseDelta.innerText = `Buying is +${formatSigFigDown(deltaOfDeltas)} better than baseline`;
+                baseDelta.style.color = "var(--success)";
+            } else {
+                baseDelta.innerText = `Renting is +${formatSigFigDown(Math.abs(deltaOfDeltas))} better than baseline`;
+                baseDelta.style.color = "var(--danger)";
+            }
         }
     } else {
-        baseDelta.style.display = 'none';
+        if(baseDelta) baseDelta.style.display = 'none';
     }
 
-    let propCard = document.getElementById('prop-card');
-
     if (purcTerm >= 0) {
-        document.getElementById('prop-breakdown-content').style.display = 'block';
-        document.getElementById('prop-breakdown-empty').style.display = 'none';
+        if(document.getElementById('prop-breakdown-content')) document.getElementById('prop-breakdown-content').style.display = 'grid';
+        if(document.getElementById('prop-breakdown-empty')) document.getElementById('prop-breakdown-empty').style.display = 'none';
 
         let totalCost = results.buyHouseCostEval[purcTerm] || 0;
         let houseVal = results.buyHouseVal[purcTerm] || 0;
         let fees = results.buyPurchaseFeesEval[purcTerm] || 0;
         let sdlt = Math.max(0, totalCost - houseVal - fees);
         let mortgage = results.buyMortgageEval[purcTerm] || 0;
+
+        let houseValR = roundSigFigDown(houseVal);
+        let sdltR = roundSigFigDown(sdlt);
+        let feesR = roundSigFigDown(fees);
+        let totalCostR = houseValR + sdltR + feesR;
+
+        let mortgageR = roundSigFigDown(mortgage);
+        let cashNeededR = Math.max(0, totalCostR - mortgageR);
+
+        if(document.getElementById('ui-prop-price')) document.getElementById('ui-prop-price').innerText = formatMoney.format(houseValR);
+        if(document.getElementById('ui-prop-sdlt')) document.getElementById('ui-prop-sdlt').innerText = formatMoney.format(sdltR);
+        if(document.getElementById('ui-prop-fees')) document.getElementById('ui-prop-fees').innerText = formatMoney.format(feesR);
+        if(document.getElementById('ui-prop-total')) document.getElementById('ui-prop-total').innerText = formatMoney.format(totalCostR);
+        if(document.getElementById('ui-prop-total-funding')) document.getElementById('ui-prop-total-funding').innerText = formatMoney.format(totalCostR);
+        if(document.getElementById('ui-legend-mort')) document.getElementById('ui-legend-mort').innerText = formatMoney.format(mortgageR);
+        if(document.getElementById('ui-legend-cash')) document.getElementById('ui-legend-cash').innerText = formatMoney.format(cashNeededR);
+
+        let pricePct = totalCostR > 0 ? (houseValR / totalCostR) * 100 : 0;
+        let sdltPct = totalCostR > 0 ? (sdltR / totalCostR) * 100 : 0;
+        let feesPct = totalCostR > 0 ? (feesR / totalCostR) * 100 : 0;
         
-        let taxesAndFees = fees + sdlt;
-        let deposit = Math.max(0, totalCost - mortgage - taxesAndFees);
+        let costPriceBar = document.querySelector('#active-prop-cost .cost-price') || document.getElementById('ui-cost-price-bar');
+        if(costPriceBar) costPriceBar.style.width = `${pricePct}%`;
+        let costSdltBar = document.querySelector('#active-prop-cost .cost-sdlt') || document.getElementById('ui-cost-sdlt-bar');
+        if(costSdltBar) costSdltBar.style.width = `${sdltPct}%`;
+        let costFeesBar = document.querySelector('#active-prop-cost .cost-fees') || document.getElementById('ui-cost-fees-bar');
+        if(costFeesBar) costFeesBar.style.width = `${feesPct}%`;
 
-        document.getElementById('ui-prop-price').innerText = formatSigFigDown(houseVal);
-        document.getElementById('ui-prop-sdlt').innerText = formatSigFigDown(sdlt);
-        document.getElementById('ui-prop-fees').innerText = formatSigFigDown(fees);
-        document.getElementById('ui-prop-total').innerText = formatSigFigDown(totalCost);
+        let mortPct = totalCostR > 0 ? (mortgageR / totalCostR) * 100 : 0;
+        let cashPct = totalCostR > 0 ? (cashNeededR / totalCostR) * 100 : 0;
+        
+        let fundMortBar = document.querySelector('#active-prop-funding .fund-mortgage') || document.getElementById('ui-fund-mort-bar');
+        if(fundMortBar) fundMortBar.style.width = `${mortPct}%`;
+        let fundCashBar = document.querySelector('#active-prop-funding .fund-cash') || document.getElementById('ui-fund-cash-bar');
+        if(fundCashBar) fundCashBar.style.width = `${cashPct}%`;
 
-        document.getElementById('ui-legend-mort').innerText = formatSigFigDown(mortgage);
-        document.getElementById('ui-legend-dep').innerText = formatSigFigDown(deposit);
-        document.getElementById('ui-legend-tax').innerText = formatSigFigDown(taxesAndFees);
-
-        let mortPct = totalCost > 0 ? (mortgage / totalCost) * 100 : 0;
-        let depPct = totalCost > 0 ? (deposit / totalCost) * 100 : 0;
-        let taxPct = totalCost > 0 ? (taxesAndFees / totalCost) * 100 : 0;
-
-        document.getElementById('ui-fund-mort-bar').style.width = `${mortPct}%`;
-        document.getElementById('ui-fund-dep-bar').style.width = `${depPct}%`;
-        document.getElementById('ui-fund-tax-bar').style.width = `${taxPct}%`;
     } else {
-        document.getElementById('prop-breakdown-content').style.display = 'none';
-        document.getElementById('prop-breakdown-empty').style.display = 'block';
+        if(document.getElementById('prop-breakdown-content')) document.getElementById('prop-breakdown-content').style.display = 'none';
+        if(document.getElementById('prop-breakdown-empty')) document.getElementById('prop-breakdown-empty').style.display = 'block';
     }
 
+    // --- Projections chart / table data ---
     const cLabels = results.labels.slice(0, maxIdx);
     const cBuy = results.buyWealth.slice(0, maxIdx);
     const cRent = results.rentWealth.slice(0, maxIdx);
 
-    drawChartAndTable(cLabels, cBuy, cRent, results.purchaseAge, inputs.Case_Life_1_Retirement_age, maxIdx);
+    lastCalcData = {
+        current: {
+            labels: cLabels, buy: cBuy, rent: cRent,
+            purchaseAge: canBuyBeforeRetirement ? results.purchaseAge : null,
+            retirementAge: inputs.Case_Life_1_Retirement_age,
+            maxIdx: maxIdx
+        },
+        baseline: null
+    };
+
+    if (isCompareMode && baselineResults) {
+        let baseRetAge = parseFloat(baselineInputs['s_ret1']) || inputs.Case_Life_1_Retirement_age;
+        let baseCanBuy = baselineResults.purchaseAge !== null && baselineResults.purchaseAge < baseRetAge;
+        lastCalcData.baseline = {
+            labels: cLabels,
+            buy: baselineResults.buyWealth.slice(0, maxIdx),
+            rent: baselineResults.rentWealth.slice(0, maxIdx),
+            purchaseAge: baseCanBuy ? baselineResults.purchaseAge : null,
+            retirementAge: baseRetAge,
+            maxIdx: maxIdx
+        };
+    }
+
+    renderProjectionsView(currentProjView);
 }
 
+function renderProjectionsView(viewType) {
+    currentProjView = viewType || 'revised';
+    if (!lastCalcData) return;
+
+    let source = lastCalcData.current;
+    if (currentProjView === 'current' && lastCalcData.baseline) {
+        source = lastCalcData.baseline;
+    }
+
+    drawChartAndTable(source.labels, source.buy, source.rent, source.purchaseAge, source.retirementAge, source.maxIdx);
+}
+window.renderProjectionsView = renderProjectionsView;
+
 function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge, maxIdx) {
-    
     const ctx = document.getElementById('wealthChart').getContext('2d');
     if (currentChart) currentChart.destroy();
 
@@ -1021,7 +995,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
             };
 
             drawMarker(purchaseAge, '🏠', '#003a5d');
-            drawMarker(retirementAge, '⛱️', '#bfa15d');
+            drawMarker(retirementAge, '⛱️', '#003a5d');
         }
     };
 
@@ -1029,19 +1003,6 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
         { label: 'Total Wealth (Buying)', data: buyData, borderColor: '#003a5d', backgroundColor: 'transparent', borderWidth: 3, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 6 },
         { label: 'Total Wealth (Renting)', data: rentData, borderColor: '#bfa15d', backgroundColor: 'transparent', borderWidth: 3, borderDash: [6, 6], fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 6 }
     ];
-
-    if (isCompareMode && baselineResults) {
-        datasets.push({
-            label: 'Baseline (Buying)', 
-            data: baselineResults.buyWealth.slice(0, maxIdx), 
-            borderColor: '#003a5d', backgroundColor: 'transparent', borderWidth: 3, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 0
-        });
-        datasets.push({
-            label: 'Baseline (Renting)', 
-            data: baselineResults.rentWealth.slice(0, maxIdx), 
-            borderColor: '#bfa15d', backgroundColor: 'transparent', borderWidth: 3, borderDash: [6, 6], fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 0
-        });
-    }
 
     currentChart = new Chart(ctx, {
         type: 'line',
@@ -1069,14 +1030,18 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                     title: { display: true, text: 'Age (You)' },
                     ticks: { maxTicksLimit: 10, maxRotation: 0, autoSkip: true }
                 },
-                y: { title: { display: true, text: 'Total Wealth (£)' }, ticks: { callback: function(value) { return '£' + (value / 1000) + 'k'; } } }
+                y: { title: { display: true, text: 'Total Wealth (£)' }, ticks: { callback: function(value) {
+                    if (Math.abs(value) >= 1000000) {
+                        return '£' + (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'm';
+                    }
+                    return '£' + (value / 1000) + 'k';
+                } } }
             }
         },
         plugins: [eventMarkersPlugin]
     });
 
-    let tableHTML = `<thead><tr><th>Age</th><th>Buying Wealth</th><th>Renting Wealth</th><th style="text-align: left;">Life Event</th></tr></thead><tbody>`;
-    
+    let tableHTML = `<thead><tr><th>Age</th><th>Buying wealth</th><th>Renting wealth</th><th style="text-align: left;">Life event</th></tr></thead><tbody>`;
     for (let i = 0; i < labels.length; i++) {
         let age = labels[i];
         let isPurc = (age === Number(purchaseAge) && purchaseAge !== null);
@@ -1106,5 +1071,6 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
     }
     
     tableHTML += `</tbody>`;
-    document.getElementById('wealth-table').innerHTML = tableHTML;
+    let tbl = document.getElementById('wealth-table');
+    if (tbl) tbl.innerHTML = tableHTML;
 }

@@ -3,11 +3,6 @@
  * Handles the Compare Mode logic, Custom Undo Modal, Table collapsing, and UI event listeners.
  */
 
-// -------------------------------------------------------------
-// 1. Tooltips, Parameters, Menu, Chart Override, and Utilities
-// -------------------------------------------------------------
-
-// We must override Chart.js prototype globally BEFORE engine.js starts drawing.
 window.addEventListener('DOMContentLoaded', () => {
     patchChartParasol();
     setInterval(patchChartParasol, 200);
@@ -41,8 +36,126 @@ function patchChartParasol() {
     }
 }
 
+// Attach UI specific utilities to the global window
+window.showToast = function(message) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-visible';
+    toast.innerHTML = `<span class="toast-message">${message}</span>`;
+    container.appendChild(toast);
+    
+    const reduceMotion = document.body.classList.contains('reduce-motion');
+    
+    const dismiss = () => {
+        if (reduceMotion) { 
+            toast.remove(); 
+            return; 
+        }
+        toast.classList.remove('toast-visible');
+        toast.classList.add('toast-hiding');
+        setTimeout(() => toast.remove(), 250);
+    };
+
+    setTimeout(dismiss, 3000);
+};
+
+window.handleSaveBaseScenario = function() {
+    if (typeof makeBaseScenario === 'function') {
+        makeBaseScenario();
+    }
+    window.showToast('Scenario saved as original scenario');
+    
+    // Clear list so button instantly disables
+    const list = document.getElementById('compare-changes-list');
+    if(list) list.innerHTML = '';
+    window.updateCompareActionsState();
+};
+
+window.formatTimingTitlesSingleAge = function() {
+    const timingTitles = document.querySelectorAll('.timing-title');
+    timingTitles.forEach(el => {
+        if (el.textContent.includes('Buy at ages') || el.textContent.includes('&')) {
+            el.textContent = el.textContent.replace(/Buy at ages (\d+)\s*&\s*\d+/, 'Buy at age $1');
+        }
+    });
+};
+
+window.startOver = function() {
+    // 1. Turn off compare mode if it is active
+    const compareSwitch = document.getElementById('compare-switch');
+    if (compareSwitch && compareSwitch.checked) {
+        compareSwitch.checked = false;
+        compareSwitch.dispatchEvent(new Event('change'));
+    }
+
+    // 2. Revert all text and number inputs to their original HTML values
+    document.querySelectorAll('input[type="text"].compare-track, input[type="number"].compare-track').forEach(input => {
+        if (input.hasAttribute('value')) {
+            input.value = input.getAttribute('value');
+        }
+    });
+    
+    // 3. Revert all radio buttons to their original HTML checked states
+    document.querySelectorAll('input[type="radio"].compare-track').forEach(radio => {
+        if (radio.hasAttribute('checked')) {
+            radio.checked = true;
+        }
+    });
+
+    // 4. Revert all dropdown selects to their default option
+    document.querySelectorAll('select.compare-track').forEach(select => {
+        const defaultOpt = select.querySelector('option[selected]');
+        if (defaultOpt) {
+            select.value = defaultOpt.value;
+        } else {
+            select.selectedIndex = 0;
+        }
+    });
+
+    // 5. Fire the UI updates so the sidebars visually reset
+    if (typeof toggleSL === 'function') toggleSL();
+    if (typeof togglePen === 'function') togglePen();
+    if (typeof updateDynamicUI === 'function') updateDynamicUI();
+    
+    // 6. Relaunch the wizard
+    const wiz = document.getElementById('wizard-overlay');
+    if (wiz) wiz.classList.add('active');
+    if (typeof openWizard === 'function') openWizard();
+};
+
+window.updateCompareActionsState = function() {
+    const list = document.getElementById('compare-changes-list');
+    const hasChanges = list && list.children.length > 0;
+    
+    const makeBaseBtn = document.getElementById('make-base-btn');
+    const discardBtn = document.getElementById('discard-whatif-btn');
+    
+    if (makeBaseBtn) {
+        makeBaseBtn.disabled = !hasChanges;
+    }
+    if (discardBtn) {
+        discardBtn.style.opacity = hasChanges ? '1' : '0.5';
+        discardBtn.style.pointerEvents = hasChanges ? 'auto' : 'none';
+    }
+};
+
+window.saveA11ySetting = function(key, value) {
+    localStorage.setItem('a11y_' + key, value);
+};
+
 window.addEventListener('DOMContentLoaded', () => {
-    // Help Text Tooltips
+    // Load A11y Settings from LocalStorage
+    if (localStorage.getItem('a11y_dark') === 'on') { document.body.classList.add('dark-mode'); const r = document.getElementById('a11y_dark_on'); if(r) r.checked = true; }
+    if (localStorage.getItem('a11y_font') === 'on') { document.body.classList.add('dyslexia-font'); const r = document.getElementById('a11y_font_on'); if(r) r.checked = true; }
+    if (localStorage.getItem('a11y_motion') === 'on') { document.body.classList.add('reduce-motion'); const r = document.getElementById('a11y_motion_on'); if(r) r.checked = true; }
+    
+    const size = localStorage.getItem('a11y_size');
+    if (size === 'large') { document.documentElement.classList.add('text-large'); const r = document.getElementById('a11y_size_large'); if(r) r.checked = true; }
+    else if (size === 'xl') { document.documentElement.classList.add('text-xlarge'); const r = document.getElementById('a11y_size_xl'); if(r) r.checked = true; }
+
+    // Focus-revealed helper text
     if (typeof helpText !== 'undefined') {
         for (const [key, text] of Object.entries(helpText)) {
             ['w_', 's_'].forEach(prefix => {
@@ -50,22 +163,19 @@ window.addEventListener('DOMContentLoaded', () => {
                 const input = document.getElementById(inputId) || document.querySelector(`input[name="${inputId}"]`);
                 if (input) {
                     const row = input.closest('.input-row-single');
-                    if (row) {
-                        const label = row.querySelector('label');
-                        if (label && !label.querySelector('.info-tip')) {
-                            label.innerHTML += ` <span tabindex="0" class="info-tip">?<span class="tip-text">${text}</span></span>`;
-                        }
+                    if (row && !row.querySelector('.helper-text')) {
+                        row.insertAdjacentHTML('beforeend', `<div class="helper-text">${text}</div>`);
                     }
                 }
             });
         }
     }
 
-    // Populate readonly parameters in the Rates and rules modal
+    // Populate readonly parameters
     if (typeof globalParams !== 'undefined') {
         const badge = document.getElementById('tax-year-badge');
         const badge2 = document.getElementById('tax-year-badge-2');
-        const taxYearText = `Tax Year ${globalParams.general.current_tax_year_beginning}/${globalParams.general.current_tax_year_beginning + 1}`;
+        const taxYearText = `Tax year ${globalParams.general.current_tax_year_beginning}/${globalParams.general.current_tax_year_beginning + 1}`;
         if (badge) badge.innerText = taxYearText;
         if (badge2) badge2.innerText = taxYearText;
         
@@ -87,25 +197,25 @@ window.addEventListener('DOMContentLoaded', () => {
                 return html;
             };
 
-            if (globalParams.income_tax) grid.innerHTML += `<div class="param-box"><h4>Income Tax Bands</h4>${formatBands(globalParams.income_tax)}</div>`;
-            if (globalParams.national_insurance) grid.innerHTML += `<div class="param-box"><h4>National Insurance</h4>${formatBands(globalParams.national_insurance)}</div>`;
+            if (globalParams.income_tax) grid.innerHTML += `<div class="param-box"><h4>Income tax bands</h4>${formatBands(globalParams.income_tax)}</div>`;
+            if (globalParams.national_insurance) grid.innerHTML += `<div class="param-box"><h4>National insurance</h4>${formatBands(globalParams.national_insurance)}</div>`;
             if (globalParams.stamp_duty && globalParams.stamp_duty.first_time_buyer) {
-                let html = `<div class="param-box"><h4>Stamp Duty (First Time Buyer)</h4>`;
+                let html = `<div class="param-box"><h4>Stamp duty (first time buyer)</h4>`;
                 html += formatBands(globalParams.stamp_duty.first_time_buyer.bands);
-                html += `<div style="margin-top: 12px; font-size: 0.8rem; color: var(--ifoa-blue); font-style: italic;">First Time Buyer (FTB) relief limit: £${globalParams.stamp_duty.first_time_buyer.limit.toLocaleString()}</div></div>`;
+                html += `<div style="margin-top: 12px; font-size: 0.8rem; color: var(--ifoa-blue); font-style: italic;">First time buyer (FTB) relief limit: £${globalParams.stamp_duty.first_time_buyer.limit.toLocaleString()}</div></div>`;
                 grid.innerHTML += html;
             }
             if (globalParams.stamp_duty && globalParams.stamp_duty.second_time_buyer) {
-                let html = `<div class="param-box"><h4>Stamp Duty (Next Home)</h4>`;
+                let html = `<div class="param-box"><h4>Stamp duty (next home)</h4>`;
                 html += formatBands(globalParams.stamp_duty.second_time_buyer.bands);
                 html += `</div>`;
                 grid.innerHTML += html;
             }
             if (globalParams.pension_taxation) {
-                let html = `<div class="param-box"><h4>Pension Rules</h4><ul style="margin-top:15px;">`;
-                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Tax Free Cash (TFC) Max:</span> <strong>${globalParams.pension_taxation.tax_free_cash_percent * 100}%</strong></li>`;
-                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>TFC Lifetime Limit:</span> <strong>£${globalParams.pension_taxation.tfc_max_withdrawal.toLocaleString()}</strong></li>`;
-                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; padding-bottom:6px;"><span>Basic Rate Rebate:</span> <strong>${globalParams.pension_taxation.tax_rebate_on_contributions * 100}%</strong></li>`;
+                let html = `<div class="param-box"><h4>Pension rules</h4><ul style="margin-top:15px;">`;
+                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Tax free cash (TFC) max:</span> <strong>${globalParams.pension_taxation.tax_free_cash_percent * 100}%</strong></li>`;
+                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>TFC lifetime limit:</span> <strong>£${globalParams.pension_taxation.tfc_max_withdrawal.toLocaleString()}</strong></li>`;
+                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; padding-bottom:6px;"><span>Basic rate rebate:</span> <strong>${globalParams.pension_taxation.tax_rebate_on_contributions * 100}%</strong></li>`;
                 html += `</ul></div>`;
                 grid.innerHTML += html;
             }
@@ -114,19 +224,23 @@ window.addEventListener('DOMContentLoaded', () => {
         const grid2 = document.getElementById('readonly-params-grid-2');
         if (grid2) {
             if (globalParams.state_pension_age_table) {
-                let html = `<div class="param-box"><h4>State Pension Age</h4><ul style="margin-top:15px;">`;
+                let htmlSpa = `<div class="param-box"><h4>State pension age</h4><ul style="margin-top:15px;">`;
+                let htmlMin = `<div class="param-box"><h4>Minimum pension age</h4><ul style="margin-top:15px;">`;
+                
                 let prevAge = 0;
                 globalParams.state_pension_age_table.forEach((row, i) => {
                     let toAge = row.current_age_under - 1;
                     let ageRange = i === globalParams.state_pension_age_table.length - 1 ? `${prevAge}+` : `${prevAge} to ${toAge}`;
-                    html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Current Age ${ageRange}:</span> <strong>${row.state_pension_age} (Min ${row.minimum_pension_age})</strong></li>`;
+                    htmlSpa += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Current age ${ageRange}:</span> <strong>${row.state_pension_age}</strong></li>`;
+                    htmlMin += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Current age ${ageRange}:</span> <strong>${row.minimum_pension_age}</strong></li>`;
                     prevAge = row.current_age_under;
                 });
-                html += `</ul></div>`;
-                grid2.innerHTML += html;
+                htmlSpa += `</ul></div>`;
+                htmlMin += `</ul></div>`;
+                grid2.innerHTML += htmlSpa + htmlMin;
             }
             if (globalParams.career_increases) {
-                let html = `<div class="param-box"><h4>Real Career Salary Growth</h4><ul style="margin-top:15px;">`;
+                let html = `<div class="param-box"><h4>Real career salary growth</h4><ul style="margin-top:15px;">`;
                 let c = globalParams.career_increases;
                 for (let i=0; i<c.length; i++) {
                     let fromAge = c[i].from_age;
@@ -142,7 +256,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 grid2.innerHTML += html;
             }
             if (globalParams.mortgages && globalParams.mortgages.rates_by_ltv) {
-                let html = `<div class="param-box"><h4>Mortgage Rates by LTV</h4><ul style="margin-top:15px;">`;
+                let html = `<div class="param-box"><h4>Mortgage rates by LTV</h4><ul style="margin-top:15px;">`;
                 let m = globalParams.mortgages.rates_by_ltv;
                 for (let i=0; i<m.length; i++) {
                     let fromLTV = (m[i].ltv_from * 100).toFixed(0) + '%';
@@ -158,17 +272,23 @@ window.addEventListener('DOMContentLoaded', () => {
                 grid2.innerHTML += html;
             }
             if (globalParams.student_loans) {
-                let html = `<div class="param-box"><h4>Student Loan Thresholds</h4><ul style="margin-top:15px;">`;
+                let htmlSlThresh = `<div class="param-box"><h4>Student loan thresholds</h4><ul style="margin-top:15px;">`;
+                let htmlSlRate = `<div class="param-box"><h4>Student loan repayment rates</h4><ul style="margin-top:15px;">`;
                 for (const [plan, data] of Object.entries(globalParams.student_loans)) {
                     let threshold = '£' + data.threshold.toLocaleString();
                     let rate = (data.rate * 100).toFixed(0) + '%';
-                    html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Plan ${plan}:</span> <strong>${threshold} (${rate})</strong></li>`;
+                    htmlSlThresh += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Plan ${plan}:</span> <strong>${threshold}</strong></li>`;
+                    htmlSlRate += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Plan ${plan}:</span> <strong>${rate}</strong></li>`;
                 }
-                html += `</ul></div>`;
-                grid2.innerHTML += html;
+                htmlSlThresh += `</ul></div>`;
+                htmlSlRate += `</ul></div>`;
+                grid2.innerHTML += htmlSlThresh + htmlSlRate;
             }
         }
     }
+
+    // Initialize compare actions state (buttons disabled on empty list)
+    window.updateCompareActionsState();
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', function(event) {
@@ -180,7 +300,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // Sync Dropdown with tab button clicks
         if(event.target.classList.contains('tab-btn')) {
             const select = document.getElementById('mobile-tab-select');
             if(select) {
@@ -189,6 +308,11 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    
+    // Auto-update formatting for Timing cards
+    const observer = new MutationObserver(window.formatTimingTitlesSingleAge);
+    const activeTiming = document.getElementById('active-timing');
+    if (activeTiming) observer.observe(activeTiming, { childList: true, subtree: true });
 
     // Skip Wizard check
     if (window.location.search.includes('skipWizard=true')) {
@@ -223,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultsPane.classList.add('compare-mode-active');
                 if(projControls) projControls.style.display = 'flex';
                 
-                const sections = ['hero', 'timing', 'wealth', 'prop'];
+                const sections = ['hero', 'timing', 'wealth', 'prop-cost', 'prop-funding'];
                 sections.forEach(sec => {
                     const activeEl = document.getElementById(`active-${sec}`);
                     const baselineEl = document.getElementById(`baseline-${sec}`);
@@ -238,10 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 resultsPane.classList.remove('compare-mode-active');
                 if(projControls) projControls.style.display = 'none';
-                
-                document.getElementById('legend-baseline-buy').style.display = 'none';
-                document.getElementById('legend-baseline-rent').style.display = 'none';
-                window.syncProjViewSelect('revised'); 
+                window.syncProjViewSelect('revised');
             }
             
             const tabChanges = document.getElementById('tab-changes');
@@ -255,14 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (overviewBtn) overviewBtn.click();
                 }
             }
-            
-            const summaryBlock = document.getElementById('compare-summary-block');
-            const noChangesMsg = document.getElementById('no-changes-msg');
-            if (this.checked && summaryBlock && noChangesMsg) {
-                setTimeout(() => {
-                    noChangesMsg.style.display = summaryBlock.style.display === 'none' ? 'block' : 'none';
-                }, 50);
-            }
         });
         
         if(compareSwitch.checked) {
@@ -271,37 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
-window.applyChartVisibility = function() {
-    if (typeof Chart !== 'undefined') {
-        const chart = Chart.getChart("wealthChart");
-        if(chart && chart.data.datasets.length >= 4) {
-            const compareSwitch = document.getElementById('compare-switch');
-            if(!compareSwitch || !compareSwitch.checked) {
-                chart.setDatasetVisibility(0, true);
-                chart.setDatasetVisibility(1, true);
-                chart.setDatasetVisibility(2, false);
-                chart.setDatasetVisibility(3, false);
-            } else {
-                const viewRadio = document.querySelector('input[name="proj_compare_view"]:checked');
-                const viewType = viewRadio ? viewRadio.value : 'revised';
-                
-                if(viewType === 'current') {
-                    chart.setDatasetVisibility(0, false);
-                    chart.setDatasetVisibility(1, false);
-                    chart.setDatasetVisibility(2, true);
-                    chart.setDatasetVisibility(3, true);
-                } else {
-                    chart.setDatasetVisibility(0, true);
-                    chart.setDatasetVisibility(1, true);
-                    chart.setDatasetVisibility(2, false);
-                    chart.setDatasetVisibility(3, false);
-                }
-            }
-            chart.update();
-        }
-    }
-};
 
 window.syncProjViewSelect = function(val) {
     const select = document.getElementById('mobile-proj-compare-select');
@@ -313,43 +395,18 @@ window.syncProjViewSelect = function(val) {
 
 window.toggleProjView = function(viewType) {
     const mainWrapper = document.getElementById('proj-main-wrapper');
-    
-    const legBuy = document.querySelector('.line-buy')?.parentElement;
-    const legRent = document.querySelector('.line-rent')?.parentElement;
-    const legBaseBuy = document.getElementById('legend-baseline-buy');
-    const legBaseRent = document.getElementById('legend-baseline-rent');
+    if (mainWrapper) mainWrapper.style.display = 'block';
 
-    mainWrapper.style.display = 'block';
-
-    if(legBuy && legRent && legBaseBuy && legBaseRent) {
-        if (viewType === 'current') {
-            legBuy.style.display = 'none';
-            legRent.style.display = 'none';
-            legBaseBuy.style.display = 'flex';
-            legBaseRent.style.display = 'flex';
-        } else {
-            legBuy.style.display = 'flex';
-            legRent.style.display = 'flex';
-            legBaseBuy.style.display = 'none';
-            legBaseRent.style.display = 'none';
-        }
+    if (typeof window.renderProjectionsView === 'function') {
+        window.renderProjectionsView(viewType);
     }
-    window.applyChartVisibility();
 };
-
-document.getElementById('main-sidebar').addEventListener('change', () => {
-    setTimeout(window.applyChartVisibility, 100);
-});
-document.getElementById('main-sidebar').addEventListener('input', () => {
-    setTimeout(window.applyChartVisibility, 100);
-});
 
 
 // -------------------------------------------------------------
 // 3. Formatting Observers (Tables and Changes List)
 // -------------------------------------------------------------
 
-// Projections Data Table Formatting
 const tableObserver = new MutationObserver(() => {
     const table = document.getElementById('wealth-table');
     if(!table || table.rows.length === 0) return;
@@ -357,7 +414,7 @@ const tableObserver = new MutationObserver(() => {
     let lifeEventIdx = -1;
     const headerRow = table.rows[0];
     for(let i=0; i<headerRow.cells.length; i++) {
-        if(headerRow.cells[i].innerText.includes('Life Event')) {
+        if(headerRow.cells[i].innerText.includes('Life event')) {
             lifeEventIdx = i;
             break;
         }
@@ -393,50 +450,74 @@ window.addEventListener('DOMContentLoaded', () => {
     if(tableContainer) tableObserver.observe(tableContainer, { childList: true, subtree: true });
 });
 
-// "Your Changes" Formatting and Custom Undo Modal Logic
-let pendingUndo = null;
-
+// "Your Changes" Robust Observer
 const changesObserver = new MutationObserver((mutations) => {
+    let listChanged = false;
+    
     mutations.forEach(mutation => {
         if (mutation.type === 'childList') {
+            listChanged = true;
             mutation.addedNodes.forEach(node => {
                 if (node.tagName === 'LI' && !node.dataset.formatted) {
-                    const rawHTML = node.innerHTML;
-                    const match = rawHTML.match(/<strong>(.*?)<\/strong>\s*(.*?)\s*(?:&rarr;|➔|->)\s*(.*)/);
-                    
-                    if (match) {
-                        const rawLabel = match[1].replace(':', '').trim();
-                        let oldValRaw = match[2].trim();
-                        let newValRaw = match[3].trim();
+                    try {
+                        const rawHTML = node.innerHTML;
+                        const match = rawHTML.match(/<strong>(.*?)<\/strong>\s*(.*?)\s*(?:&rarr;|➔|->)\s*(.*)/);
                         
-                        let formattedOld = oldValRaw;
-                        let formattedNew = newValRaw;
+                        if (match) {
+                            const rawLabel = match[1].replace(':', '').trim();
+                            let oldValRaw = match[2].trim();
+                            let newValRaw = match[3].trim();
+                            
+                            let formattedOld = oldValRaw;
+                            let formattedNew = newValRaw;
 
-                        const isPureNumeric = (str) => /^[\d,]+(\.\d+)?$/.test(str);
-                        const isNotAgeOrPct = !rawLabel.toLowerCase().includes('age') && !rawLabel.toLowerCase().includes('proportion') && !rawLabel.toLowerCase().includes('contribution') && !rawLabel.toLowerCase().includes('plan');
+                            const isPureNumeric = (str) => /^[\d,]+(\.\d+)?$/.test(str);
+                            const rawLabelLower = rawLabel.toLowerCase();
+                            const isPercentField = rawLabelLower.includes('spare income') || rawLabelLower.includes('contribution') || rawLabelLower.includes('proportion');
+                            const isNotAgeOrPct = !rawLabelLower.includes('age') && !isPercentField && !rawLabelLower.includes('plan');
 
-                        if (isPureNumeric(oldValRaw) && isPureNumeric(newValRaw) && isNotAgeOrPct) {
-                            formattedOld = '£' + oldValRaw;
-                            formattedNew = '£' + newValRaw;
-                        }
+                            if (isPercentField && isPureNumeric(oldValRaw) && isPureNumeric(newValRaw)) {
+                                formattedOld = oldValRaw + '%';
+                                formattedNew = newValRaw + '%';
+                            } else if (isPureNumeric(oldValRaw) && isPureNumeric(newValRaw) && isNotAgeOrPct) {
+                                formattedOld = '£' + oldValRaw;
+                                formattedNew = '£' + newValRaw;
+                            }
 
-                        node.innerHTML = `
-                            <div style="display: flex; align-items: center; width: 100%; justify-content: space-between;">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <strong style="color: var(--ifoa-blue); min-width: 140px;">${rawLabel}:</strong>
-                                    <del style="color: #888; font-size: 0.95rem;">${formattedOld}</del>
-                                    <span style="color: #aaa; margin: 0 4px;">➔</span>
-                                    <span class="new-val">${formattedNew}</span>
+                            node.innerHTML = `
+                                <div style="display: flex; align-items: center; width: 100%; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <strong style="color: var(--ifoa-blue); min-width: 140px;">${rawLabel}:</strong>
+                                        <del style="color: #888; font-size: 0.95rem;">${formattedOld}</del>
+                                        <span style="color: #aaa; margin: 0 4px;">➔</span>
+                                        <span class="new-val">${formattedNew}</span>
+                                    </div>
+                                    <button class="btn-undo" onclick="handleUndoClick(this, '${rawLabel.replace(/'/g, "\\'")}', '${oldValRaw.replace(/'/g, "\\'")}', '${newValRaw.replace(/'/g, "\\'")}')" title="Revert this change">Undo</button>
                                 </div>
-                                <button class="btn-undo" onclick="promptUndo(this, '${rawLabel.replace(/'/g, "\\'")}', '${oldValRaw.replace(/'/g, "\\'")}')" title="Revert this change">Undo</button>
-                            </div>
-                        `;
-                        node.dataset.formatted = 'true';
+                            `;
+                            node.dataset.formatted = 'true';
+                        }
+                    } catch(e) {
+                        console.error('Error formatting change row:', e);
                     }
                 }
             });
         }
     });
+
+    if (listChanged) {
+        const list = document.getElementById('compare-changes-list');
+        const summaryBlock = document.getElementById('compare-summary-block');
+        const noChangesMsg = document.getElementById('no-changes-msg');
+        
+        if (list && summaryBlock && noChangesMsg) {
+            const hasChanges = list.children.length > 0;
+            summaryBlock.style.display = hasChanges ? 'block' : 'none';
+            noChangesMsg.style.display = hasChanges ? 'none' : 'block';
+        }
+
+        window.updateCompareActionsState();
+    }
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -444,49 +525,114 @@ window.addEventListener('DOMContentLoaded', () => {
     if(changesList) changesObserver.observe(changesList, { childList: true });
 });
 
-// The initial click maps the context and displays the modal
-window.promptUndo = function(btnElement, label, rawOldValue) {
-    pendingUndo = { btnElement, label, rawOldValue };
-    document.getElementById('undo-confirm-modal').classList.add('active');
-};
+function applyChangeValue(label, rawValue) {
+    const input = document.querySelector(`input[data-label="${label}"], select[data-label="${label}"]`);
+    if (!input) return false;
 
-// Closes the modal without action
-window.closeUndoModal = function() {
-    pendingUndo = null;
-    document.getElementById('undo-confirm-modal').classList.remove('active');
-};
-
-// Executes the action if the user confirms inside the modal
-window.confirmUndoAction = function() {
-    if (pendingUndo) {
-        const { btnElement, label, rawOldValue } = pendingUndo;
-        const input = document.querySelector(`input[data-label="${label}"], select[data-label="${label}"]`);
-        
-        if (input) {
-            const cleanVal = rawOldValue.replace(/,/g, '');
-            if (input.type === 'text' && input.classList.contains('comma-format')) {
-                input.value = rawOldValue;
-            } else if (input.type === 'radio') {
-                const radio = document.querySelector(`input[name="${input.name}"][value="${rawOldValue}"]`);
-                if (radio) radio.checked = true;
-            } else {
-                input.value = cleanVal;
-            }
-
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            input.dispatchEvent(new Event('change', { bubbles: true }));
-
-            const li = btnElement.closest('li');
-            if(li) li.remove();
-
-            const list = document.getElementById('compare-changes-list');
-            if (list && list.children.length === 0) {
-                document.getElementById('compare-summary-block').style.display = 'none';
-                document.getElementById('no-changes-msg').style.display = 'block';
-            }
-        } else {
-            console.error("Could not find input for label: " + label);
-        }
+    const cleanVal = rawValue.replace(/,/g, '');
+    if (input.type === 'text' && input.classList.contains('comma-format')) {
+        input.value = rawValue;
+    } else if (input.type === 'radio') {
+        const radio = document.querySelector(`input[name="${input.name}"][value="${rawValue}"]`);
+        if (radio) radio.checked = true;
+    } else {
+        input.value = cleanVal;
     }
-    closeUndoModal();
+
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    return true;
+}
+
+function collapseChangeRow(li, onDone) {
+    if (!li) { if (onDone) onDone(); return; }
+
+    const reduceMotion = document.body.classList.contains('reduce-motion');
+    if (reduceMotion) {
+        li.remove();
+        if (onDone) onDone();
+        return;
+    }
+
+    const startHeight = li.getBoundingClientRect().height;
+    li.style.height = startHeight + 'px';
+    li.style.overflow = 'hidden';
+    li.style.boxSizing = 'border-box';
+    void li.offsetHeight; 
+
+    li.classList.add('row-collapsing');
+
+    let finished = false;
+    const finish = () => {
+        if (finished) return;
+        finished = true;
+        li.removeEventListener('transitionend', onTransitionEnd);
+        clearTimeout(fallbackTimer);
+        li.remove();
+        if (onDone) onDone();
+    };
+    const onTransitionEnd = (e) => { if (e.target === li && e.propertyName === 'height') finish(); };
+    li.addEventListener('transitionend', onTransitionEnd);
+    const fallbackTimer = setTimeout(finish, 400);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            li.style.height = '0px';
+            li.style.marginTop = '0px';
+            li.style.marginBottom = '0px';
+            li.style.paddingTop = '0px';
+            li.style.paddingBottom = '0px';
+            li.style.borderWidth = '0px';
+            li.style.opacity = '0';
+        });
+    });
+}
+
+window.handleUndoClick = function(btnElement, label, oldValRaw, newValRaw) {
+    const li = btnElement.closest('li');
+    if (!applyChangeValue(label, oldValRaw)) return;
+
+    collapseChangeRow(li, () => {
+        const list = document.getElementById('compare-changes-list');
+        if (list && list.children.length === 0) {
+            document.getElementById('compare-summary-block').style.display = 'none';
+            document.getElementById('no-changes-msg').style.display = 'block';
+        }
+        window.updateCompareActionsState();
+    });
+
+    showUndoToast('Change reverted', () => { applyChangeValue(label, newValRaw); });
 };
+
+function showUndoToast(message, onUndo) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span class="toast-message">${message}</span><button type="button" class="toast-undo-btn">Undo</button>`;
+    container.appendChild(toast);
+
+    const reduceMotion = document.body.classList.contains('reduce-motion');
+
+    const dismiss = () => {
+        clearTimeout(autoDismissTimer);
+        if (reduceMotion) { toast.remove(); return; }
+        toast.classList.remove('toast-visible');
+        toast.classList.add('toast-hiding');
+        setTimeout(() => toast.remove(), 250);
+    };
+
+    const autoDismissTimer = setTimeout(dismiss, 6000);
+
+    toast.querySelector('.toast-undo-btn').addEventListener('click', () => {
+        if (onUndo) onUndo();
+        dismiss();
+    });
+
+    if (reduceMotion) {
+        toast.classList.add('toast-visible');
+    } else {
+        requestAnimationFrame(() => toast.classList.add('toast-visible'));
+    }
+}
