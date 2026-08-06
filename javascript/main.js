@@ -144,7 +144,13 @@ let wExPre = document.getElementById('w_ex_pre');
 if(wExPre) {
     wExPre.addEventListener('input', function() {
         let wExPost = document.getElementById('w_ex_post');
-        if(wExPost) wExPost.value = this.value;
+        if(wExPost && !wExPost.dataset.userEdited) wExPost.value = this.value;
+    });
+}
+let wExPost = document.getElementById('w_ex_post');
+if(wExPost) {
+    wExPost.addEventListener('input', function() {
+        this.dataset.userEdited = 'true';
     });
 }
 
@@ -540,7 +546,7 @@ function setMode(mode) {
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
         switchPerson('you');
-        stepSequence = [0, 1, 3, 4, 6, 8, 9];
+        stepSequence = [0, 1, 2, 3, 4, 6, 8, 9];
     } else if (mode === 'couple') {
         if(modeCouple) { modeCouple.classList.add('active'); modeCouple.setAttribute('aria-pressed', 'true'); }
         if(sideCouple) sideCouple.checked = true;
@@ -643,6 +649,7 @@ function wizardStep(dir) {
 function closeWizard() {
     let wizardOverlay = document.getElementById('wizard-overlay');
     if(wizardOverlay) wizardOverlay.classList.remove('active');
+    forceCalculation();
 }
 
 function saveWizardAndClose() {
@@ -854,10 +861,151 @@ function forceCalculation() {
     runCalculation();
 }
 
+function setFieldValidity(inputEl, isValid, message) {
+    if (!inputEl) return;
+    const wrapper = inputEl.closest('.input-wrapper') || inputEl.closest('.toggle-container');
+    if (!wrapper) return;
+    const row = wrapper.closest('.input-row-single') || wrapper.parentElement;
+    let errEl = row.querySelector('.field-error-text');
+    if (!errEl) {
+        errEl = document.createElement('div');
+        errEl.className = 'field-error-text';
+        wrapper.insertAdjacentElement('afterend', errEl);
+    }
+    if (isValid) {
+        wrapper.classList.remove('has-error');
+        errEl.classList.remove('visible');
+    } else {
+        wrapper.classList.add('has-error');
+        errEl.textContent = message || 'This field is required.';
+        errEl.classList.add('visible');
+    }
+}
+
+function validateRequiredFields() {
+    const isCouple = currentMode === 'couple';
+    const missing = [];
+
+    const checkNumber = (id, mustBePositive) => {
+        const el = document.getElementById(id);
+        if (!el) return true;
+        const raw = String(el.value || '').replace(/,/g, '').trim();
+        const ok = mustBePositive ? (raw !== '' && parseFloat(raw) > 0) : raw !== '';
+        setFieldValidity(el, ok, mustBePositive ? 'Enter an amount greater than £0.' : 'This field is required.');
+        if (!ok) missing.push(id);
+        return ok;
+    };
+
+    const checkRadio = (name) => {
+        const anyRadio = document.querySelector(`input[name="${name}"]`);
+        const checkedEl = document.querySelector(`input[name="${name}"]:checked`);
+        setFieldValidity(anyRadio, !!checkedEl, 'Please make a selection.');
+        if (!checkedEl) missing.push(name);
+        return checkedEl;
+    };
+
+    const checkSelect = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return true;
+        const ok = el.value !== '';
+        setFieldValidity(el, ok, 'Please make a selection.');
+        if (!ok) missing.push(id);
+        return ok;
+    };
+
+    const clearField = (id) => setFieldValidity(document.getElementById(id), true);
+    const clearRadio = (name) => setFieldValidity(document.querySelector(`input[name="${name}"]`), true);
+
+    checkNumber('s_hp', true);
+    checkRadio('s_ftb');
+    checkNumber('s_ex_pre', false);
+    checkNumber('s_ex_post', false);
+    checkNumber('s_age1', false);
+    checkNumber('s_ret1', false);
+    checkNumber('s_sal1', false);
+
+    const sl1 = checkRadio('s_has_sl1');
+    if (sl1 && sl1.value === 'Yes') {
+        checkNumber('s_sl1', false);
+        checkSelect('s_slp1');
+    } else {
+        clearField('s_sl1');
+        clearField('s_slp1');
+    }
+
+    checkRadio('s_has_pen1');
+
+    if (isCouple) {
+        checkNumber('s_age2', false);
+        checkNumber('s_sal2', false);
+        const sl2 = checkRadio('s_has_sl2');
+        if (sl2 && sl2.value === 'Yes') {
+            checkNumber('s_sl2', false);
+            checkSelect('s_slp2');
+        } else {
+            clearField('s_sl2');
+            clearField('s_slp2');
+        }
+        checkRadio('s_has_pen2');
+    } else {
+        clearField('s_age2');
+        clearField('s_sal2');
+        clearField('s_sl2');
+        clearField('s_slp2');
+        clearRadio('s_has_sl2');
+        clearRadio('s_has_pen2');
+    }
+
+    return missing;
+}
+
+function updateResultsOverlay(state) {
+    const zones = ['hero', 'timing', 'wealth', 'prop-cost', 'prop-funding'];
+    const messages = {
+        blocked: 'Fill in the highlighted fields on the left to see your results.',
+        empty: 'This matches your original scenario. Change something on the left to see the effect.'
+    };
+
+    zones.forEach(key => {
+        const activeEl = document.getElementById(`active-${key}`);
+        if (!activeEl) return;
+        let ph = activeEl.querySelector('.results-placeholder');
+        if (!ph) {
+            ph = document.createElement('div');
+            ph.className = 'results-placeholder baseline-placeholder is-hidden';
+            activeEl.insertBefore(ph, activeEl.firstChild);
+        }
+        const realChildren = Array.from(activeEl.children).filter(c => c !== ph);
+        if (state === 'normal') {
+            ph.classList.add('is-hidden');
+            realChildren.forEach(c => c.classList.remove('is-hidden'));
+        } else {
+            ph.textContent = messages[state];
+            ph.classList.remove('is-hidden');
+            realChildren.forEach(c => c.classList.add('is-hidden'));
+        }
+    });
+
+    if (state === 'blocked') {
+        const propBreakdownContent = document.getElementById('prop-breakdown-content');
+        if (propBreakdownContent) propBreakdownContent.style.display = 'grid';
+        const propBreakdownEmpty = document.getElementById('prop-breakdown-empty');
+        if (propBreakdownEmpty) propBreakdownEmpty.style.display = 'none';
+    }
+}
+
 function runCalculation() {
     if (typeof globalParams === 'undefined') { return; }
 
-    checkCompareModifications(); 
+    const missingFields = validateRequiredFields();
+    checkCompareModifications();
+
+    if (missingFields.length > 0) {
+        const resultsPane = document.getElementById('results-pane');
+        if(resultsPane) resultsPane.classList.remove('stale');
+        updateResultsOverlay('blocked');
+        return;
+    }
 
     const inputs = gatherEngineInputs();
     let engine, results;
@@ -1052,6 +1200,8 @@ function runCalculation() {
     }
 
     renderProjectionsView(currentProjView);
+
+    updateResultsOverlay(isCompareMode && changedInputsList.length === 0 ? 'empty' : 'normal');
 }
 
 function renderProjectionsView(viewType) {

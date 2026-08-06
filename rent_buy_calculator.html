@@ -270,9 +270,9 @@
                                     <label>Spend tax free cash at retirement?</label>
                                     <div class="input-wrapper" style="width: 100%;">
                                         <select id="s_tfc1" class="compare-track" data-label="Spend tax free cash (You)">
-                                            <option value="" disabled selected>Select option</option>
+                                            <option value="" disabled>Select option</option>
                                             <option value="Yes">Yes, for a one-off expense</option>
-                                            <option value="No">No, use as income</option>
+                                            <option value="No" selected>No, use as income</option>
                                         </select>
                                     </div>
                                 </div>
@@ -310,9 +310,9 @@
                                     <label>Spend tax free cash at retirement?</label>
                                     <div class="input-wrapper" style="width: 100%;">
                                         <select id="s_tfc2" class="compare-track" data-label="Spend tax free cash (Partner)">
-                                            <option value="" disabled selected>Select option</option>
+                                            <option value="" disabled>Select option</option>
                                             <option value="Yes">Yes, for a one-off expense</option>
-                                            <option value="No">No, use as income</option>
+                                            <option value="No" selected>No, use as income</option>
                                         </select>
                                     </div>
                                 </div>
@@ -851,7 +851,7 @@
                             <label for="w_has_pen1_n">No</label>
                         </div>
                     </div>
-                    <div id="w_pen_fields1" style="display: block;">
+                    <div id="w_pen_fields1" style="display: none;">
                         <div class="input-row-single">
                             <label>Current pension pot value</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval1" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
@@ -879,7 +879,7 @@
                             <label for="w_has_pen2_n">No</label>
                         </div>
                     </div>
-                    <div id="w_pen_fields2" style="display: block;">
+                    <div id="w_pen_fields2" style="display: none;">
                         <div class="input-row-single">
                             <label>Current pension pot value</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval2" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
@@ -907,8 +907,12 @@
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_rent" placeholder="e.g. 820" class="comma-format clamp-1m"><span class="suffix">/ month</span></div>
                     </div>
                     <div class="input-row-single">
-                        <label>Monthly living expenses</label>
-                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_pre" placeholder="e.g. 1,400" class="comma-format clamp-1m"><span class="suffix">/ month</span></div>
+                        <label><span id="lbl_w_ex_pre">Monthly living expenses pre-retirement</span></label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_pre" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix"><span class="suffix">/ month</span></div>
+                    </div>
+                    <div class="input-row-single">
+                        <label><span id="lbl_w_ex_post">Monthly living expenses post-retirement</span></label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_post" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix"><span class="suffix">/ month</span></div>
                     </div>
                 </div>
 

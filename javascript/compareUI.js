@@ -372,7 +372,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         baselineEl.innerHTML = html;
                     }
                 });
-                
+
+                if (typeof window.updateResultsOverlay === 'function') window.updateResultsOverlay('empty');
+
                 window.syncProjViewSelect('revised');
             } else {
                 if (title) title.innerText = 'Current scenario';
