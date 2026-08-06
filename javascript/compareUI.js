@@ -67,44 +67,55 @@ window.handleSaveBaseScenario = function() {
     }
     window.showToast('Scenario saved as original scenario');
     
-    // Clear list so button instantly disables
     const list = document.getElementById('compare-changes-list');
     if(list) list.innerHTML = '';
     window.updateCompareActionsState();
 };
 
+// Fix 4: Force precise format "Buy when you are aged X"
 window.formatTimingTitlesSingleAge = function() {
     const timingTitles = document.querySelectorAll('.timing-title');
     timingTitles.forEach(el => {
-        if (el.textContent.includes('Buy at ages') || el.textContent.includes('&')) {
-            el.textContent = el.textContent.replace(/Buy at ages (\d+)\s*&\s*\d+/, 'Buy at age $1');
+        let text = el.textContent;
+        // Match occurrences like "Buy at age 35" or "Buy at ages 35 & 37"
+        const match = text.match(/(?:Buy at age[s]?)\s*(\d+)/i);
+        if (match) {
+            const ageNum = match[1];
+            el.textContent = `Buy when you are aged ${ageNum}`;
         }
     });
+    
+    // Also strip partner references if mode is single
+    const isSingle = document.getElementById('side_single') && document.getElementById('side_single').checked;
+    if (isSingle) {
+        const timingDescs = document.querySelectorAll('.timing-description');
+        timingDescs.forEach(desc => {
+            if (desc.innerHTML.includes('when your partner would be')) {
+                desc.innerHTML = desc.innerHTML.replace(/, when your partner would be \d+/, '');
+            }
+        });
+    }
 };
 
 window.startOver = function() {
-    // 1. Turn off compare mode if it is active
     const compareSwitch = document.getElementById('compare-switch');
     if (compareSwitch && compareSwitch.checked) {
         compareSwitch.checked = false;
         compareSwitch.dispatchEvent(new Event('change'));
     }
 
-    // 2. Revert all text and number inputs to their original HTML values
     document.querySelectorAll('input[type="text"].compare-track, input[type="number"].compare-track').forEach(input => {
         if (input.hasAttribute('value')) {
             input.value = input.getAttribute('value');
         }
     });
     
-    // 3. Revert all radio buttons to their original HTML checked states
     document.querySelectorAll('input[type="radio"].compare-track').forEach(radio => {
         if (radio.hasAttribute('checked')) {
             radio.checked = true;
         }
     });
 
-    // 4. Revert all dropdown selects to their default option
     document.querySelectorAll('select.compare-track').forEach(select => {
         const defaultOpt = select.querySelector('option[selected]');
         if (defaultOpt) {
@@ -114,12 +125,10 @@ window.startOver = function() {
         }
     });
 
-    // 5. Fire the UI updates so the sidebars visually reset
     if (typeof toggleSL === 'function') toggleSL();
     if (typeof togglePen === 'function') togglePen();
     if (typeof updateDynamicUI === 'function') updateDynamicUI();
     
-    // 6. Relaunch the wizard
     const wiz = document.getElementById('wizard-overlay');
     if (wiz) wiz.classList.add('active');
     if (typeof openWizard === 'function') openWizard();
@@ -145,17 +154,22 @@ window.saveA11ySetting = function(key, value) {
     localStorage.setItem('a11y_' + key, value);
 };
 
+window.switchSettingsTab = function(tabNum, btn) {
+    document.querySelectorAll('#settings-tabs .tab-btn, #settings-tabs label').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.getElementById('set-tab-1').style.display = tabNum === 1 ? 'block' : 'none';
+    document.getElementById('set-tab-2').style.display = tabNum === 2 ? 'block' : 'none';
+    document.getElementById('set-tab-3').style.display = tabNum === 3 ? 'block' : 'none';
+};
+
 window.addEventListener('DOMContentLoaded', () => {
-    // Load A11y Settings from LocalStorage
-    if (localStorage.getItem('a11y_dark') === 'on') { document.body.classList.add('dark-mode'); const r = document.getElementById('a11y_dark_on'); if(r) r.checked = true; }
-    if (localStorage.getItem('a11y_font') === 'on') { document.body.classList.add('dyslexia-font'); const r = document.getElementById('a11y_font_on'); if(r) r.checked = true; }
-    if (localStorage.getItem('a11y_motion') === 'on') { document.body.classList.add('reduce-motion'); const r = document.getElementById('a11y_motion_on'); if(r) r.checked = true; }
-    
+    if (localStorage.getItem('a11y_dark') === 'on') { document.body.classList.add('dark-mode'); const r = document.getElementById('a11y_dark_toggle'); if(r) r.checked = true; }
+	if (localStorage.getItem('a11y_font') === 'on') { document.body.classList.add('dyslexia-font'); const r = document.getElementById('a11y_font_toggle'); if(r) r.checked = true; }
+	if (localStorage.getItem('a11y_motion') === 'on') { document.body.classList.add('reduce-motion'); const r = document.getElementById('a11y_motion_toggle'); if(r) r.checked = true; }
     const size = localStorage.getItem('a11y_size');
     if (size === 'large') { document.documentElement.classList.add('text-large'); const r = document.getElementById('a11y_size_large'); if(r) r.checked = true; }
     else if (size === 'xl') { document.documentElement.classList.add('text-xlarge'); const r = document.getElementById('a11y_size_xl'); if(r) r.checked = true; }
 
-    // Focus-revealed helper text
     if (typeof helpText !== 'undefined') {
         for (const [key, text] of Object.entries(helpText)) {
             ['w_', 's_'].forEach(prefix => {
@@ -171,7 +185,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Populate readonly parameters
     if (typeof globalParams !== 'undefined') {
         const badge = document.getElementById('tax-year-badge');
         const badge2 = document.getElementById('tax-year-badge-2');
@@ -287,10 +300,8 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize compare actions state (buttons disabled on empty list)
     window.updateCompareActionsState();
 
-    // Close mobile menu when clicking outside
     document.addEventListener('click', function(event) {
         const menu = document.getElementById('calc-mobile-menu');
         const btn = document.getElementById('calc-burger-btn');
@@ -300,7 +311,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        if(event.target.classList.contains('tab-btn')) {
+        if(event.target.classList.contains('tab-btn') && !event.target.closest('#settings-tabs') && !event.target.closest('.partner-toggle-wrapper')) {
             const select = document.getElementById('mobile-tab-select');
             if(select) {
                 const match = event.target.getAttribute('onclick').match(/'([^']+)'/);
@@ -309,12 +320,10 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Auto-update formatting for Timing cards
     const observer = new MutationObserver(window.formatTimingTitlesSingleAge);
     const activeTiming = document.getElementById('active-timing');
     if (activeTiming) observer.observe(activeTiming, { childList: true, subtree: true });
 
-    // Skip Wizard check
     if (window.location.search.includes('skipWizard=true')) {
         const style = document.createElement('style');
         style.innerHTML = '#wizard-overlay { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
@@ -331,6 +340,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Note: setMode is now defined in main.js and handles both wizard and non-wizard modes
+// The main.js version already includes all necessary functionality
+// This comment is left for reference to avoid re-implementing the mode-switching logic
 
 // -------------------------------------------------------------
 // 2. Compare Mode Toggles & Chart Interactions
@@ -343,7 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (compareSwitch && resultsPane) {
         compareSwitch.addEventListener('change', function() {
+            const title = document.getElementById('sidebar-title');
+            
             if (this.checked) {
+                if (title) title.innerText = 'New scenario';
                 resultsPane.classList.add('compare-mode-active');
                 if(projControls) projControls.style.display = 'flex';
                 
@@ -360,6 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 window.syncProjViewSelect('revised');
             } else {
+                if (title) title.innerText = 'Current scenario';
                 resultsPane.classList.remove('compare-mode-active');
                 if(projControls) projControls.style.display = 'none';
                 window.syncProjViewSelect('revised');
@@ -379,6 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         if(compareSwitch.checked) {
+            const title = document.getElementById('sidebar-title');
+            if (title) title.innerText = 'New scenario';
             resultsPane.classList.add('compare-mode-active');
             if(projControls) projControls.style.display = 'flex';
         }
@@ -395,7 +413,7 @@ window.syncProjViewSelect = function(val) {
 
 window.toggleProjView = function(viewType) {
     const mainWrapper = document.getElementById('proj-main-wrapper');
-    if (mainWrapper) mainWrapper.style.display = 'block';
+    if (mainWrapper) mainWrapper.style.display = 'flex';
 
     if (typeof window.renderProjectionsView === 'function') {
         window.renderProjectionsView(viewType);
@@ -407,6 +425,7 @@ window.toggleProjView = function(viewType) {
 // 3. Formatting Observers (Tables and Changes List)
 // -------------------------------------------------------------
 
+// Fix 3: Robust Table House Icon Observer
 const tableObserver = new MutationObserver(() => {
     const table = document.getElementById('wealth-table');
     if(!table || table.rows.length === 0) return;
@@ -414,9 +433,23 @@ const tableObserver = new MutationObserver(() => {
     let lifeEventIdx = -1;
     const headerRow = table.rows[0];
     for(let i=0; i<headerRow.cells.length; i++) {
-        if(headerRow.cells[i].innerText.includes('Life event')) {
+        if(headerRow.cells[i].innerText.includes('Life event') || headerRow.cells[i].innerText.includes('Event')) {
             lifeEventIdx = i;
             break;
+        }
+    }
+    
+    for(let i=1; i<table.rows.length; i++) {
+        const row = table.rows[i];
+        if (row.classList.contains('row-purchase') || (row.style && row.style.backgroundColor)) {
+            if (!row.cells[0].innerHTML.includes('🏠')) {
+                row.cells[0].innerHTML += ` <span style="margin-left: 6px;" title="Purchase">🏠</span>`;
+            }
+        }
+        if (row.classList.contains('row-retire')) {
+            if (!row.cells[0].innerHTML.includes('⛱️')) {
+                row.cells[0].innerHTML += ` <span style="margin-left: 6px;" title="Retirement">⛱️</span>`;
+            }
         }
     }
     
@@ -450,7 +483,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if(tableContainer) tableObserver.observe(tableContainer, { childList: true, subtree: true });
 });
 
-// "Your Changes" Robust Observer
 const changesObserver = new MutationObserver((mutations) => {
     let listChanged = false;
     
@@ -484,15 +516,22 @@ const changesObserver = new MutationObserver((mutations) => {
                                 formattedNew = '£' + newValRaw;
                             }
 
+                            const undoSvg = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="undo-icon"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
+
                             node.innerHTML = `
-                                <div style="display: flex; align-items: center; width: 100%; justify-content: space-between;">
-                                    <div style="display: flex; align-items: center; gap: 8px;">
-                                        <strong style="color: var(--ifoa-blue); min-width: 140px;">${rawLabel}:</strong>
-                                        <del style="color: #888; font-size: 0.95rem;">${formattedOld}</del>
-                                        <span style="color: #aaa; margin: 0 4px;">➔</span>
-                                        <span class="new-val">${formattedNew}</span>
+                                <div class="change-list-item-inner">
+                                    <div class="change-list-text">
+                                        <strong>${rawLabel}:</strong>
+                                        <div class="change-list-vals">
+                                            <del>${formattedOld}</del>
+                                            <span class="arrow">➔</span>
+                                            <span class="new-val">${formattedNew}</span>
+                                        </div>
                                     </div>
-                                    <button class="btn-undo" onclick="handleUndoClick(this, '${rawLabel.replace(/'/g, "\\'")}', '${oldValRaw.replace(/'/g, "\\'")}', '${newValRaw.replace(/'/g, "\\'")}')" title="Revert this change">Undo</button>
+                                    <button class="btn-undo" onclick="handleUndoClick(this, '${rawLabel.replace(/'/g, "\\'")}', '${oldValRaw.replace(/'/g, "\\'")}', '${newValRaw.replace(/'/g, "\\'")}')" title="Revert this change">
+                                        ${undoSvg}
+                                        <span class="undo-text">Undo</span>
+                                    </button>
                                 </div>
                             `;
                             node.dataset.formatted = 'true';
@@ -636,3 +675,20 @@ function showUndoToast(message, onUndo) {
         requestAnimationFrame(() => toast.classList.add('toast-visible'));
     }
 }
+
+// --- Safe Element Null-Check Patch for main.js ---
+window.addEventListener('DOMContentLoaded', () => {
+    // Prevent crashes if main.js looks for elements that were removed or changed
+    const originalGetElementById = document.getElementById;
+    document.getElementById = function(id) {
+        const el = originalGetElementById.call(document, id);
+        if (!el && (id.includes('yrs') || id.includes('suffix'))) {
+            // Return a dummy element to prevent reading properties of null crashes
+            const dummy = document.createElement('span');
+            dummy.value = '';
+            dummy.classList = { add: ()=>{}, remove: ()=>{}, contains: ()=>false };
+            return dummy;
+        }
+        return el;
+    };
+});

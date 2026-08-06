@@ -12,7 +12,7 @@ const heroTemplates = {
             </div>
             <div class="hero-text-content">
                 <h2 class="hero-title">Buying is the stronger financial choice</h2>
-                <p class="hero-description">Over your chosen timeframe, buying this property leaves you <span class="hero-highlight">${diff}</span> wealthier than renting.</p>
+                <p class="hero-description">Over your chosen timeframe, buying this property could leave you <span class="hero-highlight">${diff}</span> wealthier than renting.</p>
             </div>
         </div>
     `,
@@ -47,8 +47,8 @@ const heroTemplates = {
                 </svg>
             </div>
             <div class="hero-text-content">
-                <h2 class="hero-title">Let's adjust your buying plan</h2>
-                <p class="hero-description">Based on your current deposit and income limits, a <span class="hero-highlight">${hp}</span> home isn't reachable yet.</p>
+                <h2 class="hero-title">Adjust your buying plan</h2>
+                <p class="hero-description">Based on your current deposit and income, an <span class="hero-highlight">${hp}</span> home isn't reachable yet.</p>
             </div>
         </div>
     `,
@@ -85,9 +85,6 @@ const timingTemplate = (titleText, descText) => `
     </div>
 `;
 
-// Shown in the "When can you buy?" section whenever there is no purchase time
-// to report (unaffordable, or the only affordable date would fall on or after
-// retirement, which the projection engine won't produce as a purchase date).
 const timingUnaffordableTemplate = (descText) => `
     <div class="timing-hero-card timing-hero-card-warning">
         <div class="timing-icon-wrapper timing-icon-warning">
@@ -110,7 +107,7 @@ let currentChart = null;
 let debounceTimer = null;
 let currentMode = null; 
 let currentWizIndex = 0;
-let stepSequence = [];
+let stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 let savedSettings = {}; 
 
 let isCompareMode = false;
@@ -146,11 +143,13 @@ document.querySelectorAll('.comma-format').forEach(item => {
 let wExPre = document.getElementById('w_ex_pre');
 if(wExPre) {
     wExPre.addEventListener('input', function() {
-        document.getElementById('w_ex_post').value = this.value;
+        let wExPost = document.getElementById('w_ex_post');
+        if(wExPost) wExPost.value = this.value;
     });
 }
 
 function applyLimits(el) {
+    if (!el) return;
     let valStr = String(el.value).replace(/,/g, '').replace(/£/g, '').replace(/%/g, '');
     if(valStr === '') return;
     let val = parseFloat(valStr);
@@ -166,7 +165,8 @@ function applyLimits(el) {
         max = 75;
         let idPrefix = el.id.charAt(0); 
         let ageId = idPrefix + "_age1";
-        let ageVal = parseFloat(document.getElementById(ageId)?.value || 0);
+        let ageEl = document.getElementById(ageId);
+        let ageVal = parseFloat(ageEl ? ageEl.value : 0);
         min = Math.max(55, ageVal);
     } else if (el.classList.contains('clamp-1m')) {
         min = 0; max = 1000000;
@@ -185,28 +185,25 @@ function applyLimits(el) {
 }
 
 document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('change', function() { applyLimits(this); updateDynamicUI();});
+    input.addEventListener('change', function() { applyLimits(this); updateDynamicUI(); validateStep(); });
 });
 
 function updateDynamicUI() {
-    let wA1 = parseInt(document.getElementById('w_age1').value) || 0;
-    let wA2 = parseInt(document.getElementById('w_age2').value) || 0;
-    let wR1 = parseInt(document.getElementById('w_ret1').value) || 0;
-    
-    let sA1 = parseInt(document.getElementById('s_age1').value) || 0;
-    let sA2 = parseInt(document.getElementById('s_age2').value) || 0;
-    let sR1 = parseInt(document.getElementById('s_ret1').value) || 0;
-    if(sA1 && sA2 && sR1) document.getElementById('s_ret2').value = Math.max(0, sR1 - sA1 + sA2);
+    let sR1 = parseInt(document.getElementById('s_ret1')?.value || 68);
+    let sA1 = parseInt(document.getElementById('s_age1')?.value || 29);
+    let sR2 = document.getElementById('s_ret2');
+    if(sR2 && sA1 && sR1) sR2.value = Math.max(0, sR1 - sA1 + parseInt(document.getElementById('s_age2')?.value || 31));
 
     let lblWPre = document.getElementById('lbl_w_ex_pre');
     let lblWPost = document.getElementById('lbl_w_ex_post');
-    if (lblWPre) lblWPre.innerText = `Pre-retirement (age ${wR1 || 68} for you)`;
-    if (lblWPost) lblWPost.innerText = `Post-retirement (age ${wR1 || 68} for you)`;
+    let wR1 = parseInt(document.getElementById('w_ret1')?.value || 68);
+    if (lblWPre) lblWPre.innerText = `Pre-retirement (age ${wR1} for you)`;
+    if (lblWPost) lblWPost.innerText = `Post-retirement (age ${wR1} for you)`;
 
     let lblSPre = document.getElementById('lbl_s_ex_pre');
     let lblSPost = document.getElementById('lbl_s_ex_post');
-    if (lblSPre) lblSPre.innerText = `Pre-retirement (age ${sR1 || 68} for you)`;
-    if (lblSPost) lblSPost.innerText = `Post-retirement (age ${sR1 || 68} for you)`;
+    if (lblSPre) lblSPre.innerText = `Pre-retirement (age ${sR1} for you)`;
+    if (lblSPost) lblSPost.innerText = `Post-retirement (age ${sR1} for you)`;
 }
 
 document.querySelectorAll('.calc-ret-trigger').forEach(input => {
@@ -223,6 +220,25 @@ function toggleSL() {
     if(s_f1) s_f1.style.display = sl1 ? 'block' : 'none';
     if(s_f2) s_f2.style.display = sl2 ? 'block' : 'none';
 }
+
+function handleModeCardKey(e, mode) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        e.stopPropagation();
+        setMode(mode);
+    }
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    const wizardOverlay = document.getElementById('wizard-overlay');
+    if (!wizardOverlay || !wizardOverlay.classList.contains('active')) return;
+    const tag = e.target.tagName;
+    if (tag === 'BUTTON' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'A') return;
+    e.preventDefault();
+    const wizNext = document.getElementById('wiz-next');
+    if (wizNext && !wizNext.disabled) wizardStep(1);
+});
 
 function toggleWizSL(personNum) {
     let has = document.querySelector(`input[name="w_has_sl${personNum}"]:checked`)?.value === 'Yes';
@@ -251,16 +267,19 @@ function switchTab(btnElement, tabId) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     btnElement.classList.add('active');
-    document.getElementById('view-' + tabId).classList.add('active');
+    const viewSection = document.getElementById('view-' + tabId);
+    if(viewSection) viewSection.classList.add('active');
 }
 
 function toggleDataView(viewType) {
+    const graphContainer = document.getElementById('graph-container');
+    const tableContainer = document.getElementById('table-container');
     if (viewType === 'graph') {
-        document.getElementById('graph-container').style.display = 'flex';
-        document.getElementById('table-container').style.display = 'none';
+        if(graphContainer) graphContainer.style.display = 'flex';
+        if(tableContainer) tableContainer.style.display = 'none';
     } else {
-        document.getElementById('graph-container').style.display = 'none';
-        document.getElementById('table-container').style.display = 'flex';
+        if(graphContainer) graphContainer.style.display = 'none';
+        if(tableContainer) tableContainer.style.display = 'flex';
     }
 }
 
@@ -277,7 +296,8 @@ function switchPerson(person) {
 }
 
 function toggleCompareMode() {
-    isCompareMode = document.getElementById('compare-switch').checked;
+    const compareSwitch = document.getElementById('compare-switch');
+    isCompareMode = compareSwitch ? compareSwitch.checked : false;
     
     if (isCompareMode) {
         baselineInputs = gatherRawInputs();
@@ -288,12 +308,14 @@ function toggleCompareMode() {
 
         const footer = document.getElementById('compare-actions-footer');
         if(footer) footer.style.display = 'block';
-        document.getElementById('compare-summary-block').style.display = 'block';
+        const summaryBlock = document.getElementById('compare-summary-block');
+        if(summaryBlock) summaryBlock.style.display = 'block';
     } else {
         discardWhatIf();
         const footer = document.getElementById('compare-actions-footer');
         if(footer) footer.style.display = 'none';
-        document.getElementById('compare-summary-block').style.display = 'none';
+        const summaryBlock = document.getElementById('compare-summary-block');
+        if(summaryBlock) summaryBlock.style.display = 'none';
         baselineInputs = {};
         baselineResults = null;
     }
@@ -327,7 +349,8 @@ function discardWhatIf() {
     });
 
     changedInputsList = [];
-    document.getElementById('compare-changes-list').innerHTML = '';
+    const changesList = document.getElementById('compare-changes-list');
+    if(changesList) changesList.innerHTML = '';
     toggleSL();
     togglePen();
     updateDynamicUI();
@@ -350,17 +373,12 @@ function checkCompareModifications() {
     if(!isCompareMode) return;
     changedInputsList = [];
     const ul = document.getElementById('compare-changes-list');
+    if (!ul) return;
     ul.innerHTML = '';
     let currentRaw = gatherRawInputs();
     
     document.querySelectorAll('.compare-track').forEach(el => {
-        let isChanged = false;
-        if (el.type === 'radio' || el.type === 'checkbox') {
-            isChanged = (currentRaw[el.id] !== baselineInputs[el.id]);
-        } else {
-            isChanged = (currentRaw[el.id] !== baselineInputs[el.id]);
-        }
-
+        let isChanged = (currentRaw[el.id] !== baselineInputs[el.id]);
         let wrapper = el.closest('.input-wrapper') || el.closest('.toggle-container');
         if (isChanged) {
             if (wrapper) wrapper.classList.add('is-modified');
@@ -402,13 +420,13 @@ function gatherEngineInputs(sourceDataObj = null) {
     const fetchRadio = (name) => {
         if(sourceDataObj) {
              let checkedId = Object.keys(sourceDataObj).find(key => key.startsWith(name) && sourceDataObj[key] === true);
-             return checkedId ? document.getElementById(checkedId).value : 'No';
+             return checkedId ? document.getElementById(checkedId)?.value || 'No' : 'No';
         }
         return document.querySelector(`input[name="${name}"]:checked`)?.value || 'No';
     };
 
-    const slp1 = document.getElementById('s_slp1').value;
-    const slp2 = document.getElementById('s_slp2').value;
+    const slp1 = document.getElementById('s_slp1')?.value || "2";
+    const slp2 = document.getElementById('s_slp2')?.value || "2";
     const m = currentMode === 'couple' ? 1 : 0;
     const inflation = fetchVal('set_inf');
     const toReal = (nominalStr) => {
@@ -425,7 +443,7 @@ function gatherEngineInputs(sourceDataObj = null) {
         Case_Life_1_Pension_cont_Ee: fetchRadio('s_has_pen1') === 'Yes' ? fetchVal('s_pee1') : 0,
         Case_Life_1_Pension_cont_Er: fetchRadio('s_has_pen1') === 'Yes' ? fetchVal('s_per1') : 0,
         Case_Life_1_Pension_initial_value: fetchRadio('s_has_pen1') === 'Yes' ? fetchVal('s_pval1') : 0,
-        Case_Life_1_Spend_TFC: document.getElementById('s_tfc1').value,
+        Case_Life_1_Spend_TFC: document.getElementById('s_tfc1')?.value || "No",
         Case_Life_1_Student_loan: fetchRadio('s_has_sl1') === 'Yes' ? fetchVal('s_sl1') : 0,
         Case_Life_1_Student_loan_plan: fetchRadio('s_has_sl1') === 'Yes' ? slp1 : "",
         Case_Life_2_Current_age: fetchVal('s_age2') || fetchVal('s_age1'),
@@ -434,7 +452,7 @@ function gatherEngineInputs(sourceDataObj = null) {
         Case_Life_2_Pension_cont_Ee: (fetchRadio('s_has_pen2') === 'Yes') ? (fetchVal('s_pee2') * m) : 0,
         Case_Life_2_Pension_cont_Er: (fetchRadio('s_has_pen2') === 'Yes') ? (fetchVal('s_per2') * m) : 0,
         Case_Life_2_Pension_initial_value: (fetchRadio('s_has_pen2') === 'Yes') ? (fetchVal('s_pval2') * m) : 0,
-        Case_Life_2_Spend_TFC: document.getElementById('s_tfc2').value,
+        Case_Life_2_Spend_TFC: document.getElementById('s_tfc2')?.value || "No",
         Case_Life_2_Student_loan: (fetchRadio('s_has_sl2') === 'Yes') ? (fetchVal('s_sl2') * m) : 0,
         Case_Life_2_Student_loan_plan: (fetchRadio('s_has_sl2') === 'Yes' && m) ? slp2 : "",
         Case_Joint_Savings_initial_value: fetchVal('s_cash'),
@@ -449,10 +467,10 @@ function gatherEngineInputs(sourceDataObj = null) {
         Case_Joint_Mortgage_multiplier: fetchVal('set_mult'),
         Case_Joint_Mortgage_LTV: fetchVal('set_ltv'),
         Case_Joint_Mortgage_term_maximum: fetchVal('set_term'),
-        Case_Joint_Rent_increases: toReal(document.getElementById('set_rent_inc').value),
-        Returns_House_price_increase: toReal(document.getElementById('set_hp_inc').value),
-        Returns_cash: toReal(document.getElementById('set_cash').value),
-        Returns_pension: toReal(document.getElementById('set_pen').value),
+        Case_Joint_Rent_increases: toReal(document.getElementById('set_rent_inc')?.value || "3.4"),
+        Returns_House_price_increase: toReal(document.getElementById('set_hp_inc')?.value || "3.2"),
+        Returns_cash: toReal(document.getElementById('set_cash')?.value || "2.0"),
+        Returns_pension: toReal(document.getElementById('set_pen')?.value || "5.5"),
         Returns_inflation: inflation
     };
 }
@@ -476,12 +494,24 @@ function validateStep() {
     if (!nextBtn) return;
     let isValid = true;
     let step = stepSequence[currentWizIndex];
-    if (step === 0) isValid = currentMode !== null;
-    else if (step === 3) isValid = document.querySelector('input[name="w_has_sl1"]:checked') !== null;
-    else if (step === 4) isValid = document.querySelector('input[name="w_has_sl2"]:checked') !== null;
-    else if (step === 5) isValid = document.querySelector('input[name="w_has_pen1"]:checked') !== null;
-    else if (step === 6) isValid = document.querySelector('input[name="w_has_pen2"]:checked') !== null;
-    else if (step === 9) isValid = document.querySelector('input[name="w_ftb"]:checked') !== null;
+    
+    if (step === 0) {
+        isValid = currentMode !== null;
+    } else {
+        const currentStepEl = document.getElementById(`step-${step}`);
+        if (currentStepEl) {
+            const radioGroups = currentStepEl.querySelectorAll('input[type="radio"]');
+            if (radioGroups.length > 0) {
+                const names = [...new Set(Array.from(radioGroups).map(r => r.name))];
+                for (let name of names) {
+                    if (!currentStepEl.querySelector(`input[name="${name}"]:checked`)) {
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
     
     if (isValid) {
         nextBtn.disabled = false;
@@ -496,88 +526,87 @@ function validateStep() {
 
 function setMode(mode) {
     currentMode = mode;
-    document.getElementById('w-mode-single').classList.remove('active');
-    document.getElementById('w-mode-couple').classList.remove('active');
-    
+    const modeSingle = document.getElementById('w-mode-single');
+    const modeCouple = document.getElementById('w-mode-couple');
+    if(modeSingle) { modeSingle.classList.remove('active'); modeSingle.setAttribute('aria-pressed', 'false'); }
+    if(modeCouple) { modeCouple.classList.remove('active'); modeCouple.setAttribute('aria-pressed', 'false'); }
+
+    let sideSingle = document.getElementById('side_single');
+    let sideCouple = document.getElementById('side_couple');
+
     if (mode === 'single') {
-        document.getElementById('w-mode-single').classList.add('active');
-        document.getElementById('side_single').checked = true;
+        if(modeSingle) { modeSingle.classList.add('active'); modeSingle.setAttribute('aria-pressed', 'true'); }
+        if(sideSingle) sideSingle.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
         switchPerson('you');
-        stepSequence = [0, 1, 3, 5, 7, 8, 9];
-    } else {
-        document.getElementById('w-mode-couple').classList.add('active');
-        document.getElementById('side_couple').checked = true;
+        stepSequence = [0, 1, 3, 4, 6, 8, 9];
+    } else if (mode === 'couple') {
+        if(modeCouple) { modeCouple.classList.add('active'); modeCouple.setAttribute('aria-pressed', 'true'); }
+        if(sideCouple) sideCouple.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'flex');
+        document.querySelectorAll('.show-partner').forEach(el => el.classList.remove('is-hidden'));
         stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     }
-    
+
+    // Trigger recalculation if engine is available (non-wizard mode)
+    if (typeof updateDynamicUI === 'function') {
+        updateDynamicUI();
+    }
+
     updateWizardProgress();
-    validateStep();
-    if(document.getElementById('wizard-overlay').classList.contains('active') === false) {
-        handleInputChanged();
+    validateStep(); // Ensures next button unlocks properly once selected
+}
+
+function focusFirstWizardField(stepNum) {
+    const stepEl = document.getElementById(`step-${stepNum}`);
+    if (!stepEl) return;
+    if (stepNum === 0) {
+        const card = stepEl.querySelector('.mode-card.active') || stepEl.querySelector('.mode-card');
+        if (card) card.focus();
+        return;
+    }
+    const candidates = stepEl.querySelectorAll('input, select');
+    for (const el of candidates) {
+        if (el.disabled || el.type === 'hidden') continue;
+        if (el.offsetParent === null) continue; // hidden by a display:none ancestor
+        el.focus();
+        break;
     }
 }
 
 function openWizard() {
     currentWizIndex = 0;
-    const map = [
-        ['w_age1','s_age1'], ['w_age2','s_age2'], ['w_ret1','s_ret1'],
-        ['w_sal1','s_sal1'], ['w_sal2','s_sal2'], ['w_cash','s_cash'],
-        ['w_pval1','s_pval1'], ['w_pval2','s_pval2'], ['w_pee1','s_pee1'],
-        ['w_pee2','s_pee2'], ['w_per1','s_per1'], ['w_per2','s_per2'],
-        ['w_sl1','s_sl1'], ['w_sl2','s_sl2'], ['w_slp1','s_slp1'], ['w_slp2','s_slp2'], 
-        ['w_rent','s_rent'], ['w_ex_pre','s_ex_pre'], ['w_hp','s_hp']
-    ];
-    
-    map.forEach(pair => {
-        let elW = document.getElementById(pair[0]);
-        let elS = document.getElementById(pair[1]);
-        if (elW && elS) elW.value = elS.value;
-    });
+    currentMode = null; // Unselected state on launch
 
-    let w_ex_post = document.getElementById('w_ex_post');
-    let s_ex_post = document.getElementById('s_ex_post');
-    if (w_ex_post && s_ex_post) w_ex_post.value = s_ex_post.value;
-
-    const syncRadioReverse = (wName, sName) => {
-        let node = document.querySelector(`input[name="${sName}"]:checked`);
-        if(node) {
-            let target = document.querySelector(`input[name="${wName}"][value="${node.value}"]`);
-            if(target) target.checked = true;
-        }
-    };
-    syncRadioReverse('w_has_sl1', 's_has_sl1');
-    syncRadioReverse('w_has_sl2', 's_has_sl2');
-    syncRadioReverse('w_has_pen1', 's_has_pen1');
-    syncRadioReverse('w_has_pen2', 's_has_pen2');
-    syncRadioReverse('w_ftb', 's_ftb');
-
-    let isSingle = document.getElementById('side_single')?.checked;
-    setMode(isSingle ? 'single' : 'couple'); 
-    toggleWizSL(1); toggleWizSL(2);
-    toggleWizPen(1); toggleWizPen(2);
+    const modeSingle = document.getElementById('w-mode-single');
+    const modeCouple = document.getElementById('w-mode-couple');
+    if(modeSingle) modeSingle.classList.remove('active');
+    if(modeCouple) modeCouple.classList.remove('active');
 
     document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
-    document.getElementById('step-0').classList.add('active');
-    document.getElementById('wiz-back').style.visibility = 'hidden';
-    document.getElementById('wiz-next').innerText = "Next";
-    
+    let step0 = document.getElementById('step-0');
+    if(step0) step0.classList.add('active');
+    let wizBack = document.getElementById('wiz-back');
+    if(wizBack) wizBack.style.visibility = 'hidden';
+    let wizNext = document.getElementById('wiz-next');
+    if(wizNext) wizNext.innerText = "Next";
+
     updateWizardProgress();
     validateStep();
-    
-    document.getElementById('wizard-overlay').classList.add('active');
-    document.getElementById('wiz-scroll').scrollTop = 0;
-    
-    document.getElementById('compare-switch').checked = false;
-    isCompareMode = false;
-    discardWhatIf(); 
+
+    let wizardOverlay = document.getElementById('wizard-overlay');
+    if(wizardOverlay) wizardOverlay.classList.add('active');
+    let wizScroll = document.getElementById('wiz-scroll');
+    if(wizScroll) wizScroll.scrollTop = 0;
+    focusFirstWizardField(0);
 }
 
 function wizardStep(dir) {
     if (dir === 1) {
         validateStep();
-        if (document.getElementById('wiz-next').disabled) return;
+        let wizNext = document.getElementById('wiz-next');
+        if (wizNext && wizNext.disabled) return;
     }
     let prevStep = stepSequence[currentWizIndex];
     let prevEl = document.getElementById(`step-${prevStep}`);
@@ -587,7 +616,10 @@ function wizardStep(dir) {
     if (currentWizIndex < 0) currentWizIndex = 0;
     
     if (currentWizIndex >= stepSequence.length) {
-        try { saveWizardAndClose(); } catch(e) { document.getElementById('wizard-overlay').classList.remove('active'); }
+        try { saveWizardAndClose(); } catch(e) {
+            let wizardOverlay = document.getElementById('wizard-overlay');
+            if(wizardOverlay) wizardOverlay.classList.remove('active');
+        }
         return;
     }
 
@@ -598,18 +630,19 @@ function wizardStep(dir) {
     let scrollEl = document.getElementById('wiz-scroll');
     if (scrollEl) scrollEl.scrollTop = 0;
     
-    document.getElementById('wiz-back').style.visibility = currentWizIndex === 0 ? 'hidden' : 'visible';
-    document.getElementById('wiz-next').innerText = currentWizIndex === stepSequence.length - 1 ? "Finish" : "Next";
-    
+    let wizBack = document.getElementById('wiz-back');
+    if(wizBack) wizBack.style.visibility = currentWizIndex === 0 ? 'hidden' : 'visible';
+    let wizNext = document.getElementById('wiz-next');
+    if(wizNext) wizNext.innerText = currentWizIndex === stepSequence.length - 1 ? "Finish" : "Next";
+
     updateWizardProgress();
     validateStep();
+    focusFirstWizardField(nextStep);
 }
 
 function closeWizard() {
-    let overlay = document.getElementById('wizard-overlay');
-    if(overlay) overlay.classList.remove('active');
-    if (!currentMode) currentMode = document.getElementById('side_single')?.checked ? 'single' : 'couple';
-    forceCalculation();
+    let wizardOverlay = document.getElementById('wizard-overlay');
+    if(wizardOverlay) wizardOverlay.classList.remove('active');
 }
 
 function saveWizardAndClose() {
@@ -626,15 +659,15 @@ function saveWizardAndClose() {
         map.forEach(pair => {
             let el1 = document.getElementById(pair[0]);
             let el2 = document.getElementById(pair[1]);
-            if (el1 && el2) el2.value = el1.value;
+            if (el1 && el2 && el1.value) el2.value = el1.value;
         });
 
         let w_ex_post = document.getElementById('w_ex_post');
         let s_ex_post = document.getElementById('s_ex_post');
-        if (w_ex_post && s_ex_post) s_ex_post.value = w_ex_post.value;
+        if (w_ex_post && s_ex_post && w_ex_post.value) s_ex_post.value = w_ex_post.value;
         
         let w_hp = document.getElementById('w_hp');
-        if (w_hp) {
+        if (w_hp && w_hp.value) {
             let hpStr = w_hp.value.replace(/,/g, '').replace(/£/g, '');
             let hpVal = parseFloat(hpStr) || 0;
             let s_maint = document.getElementById('s_maint');
@@ -642,33 +675,33 @@ function saveWizardAndClose() {
         }
 
         let s_fees = document.getElementById('s_fees');
-        if(s_fees) s_fees.value = "5,000";
+        if(s_fees && !s_fees.value) s_fees.value = "5,000";
 
         let s_sp1 = document.getElementById('s_sp1');
-        if(s_sp1) s_sp1.value = "12,000";
+        if(s_sp1 && !s_sp1.value) s_sp1.value = "12,000";
         let s_sp2 = document.getElementById('s_sp2');
-        if(s_sp2) s_sp2.value = "12,000";
+        if(s_sp2 && !s_sp2.value) s_sp2.value = "12,000";
         
         let s_tfc1 = document.getElementById('s_tfc1');
-        if(s_tfc1) s_tfc1.value = "No";
+        if(s_tfc1 && !s_tfc1.value) s_tfc1.value = "No";
         let s_tfc2 = document.getElementById('s_tfc2');
-        if(s_tfc2) s_tfc2.value = "No";
+        if(s_tfc2 && !s_tfc2.value) s_tfc2.value = "No";
         
         let s_save_pen = document.getElementById('s_save_pen');
-        if(s_save_pen) s_save_pen.value = "0";
+        if(s_save_pen && !s_save_pen.value) s_save_pen.value = "0";
 
         const hasPen1Node = document.querySelector('input[name="w_has_pen1"]:checked');
         if(!hasPen1Node || hasPen1Node.value !== 'Yes') {
-            if(document.getElementById('s_pval1')) document.getElementById('s_pval1').value = "0";
-            if(document.getElementById('s_pee1')) document.getElementById('s_pee1').value = "0";
-            if(document.getElementById('s_per1')) document.getElementById('s_per1').value = "0";
+            let pval1 = document.getElementById('s_pval1'); if(pval1 && !pval1.value) pval1.value = "0";
+            let pee1 = document.getElementById('s_pee1'); if(pee1 && !pee1.value) pee1.value = "0";
+            let per1 = document.getElementById('s_per1'); if(per1 && !per1.value) per1.value = "0";
         }
         
         const hasPen2Node = document.querySelector('input[name="w_has_pen2"]:checked');
         if(!hasPen2Node || hasPen2Node.value !== 'Yes') {
-            if(document.getElementById('s_pval2')) document.getElementById('s_pval2').value = "0";
-            if(document.getElementById('s_pee2')) document.getElementById('s_pee2').value = "0";
-            if(document.getElementById('s_per2')) document.getElementById('s_per2').value = "0";
+            let pval2 = document.getElementById('s_pval2'); if(pval2 && !pval2.value) pval2.value = "0";
+            let pee2 = document.getElementById('s_pee2'); if(pee2 && !pee2.value) pee2.value = "0";
+            let per2 = document.getElementById('s_per2'); if(per2 && !per2.value) per2.value = "0";
         }
 
         const syncRadio = (name, idPrefix) => {
@@ -712,7 +745,8 @@ function openSettings() {
     settingsInputs.forEach(input => {
         savedSettings[input.id] = (input.type === 'checkbox' || input.type === 'radio') ? input.checked : input.value;
     });
-    document.getElementById('settings-overlay').classList.add('active'); 
+    const settingsOverlay = document.getElementById('settings-overlay');
+    if(settingsOverlay) settingsOverlay.classList.add('active'); 
 }
 
 function cancelSettings() { 
@@ -724,40 +758,93 @@ function cancelSettings() {
             input.value = savedSettings[input.id];
         }
     });
-    document.getElementById('settings-overlay').classList.remove('active'); 
+    const settingsOverlay = document.getElementById('settings-overlay');
+    if(settingsOverlay) settingsOverlay.classList.remove('active'); 
 }
 
 function saveSettings() {
-    document.getElementById('settings-overlay').classList.remove('active');
+    const settingsOverlay = document.getElementById('settings-overlay');
+    if(settingsOverlay) settingsOverlay.classList.remove('active');
     handleInputChanged(); 
 }
 
-window.onload = function() {
+window.addEventListener('load', function() {
     const sidebarInputs = document.querySelectorAll('.sidebar input, .sidebar select');
     sidebarInputs.forEach(input => {
         input.addEventListener('input', handleInputChanged);
     });
 
-    openWizard();
+    // Check if skipWizard parameter is passed via sample input button
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('skipWizard') === 'true') {
+        const overlay = document.getElementById('wizard-overlay');
+        if (overlay) overlay.classList.remove('active');
+
+        // Set default sample values
+        const defaults = {
+            's_age1': '29',
+            's_age2': '31',
+            's_ret1': '68',
+            's_sal1': '42000',
+            's_sal2': '42000',
+            's_hp': '400000',
+            's_rent': '1000',
+            's_ex_pre': '1500',
+            's_ex_post': '1200',
+            's_cash': '15000',
+            's_maint': '4000',
+            's_fees': '5000',
+            's_has_sl1_n': true,
+            's_has_sl2_n': true,
+            's_has_pen1_y': true,
+            's_has_pen2_y': true,
+            's_pval1': '25000',
+            's_pval2': '25000',
+            's_pee1': '5',
+            's_pee2': '5',
+            's_per1': '3',
+            's_per2': '3',
+            's_sp1': '12000',
+            's_sp2': '12000',
+            's_tfc1': 'No',
+            's_tfc2': 'No',
+            's_ftb_y': true,
+            's_slp1': '2',
+            's_slp2': '2'
+        };
+
+        for (const [id, value] of Object.entries(defaults)) {
+            const el = document.getElementById(id);
+            if (el) {
+                if (el.type === 'radio' || el.type === 'checkbox') {
+                    el.checked = value === true;
+                } else {
+                    el.value = value;
+                }
+            }
+        }
+
+        setMode('couple');
+        toggleSL();
+        togglePen();
+        updateDynamicUI();
+        forceCalculation();
+    } else {
+        openWizard();
+    }
 
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => { runCalculation() }, 200);
     });
-
-    setTimeout(() => {
-        const overlay = document.getElementById('wizard-overlay');
-        if (!overlay || !overlay.classList.contains('active')) {
-            if (!currentMode) currentMode = document.getElementById('side_single')?.checked ? 'single' : 'couple';
-            forceCalculation();
-        }
-    }, 150);
-};
+});
 
 function handleInputChanged() {
-    if(document.getElementById('wizard-overlay').classList.contains('active')) return;
-    document.getElementById('results-pane').classList.add('stale');
+    const wizardOverlay = document.getElementById('wizard-overlay');
+    if(wizardOverlay && wizardOverlay.classList.contains('active')) return;
+    const resultsPane = document.getElementById('results-pane');
+    if(resultsPane) resultsPane.classList.add('stale');
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => { runCalculation(); }, 400); 
 }
@@ -780,7 +867,8 @@ function runCalculation() {
         results = engine.runFullProjection();
     } catch(e) { return; }
 
-    document.getElementById('results-pane').classList.remove('stale');
+    const resultsPane = document.getElementById('results-pane');
+    if(resultsPane) resultsPane.classList.remove('stale');
     
     const heroContainer = document.getElementById('hero-card-container');
     const timingContainer = document.getElementById('timing-card-container');
@@ -813,12 +901,12 @@ function runCalculation() {
         const currentYear = new Date().getFullYear();
         const purchaseYear = currentYear + purcTerm;
         const age1AtPurc = inputs.Case_Life_1_Current_age + purcTerm;
-        let titleText = `Buy at age ${age1AtPurc}`;
+        let titleText = `Buy when you are aged ${age1AtPurc}`;
         let descText = `You can afford to buy this home in <strong>${purchaseYear}</strong>.`;
 
         if (currentMode === 'couple') {
             const age2AtPurc = (getVal('s_age2') || getVal('s_age1')) + purcTerm;
-            titleText = `Buy at ages ${age1AtPurc} & ${age2AtPurc}`;
+            titleText = `Buy when you are aged ${age1AtPurc}`;
             descText = `You can afford to buy this home in <strong>${purchaseYear}</strong>, when your partner would be <strong>${age2AtPurc}</strong>.`;
         }
         if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); timingContainer.style.display = 'flex'; }
@@ -827,23 +915,28 @@ function runCalculation() {
     }
 
     let maxW = Math.max(buyEndVal, rentEndVal, 1);
-    if(document.getElementById('ui-buy-wealth')) document.getElementById('ui-buy-wealth').innerText = formatSigFigDown(buyEndVal);
-    if(document.getElementById('ui-buy-bar')) document.getElementById('ui-buy-bar').style.width = `${(buyEndVal / maxW) * 100}%`;
-    if(document.getElementById('ui-rent-wealth')) document.getElementById('ui-rent-wealth').innerText = formatSigFigDown(rentEndVal);
-    if(document.getElementById('ui-rent-bar')) document.getElementById('ui-rent-bar').style.width = `${(rentEndVal / maxW) * 100}%`;
+    const uiBuyWealth = document.getElementById('ui-buy-wealth');
+    if(uiBuyWealth) uiBuyWealth.innerText = formatSigFigDown(buyEndVal);
+    const uiBuyBar = document.getElementById('ui-buy-bar');
+    if(uiBuyBar) uiBuyBar.style.width = `${(buyEndVal / maxW) * 100}%`;
+    const uiRentWealth = document.getElementById('ui-rent-wealth');
+    if(uiRentWealth) uiRentWealth.innerText = formatSigFigDown(rentEndVal);
+    const uiRentBar = document.getElementById('ui-rent-bar');
+    if(uiRentBar) uiRentBar.style.width = `${(rentEndVal / maxW) * 100}%`;
 
     let benBox = document.getElementById('ui-benefit-box');
     if(benBox) benBox.classList.remove('negative', 'neutral');
     let baseDelta = document.getElementById('ui-compare-delta');
     
+    const uiBenefitVal = document.getElementById('ui-benefit-val');
     if (benefit > 100) {
-        if(document.getElementById('ui-benefit-val')) document.getElementById('ui-benefit-val').innerText = "+" + formatSigFigDown(benefit) + " (buying wins)";
+        if(uiBenefitVal) uiBenefitVal.innerText = "+" + formatSigFigDown(benefit) + " (buying wins)";
     } else if (benefit < -100) {
         if(benBox) benBox.classList.add('negative');
-        if(document.getElementById('ui-benefit-val')) document.getElementById('ui-benefit-val').innerText = formatSigFigDown(Math.abs(benefit)) + " (renting wins)";
+        if(uiBenefitVal) uiBenefitVal.innerText = formatSigFigDown(Math.abs(benefit)) + " (renting wins)";
     } else {
         if(benBox) benBox.classList.add('neutral');
-        if(document.getElementById('ui-benefit-val')) document.getElementById('ui-benefit-val').innerText = "Break-even scenario";
+        if(uiBenefitVal) uiBenefitVal.innerText = "Break-even scenario";
     }
 
     if (isCompareMode && baselineResults) {
@@ -871,8 +964,10 @@ function runCalculation() {
     }
 
     if (purcTerm >= 0) {
-        if(document.getElementById('prop-breakdown-content')) document.getElementById('prop-breakdown-content').style.display = 'grid';
-        if(document.getElementById('prop-breakdown-empty')) document.getElementById('prop-breakdown-empty').style.display = 'none';
+        const propBreakdownContent = document.getElementById('prop-breakdown-content');
+        if(propBreakdownContent) propBreakdownContent.style.display = 'grid';
+        const propBreakdownEmpty = document.getElementById('prop-breakdown-empty');
+        if(propBreakdownEmpty) propBreakdownEmpty.style.display = 'none';
 
         let totalCost = results.buyHouseCostEval[purcTerm] || 0;
         let houseVal = results.buyHouseVal[purcTerm] || 0;
@@ -888,13 +983,20 @@ function runCalculation() {
         let mortgageR = roundSigFigDown(mortgage);
         let cashNeededR = Math.max(0, totalCostR - mortgageR);
 
-        if(document.getElementById('ui-prop-price')) document.getElementById('ui-prop-price').innerText = formatMoney.format(houseValR);
-        if(document.getElementById('ui-prop-sdlt')) document.getElementById('ui-prop-sdlt').innerText = formatMoney.format(sdltR);
-        if(document.getElementById('ui-prop-fees')) document.getElementById('ui-prop-fees').innerText = formatMoney.format(feesR);
-        if(document.getElementById('ui-prop-total')) document.getElementById('ui-prop-total').innerText = formatMoney.format(totalCostR);
-        if(document.getElementById('ui-prop-total-funding')) document.getElementById('ui-prop-total-funding').innerText = formatMoney.format(totalCostR);
-        if(document.getElementById('ui-legend-mort')) document.getElementById('ui-legend-mort').innerText = formatMoney.format(mortgageR);
-        if(document.getElementById('ui-legend-cash')) document.getElementById('ui-legend-cash').innerText = formatMoney.format(cashNeededR);
+        const uiPropPrice = document.getElementById('ui-prop-price');
+        if(uiPropPrice) uiPropPrice.innerText = formatMoney.format(houseValR);
+        const uiPropSdlt = document.getElementById('ui-prop-sdlt');
+        if(uiPropSdlt) uiPropSdlt.innerText = formatMoney.format(sdltR);
+        const uiPropFees = document.getElementById('ui-prop-fees');
+        if(uiPropFees) uiPropFees.innerText = formatMoney.format(feesR);
+        const uiPropTotal = document.getElementById('ui-prop-total');
+        if(uiPropTotal) uiPropTotal.innerText = formatMoney.format(totalCostR);
+        const uiPropTotalFunding = document.getElementById('ui-prop-total-funding');
+        if(uiPropTotalFunding) uiPropTotalFunding.innerText = formatMoney.format(totalCostR);
+        const uiLegendMort = document.getElementById('ui-legend-mort');
+        if(uiLegendMort) uiLegendMort.innerText = formatMoney.format(mortgageR);
+        const uiLegendCash = document.getElementById('ui-legend-cash');
+        if(uiLegendCash) uiLegendCash.innerText = formatMoney.format(cashNeededR);
 
         let pricePct = totalCostR > 0 ? (houseValR / totalCostR) * 100 : 0;
         let sdltPct = totalCostR > 0 ? (sdltR / totalCostR) * 100 : 0;
@@ -916,11 +1018,12 @@ function runCalculation() {
         if(fundCashBar) fundCashBar.style.width = `${cashPct}%`;
 
     } else {
-        if(document.getElementById('prop-breakdown-content')) document.getElementById('prop-breakdown-content').style.display = 'none';
-        if(document.getElementById('prop-breakdown-empty')) document.getElementById('prop-breakdown-empty').style.display = 'block';
+        const propBreakdownContent = document.getElementById('prop-breakdown-content');
+        if(propBreakdownContent) propBreakdownContent.style.display = 'none';
+        const propBreakdownEmpty = document.getElementById('prop-breakdown-empty');
+        if(propBreakdownEmpty) propBreakdownEmpty.style.display = 'block';
     }
 
-    // --- Projections chart / table data ---
     const cLabels = results.labels.slice(0, maxIdx);
     const cBuy = results.buyWealth.slice(0, maxIdx);
     const cRent = results.rentWealth.slice(0, maxIdx);
@@ -965,7 +1068,9 @@ function renderProjectionsView(viewType) {
 window.renderProjectionsView = renderProjectionsView;
 
 function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge, maxIdx) {
-    const ctx = document.getElementById('wealthChart').getContext('2d');
+    const canvas = document.getElementById('wealthChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
     if (currentChart) currentChart.destroy();
 
     const eventMarkersPlugin = {

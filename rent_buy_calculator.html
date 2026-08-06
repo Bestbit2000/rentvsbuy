@@ -29,7 +29,7 @@
         </a>
         <div class="header-actions desktop-only">
             <div class="compare-toggle">
-                <label for="compare-switch">Compare scenarios</label>
+                <label for="compare-switch">Compare a scenario</label>
                 <input type="checkbox" id="compare-switch" onchange="toggleCompareMode(); const m = document.getElementById('compare-switch-mob'); if(m) m.checked = this.checked;">
             </div>
             <button class="settings-btn" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
@@ -72,16 +72,15 @@
     <div class="wrapper">
         
         <div class="sidebar" id="main-sidebar">
-            
             <div class="sidebar-scroll-area">
-                <div class="sidebar-header" style="flex-wrap: wrap; gap: 10px;">
-                    <h2>Your current position</h2>
-					<div class="toggle-container" style="width: 100%;">
-						<input type="radio" name="side_mode" id="side_single" value="single" onchange="setMode('single')">
-						<label for="side_single" style="padding: 10px 15px;">Single</label>
-						<input type="radio" name="side_mode" id="side_couple" value="couple" checked onchange="setMode('couple')">
-						<label for="side_couple" style="padding: 10px 15px;">Couple</label>
-					</div>
+                <div class="sidebar-header">
+                    <h2 id="sidebar-title">Current scenario</h2>
+                    <div class="toggle-container" style="width: 100%;">
+                        <input type="radio" name="side_mode" id="side_single" value="single" onchange="setMode('single')">
+                        <label for="side_single" style="padding: 10px 15px;">Single</label>
+                        <input type="radio" name="side_mode" id="side_couple" value="couple" onchange="setMode('couple')">
+                        <label for="side_couple" style="padding: 10px 15px;">Couple</label>
+                    </div>
                 </div>
 
                 <details open>
@@ -89,20 +88,20 @@
                     <div class="accordion-content">
                         <div class="input-row-single">
                             <label>House price</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_hp" value="550,000" class="comma-format clamp-10m compare-track" data-label="House price"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m compare-track" data-label="House price"></div>
                         </div>
                         <div class="input-row-single">
                             <label>Purchase costs</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_fees" value="5,000" class="comma-format clamp-10m compare-track" data-label="Purchase costs"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_fees" placeholder="e.g. 5,000" class="comma-format clamp-10m compare-track" data-label="Purchase costs"></div>
                         </div>
                         <div class="input-row-single">
                             <label>Annual maintenance</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_maint" value="5,500" class="comma-format clamp-10m compare-track" data-label="Annual maintenance"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_maint" placeholder="e.g. 5,500" class="comma-format clamp-10m has-suffix compare-track" data-label="Annual maintenance"><span class="suffix">p.a.</span></div>
                         </div>
                         <div class="input-row-single">
                             <label>First time buyer?</label>
                             <div class="toggle-container">
-                                <input type="radio" name="s_ftb" id="s_ftb_y" value="Yes" checked class="compare-track" data-label="First time buyer" onchange="handleInputChanged()">
+                                <input type="radio" name="s_ftb" id="s_ftb_y" value="Yes" class="compare-track" data-label="First time buyer" onchange="handleInputChanged()">
                                 <label for="s_ftb_y">Yes</label>
                                 <input type="radio" name="s_ftb" id="s_ftb_n" value="No" class="compare-track" data-label="First time buyer" onchange="handleInputChanged()">
                                 <label for="s_ftb_n">No</label>
@@ -115,8 +114,8 @@
                     <summary>Renting costs</summary>
                     <div class="accordion-content">
                         <div class="input-row-single">
-                            <label>Monthly rent</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_rent" value="820" class="comma-format clamp-1m compare-track" data-label="Monthly rent"></div>
+                            <label>Rent</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_rent" placeholder="e.g. 820" class="comma-format clamp-1m has-suffix compare-track" data-label="Monthly rent"><span class="suffix">/ month</span></div>
                         </div>
                     </div>
                 </details>
@@ -125,12 +124,12 @@
                     <summary>Living expenses</summary>
                     <div class="accordion-content">
                         <div class="input-row-single">
-                            <label><span id="lbl_s_ex_pre">Living expenses pre-retirement (age 68 for you)</span></label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_ex_pre" value="1,400" class="comma-format clamp-1m has-suffix compare-track" data-label="Pre-retirement expenses"><span class="suffix">/ mo</span></div>
+                            <label><span id="lbl_s_ex_pre">Living expenses pre-retirement</span></label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_ex_pre" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix compare-track" data-label="Pre-retirement expenses"><span class="suffix">/ month</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label><span id="lbl_s_ex_post">Living expenses post-retirement (age 68 for you)</span></label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_ex_post" value="1,400" class="comma-format clamp-1m has-suffix compare-track" data-label="Post-retirement expenses"><span class="suffix">/ mo</span></div>
+                            <label><span id="lbl_s_ex_post">Living expenses post-retirement</span></label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_ex_post" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix compare-track" data-label="Post-retirement expenses"><span class="suffix">/ month</span></div>
                         </div>
                     </div>
                 </details>
@@ -139,7 +138,7 @@
                     <summary>Personal details</summary>
                     <div class="accordion-content">
                         <div class="tab-navigation partner-toggle-wrapper">
-                            <input type="radio" name="s_prof1_tab" id="s_prof1_you" checked onchange="switchPerson('you')">
+                            <input type="radio" name="s_prof1_tab" id="s_prof1_you" onchange="switchPerson('you')">
                             <label for="s_prof1_you">You</label>
                             <input type="radio" name="s_prof1_tab" id="s_prof1_part" onchange="switchPerson('partner')">
                             <label for="s_prof1_part">Partner</label>
@@ -147,29 +146,29 @@
 
                         <div class="input-row-single show-you">
                             <label>Current age</label>
-                            <div class="input-wrapper"><input type="number" id="s_age1" value="29" class="clamp-age calc-ret-trigger has-suffix compare-track" data-label="Current age (You)"><span class="suffix">yrs</span></div>
+                            <div class="input-wrapper"><input type="number" id="s_age1" placeholder="e.g. 29" class="clamp-age calc-ret-trigger compare-track" data-label="Current age (You)"></div>
                         </div>
                         <div class="input-row-single show-partner is-hidden">
                             <label>Current age</label>
-                            <div class="input-wrapper"><input type="number" id="s_age2" value="31" class="clamp-age calc-ret-trigger has-suffix compare-track" data-label="Current age (Partner)"><span class="suffix">yrs</span></div>
+                            <div class="input-wrapper"><input type="number" id="s_age2" placeholder="e.g. 31" class="clamp-age calc-ret-trigger compare-track" data-label="Current age (Partner)"></div>
                         </div>
                         
                         <div class="input-row-single show-you">
                             <label>Retirement age</label>
-                            <div class="input-wrapper"><input type="number" id="s_ret1" value="68" class="clamp-ret-age calc-ret-trigger has-suffix compare-track" data-label="Retirement age (You)"><span class="suffix">yrs</span></div>
+                            <div class="input-wrapper"><input type="number" id="s_ret1" placeholder="e.g. 68" class="clamp-ret-age calc-ret-trigger compare-track" data-label="Retirement age (You)"></div>
                         </div>
                         <div class="input-row-single show-partner is-hidden">
                             <label>Retirement age (calculated)</label>
-                            <div class="input-wrapper wrapper-readonly"><input type="text" id="s_ret2" value="70" class="readonly-calc has-suffix" readonly tabindex="-1" title="Calculated automatically"><span class="suffix">yrs</span></div>
+                            <div class="input-wrapper wrapper-readonly"><input type="text" id="s_ret2" placeholder="" class="readonly-calc" readonly tabindex="-1" title="Calculated automatically"></div>
                         </div>
 
                         <div class="input-row-single show-you">
                             <label>Salary before tax</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sal1" value="42,000" class="comma-format clamp-1m has-suffix compare-track" data-label="Salary (You)"><span class="suffix">/ yr</span></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sal1" placeholder="e.g. 42,000" class="comma-format clamp-1m has-suffix compare-track" data-label="Salary (You)"><span class="suffix">p.a.</span></div>
                         </div>
                         <div class="input-row-single show-partner is-hidden">
                             <label>Salary before tax</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sal2" value="42,000" class="comma-format clamp-1m has-suffix compare-track" data-label="Salary (Partner)"><span class="suffix">/ yr</span></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sal2" placeholder="e.g. 42,000" class="comma-format clamp-1m has-suffix compare-track" data-label="Salary (Partner)"><span class="suffix">p.a.</span></div>
                         </div>
 
                         <div class="sub-group-title" style="margin-top: 20px;">Student loan</div>
@@ -178,22 +177,23 @@
                             <div class="input-row-single">
                                 <label>Student loan to repay?</label>
                                 <div class="toggle-container">
-                                    <input type="radio" name="s_has_sl1" id="s_has_sl1_y" value="Yes" checked class="compare-track" data-label="Has student loan (You)" onchange="toggleSL()">
+                                    <input type="radio" name="s_has_sl1" id="s_has_sl1_y" value="Yes" class="compare-track" data-label="Has student loan (You)" onchange="toggleSL()">
                                     <label for="s_has_sl1_y">Yes</label>
                                     <input type="radio" name="s_has_sl1" id="s_has_sl1_n" value="No" class="compare-track" data-label="Has student loan (You)" onchange="toggleSL()">
                                     <label for="s_has_sl1_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_sl_fields1" style="display: block;">
+                            <div id="s_sl_fields1" style="display: none;">
                                 <div class="input-row-single">
                                     <label>Loan debt</label>
-                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sl1" value="20,000" class="comma-format clamp-1m compare-track" data-label="Loan debt (You)"></div>
+                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sl1" placeholder="e.g. 20,000" class="comma-format clamp-1m compare-track" data-label="Loan debt (You)"></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Loan plan</label>
                                     <div class="input-wrapper">
                                         <select id="s_slp1" class="compare-track" data-label="Loan plan (You)">
-                                            <option value="1">Plan 1</option><option selected value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
+                                            <option value="" disabled selected>Select plan</option>
+                                            <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
                                         </select>
                                     </div>
                                 </div>
@@ -204,22 +204,23 @@
                             <div class="input-row-single">
                                 <label>Student loan to repay?</label>
                                 <div class="toggle-container">
-                                    <input type="radio" name="s_has_sl2" id="s_has_sl2_y" value="Yes" checked class="compare-track" data-label="Has student loan (Partner)" onchange="toggleSL()">
+                                    <input type="radio" name="s_has_sl2" id="s_has_sl2_y" value="Yes" class="compare-track" data-label="Has student loan (Partner)" onchange="toggleSL()">
                                     <label for="s_has_sl2_y">Yes</label>
                                     <input type="radio" name="s_has_sl2" id="s_has_sl2_n" value="No" class="compare-track" data-label="Has student loan (Partner)" onchange="toggleSL()">
                                     <label for="s_has_sl2_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_sl_fields2" style="display: block;">
+                            <div id="s_sl_fields2" style="display: none;">
                                 <div class="input-row-single">
                                     <label>Loan debt</label>
-                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sl2" value="20,000" class="comma-format clamp-1m compare-track" data-label="Loan debt (Partner)"></div>
+                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sl2" placeholder="e.g. 20,000" class="comma-format clamp-1m compare-track" data-label="Loan debt (Partner)"></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Loan plan</label>
                                     <div class="input-wrapper">
                                         <select id="s_slp2" class="compare-track" data-label="Loan plan (Partner)">
-                                            <option value="1">Plan 1</option><option selected value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
+                                            <option value="" disabled selected>Select plan</option>
+                                            <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
                                         </select>
                                     </div>
                                 </div>
@@ -232,7 +233,7 @@
                     <summary>Pensions</summary>
                     <div class="accordion-content">
                         <div class="tab-navigation partner-toggle-wrapper">
-                            <input type="radio" name="s_prof2_tab" id="s_prof2_you" checked onchange="switchPerson('you')">
+                            <input type="radio" name="s_prof2_tab" id="s_prof2_you" onchange="switchPerson('you')">
                             <label for="s_prof2_you">You</label>
                             <input type="radio" name="s_prof2_tab" id="s_prof2_part" onchange="switchPerson('partner')">
                             <label for="s_prof2_part">Partner</label>
@@ -242,37 +243,38 @@
                             <div class="input-row-single">
                                 <label>Do you have a pension?</label>
                                 <div class="toggle-container">
-                                    <input type="radio" name="s_has_pen1" id="s_has_pen1_y" value="Yes" checked class="compare-track" data-label="Has pension (You)" onchange="togglePen()">
+                                    <input type="radio" name="s_has_pen1" id="s_has_pen1_y" value="Yes" class="compare-track" data-label="Has pension (You)" onchange="togglePen()">
                                     <label for="s_has_pen1_y">Yes</label>
                                     <input type="radio" name="s_has_pen1" id="s_has_pen1_n" value="No" class="compare-track" data-label="Has pension (You)" onchange="togglePen()">
                                     <label for="s_has_pen1_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_pen_fields1" style="display: block;">
+                            <div id="s_pen_fields1" style="display: none;">
                                 <div class="input-row-single">
                                     <label>Current value</label>
-                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_pval1" value="25,000" class="comma-format clamp-10m compare-track" data-label="Pension value (You)"></div>
+                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_pval1" placeholder="e.g. 25,000" class="comma-format clamp-10m compare-track" data-label="Pension value (You)"></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Your contribution</label>
-                                    <div class="input-wrapper"><input type="number" id="s_pee1" value="5" class="clamp-100 has-suffix compare-track" data-label="Your contribution (You)"><span class="suffix">%</span></div>
+                                    <div class="input-wrapper"><input type="number" id="s_pee1" placeholder="e.g. 5" class="clamp-100 has-suffix compare-track" data-label="Your contribution (You)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Employer contribution</label>
-                                    <div class="input-wrapper"><input type="number" id="s_per1" value="3" class="clamp-100 has-suffix compare-track" data-label="Employer contribution (You)"><span class="suffix">%</span></div>
+                                    <div class="input-wrapper"><input type="number" id="s_per1" placeholder="e.g. 3" class="clamp-100 has-suffix compare-track" data-label="Employer contribution (You)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>State pension</label>
-                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sp1" value="12,000" class="comma-format clamp-1m has-suffix compare-track" data-label="State pension (You)"><span class="suffix">/ yr</span></div>
+                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sp1" placeholder="e.g. 12,000" class="comma-format clamp-1m has-suffix compare-track" data-label="State pension (You)"><span class="suffix">p.a.</span></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Spend tax free cash at retirement?</label>
-                                <div class="input-wrapper" style="width: 100%;">
-                                    <select id="s_tfc1" class="compare-track" data-label="Spend tax free cash (You)">
-                                        <option value="Yes">Yes, for a one-off expense</option>
-                                        <option value="No" selected>No, use as income</option>
-                                    </select>
-                                </div>
+                                    <div class="input-wrapper" style="width: 100%;">
+                                        <select id="s_tfc1" class="compare-track" data-label="Spend tax free cash (You)">
+                                            <option value="" disabled selected>Select option</option>
+                                            <option value="Yes">Yes, for a one-off expense</option>
+                                            <option value="No">No, use as income</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -281,37 +283,38 @@
                             <div class="input-row-single">
                                 <label>Do they have a pension?</label>
                                 <div class="toggle-container">
-                                    <input type="radio" name="s_has_pen2" id="s_has_pen2_y" value="Yes" checked class="compare-track" data-label="Has pension (Partner)" onchange="togglePen()">
+                                    <input type="radio" name="s_has_pen2" id="s_has_pen2_y" value="Yes" class="compare-track" data-label="Has pension (Partner)" onchange="togglePen()">
                                     <label for="s_has_pen2_y">Yes</label>
                                     <input type="radio" name="s_has_pen2" id="s_has_pen2_n" value="No" class="compare-track" data-label="Has pension (Partner)" onchange="togglePen()">
                                     <label for="s_has_pen2_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_pen_fields2" style="display: block;">
+                            <div id="s_pen_fields2" style="display: none;">
                                 <div class="input-row-single">
                                     <label>Current value</label>
-                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_pval2" value="25,000" class="comma-format clamp-10m compare-track" data-label="Pension value (Partner)"></div>
+                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_pval2" placeholder="e.g. 25,000" class="comma-format clamp-10m compare-track" data-label="Pension value (Partner)"></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Your contribution</label>
-                                    <div class="input-wrapper"><input type="number" id="s_pee2" value="5" class="clamp-100 has-suffix compare-track" data-label="Your contribution (Partner)"><span class="suffix">%</span></div>
+                                    <div class="input-wrapper"><input type="number" id="s_pee2" placeholder="e.g. 5" class="clamp-100 has-suffix compare-track" data-label="Your contribution (Partner)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Employer contribution</label>
-                                    <div class="input-wrapper"><input type="number" id="s_per2" value="3" class="clamp-100 has-suffix compare-track" data-label="Employer contribution (Partner)"><span class="suffix">%</span></div>
+                                    <div class="input-wrapper"><input type="number" id="s_per2" placeholder="e.g. 3" class="clamp-100 has-suffix compare-track" data-label="Employer contribution (Partner)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>State pension</label>
-                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sp2" value="12,000" class="comma-format clamp-1m has-suffix compare-track" data-label="State pension (Partner)"><span class="suffix">/ yr</span></div>
+                                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sp2" placeholder="e.g. 12,000" class="comma-format clamp-1m has-suffix compare-track" data-label="State pension (Partner)"><span class="suffix">p.a.</span></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>Spend tax free cash at retirement?</label>
-                                <div class="input-wrapper" style="width: 100%;">
-                                    <select id="s_tfc2" class="compare-track" data-label="Spend tax free cash (Partner)">
-                                        <option value="Yes">Yes, for a one-off expense</option>
-                                        <option value="No" selected>No, use as income</option>
-                                    </select>
-                                </div>
+                                    <div class="input-wrapper" style="width: 100%;">
+                                        <select id="s_tfc2" class="compare-track" data-label="Spend tax free cash (Partner)">
+                                            <option value="" disabled selected>Select option</option>
+                                            <option value="Yes">Yes, for a one-off expense</option>
+                                            <option value="No">No, use as income</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -323,31 +326,26 @@
                     <div class="accordion-content">
                         <div class="input-row-single">
                             <label>Household cash savings</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_cash" value="5,000" class="comma-format clamp-1m compare-track" data-label="Household cash savings"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_cash" placeholder="e.g. 5,000" class="comma-format clamp-1m compare-track" data-label="Household cash savings"></div>
                         </div>
                         <div class="input-row-single">
                             <label>Proportion of spare income to invest into pensions</label>
-                            <div class="input-wrapper"><input type="number" id="s_save_pen" value="0" class="clamp-100 has-suffix compare-track" data-label="Spare income to pension"><span class="suffix">%</span></div>
+                            <div class="input-wrapper"><input type="number" id="s_save_pen" placeholder="e.g. 0" class="clamp-100 has-suffix compare-track" data-label="Spare income to pension"><span class="suffix">%</span></div>
                         </div>
                     </div>
                 </details>
 
-                <!-- Level 3: Destructive Action -->
                 <hr style="border: none; border-top: 1px solid #e0e6ed; margin: 30px 0 15px 0;">
                 <a href="#" class="link-start-over" onclick="event.preventDefault(); window.startOver();">Start over</a>
             </div>
 
-            <!-- Level 1 & 2: Sticky Footer -->
             <div id="compare-actions-footer" class="compare-actions-footer" style="display: none;">
-                <button id="make-base-btn" class="btn-primary btn-make-base" onclick="window.handleSaveBaseScenario()">Save changes as original scenario</button>
+                <button id="make-base-btn" class="btn-primary btn-make-base" onclick="window.handleSaveBaseScenario()" disabled>Save changes as original scenario</button>
                 <a href="#" id="discard-whatif-btn" class="link-reset" onclick="event.preventDefault(); discardWhatIf();">Reset to original scenario</a>
             </div>
-            
         </div>
         
         <div class="main-content" id="results-pane">
-
-            <!-- Mobile Select Dropdown for Tabs -->
             <div class="mobile-tabs-container">
                 <select id="mobile-tab-select" class="custom-select" onchange="const btn = document.querySelector('.tab-btn[onclick*=\'' + this.value + '\']'); if(btn) btn.click();">
                     <option value="overview">Overview</option>
@@ -357,7 +355,6 @@
                 </select>
             </div>
 
-            <!-- Desktop Tabs -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab(this, 'overview')">Overview</button>
                 <button class="tab-btn" onclick="switchTab(this, 'property')">Property details</button>
@@ -365,7 +362,6 @@
                 <button class="tab-btn" id="tab-changes" onclick="switchTab(this, 'changes')" style="display: none;">Your changes</button>
             </div>
 
-            <!-- OVERVIEW VIEW -->
             <div id="view-overview" class="view-section active">
                 <h3 class="section-heading" style="margin-top: 0;">The verdict</h3>
                 <div class="compare-grid">
@@ -429,12 +425,9 @@
                 </div>
             </div>
 
-            <!-- PROPERTY DETAILS VIEW -->
 			<div id="view-property" class="view-section">
 				<div class="insight-card prop-insight-card" id="prop-card">
 					<div id="prop-breakdown-content" class="prop-breakdown-wrapper">
-						
-						<!-- Cost Section -->
 						<div class="prop-compare-section">
 							<h4 class="prop-compare-row-heading">Purchase Costs</h4>
 							<div class="compare-grid">
@@ -452,7 +445,7 @@
 												<span class="prop-panel-icon" aria-hidden="true">
 													<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
 												</span>
-												Total purchase costs
+												How much it will cost
 											</div>
 											<div class="cost-bar">
 												<div class="cost-price" id="ui-cost-price-bar" style="width: 0%;"></div>
@@ -460,9 +453,18 @@
 												<div class="cost-fees" id="ui-cost-fees-bar" style="width: 0%;"></div>
 											</div>
 											<div class="funding-legend">
-												<div class="legend-item"><span class="legend-color price-color"></span> House price <span id="ui-prop-price">£0</span></div>
-												<div class="legend-item"><span class="legend-color sdlt-color"></span> Stamp duty <span id="ui-prop-sdlt">£0</span></div>
-												<div class="legend-item"><span class="legend-color fees-color"></span> Purchase costs <span id="ui-prop-fees">£0</span></div>
+												<div class="legend-item-row">
+													<div class="legend-label-group"><span class="legend-color price-color"></span> House price</div>
+													<span id="ui-prop-price" class="legend-value">£0</span>
+												</div>
+												<div class="legend-item-row">
+													<div class="legend-label-group"><span class="legend-color sdlt-color"></span> Stamp duty</div>
+													<span id="ui-prop-sdlt" class="legend-value">£0</span>
+												</div>
+												<div class="legend-item-row">
+													<div class="legend-label-group"><span class="legend-color fees-color"></span> Purchase costs</div>
+													<span id="ui-prop-fees" class="legend-value">£0</span>
+												</div>
 											</div>
 											<div class="prop-panel-divider"></div>
 											<div class="prop-total-box cost-total-box">
@@ -473,10 +475,8 @@
 									</div>
 								</div>
 							</div>
-
 						</div>
 						
-						<!-- Funding Section -->
 						<div class="prop-compare-section">
 							<h4 class="prop-compare-row-heading">Funding Source</h4>
 							<div class="compare-grid">
@@ -494,15 +494,21 @@
 												<span class="prop-panel-icon" aria-hidden="true">
 													<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17 9V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2"></path><path d="M18 12h.01"></path><path d="M13 12a4 4 0 0 0 0 8h6a1 1 0 0 0 1-1z"></path></svg>
 												</span>
-												Where the money comes from
+												Source of money
 											</div>
 											<div class="funding-bar">
 												<div class="fund-mortgage" id="ui-fund-mort-bar" style="width: 0%;"></div>
 												<div class="fund-cash" id="ui-fund-cash-bar" style="width: 0%;"></div>
 											</div>
 											<div class="funding-legend">
-												<div class="legend-item"><span class="legend-color mort-color"></span> Mortgage <span id="ui-legend-mort">£0</span></div>
-												<div class="legend-item"><span class="legend-color cash-color"></span> Cash <span id="ui-legend-cash">£0</span></div>
+												<div class="legend-item-row">
+													<div class="legend-label-group"><span class="legend-color mort-color"></span> Mortgage</div>
+													<span id="ui-legend-mort" class="legend-value">£0</span>
+												</div>
+												<div class="legend-item-row">
+													<div class="legend-label-group"><span class="legend-color cash-color"></span> Cash</div>
+													<span id="ui-legend-cash" class="legend-value">£0</span>
+												</div>
 											</div>
 											<div class="prop-panel-divider"></div>
 											<div class="prop-total-box funding-total-box">
@@ -514,7 +520,6 @@
 								</div>
 							</div>
 						</div>
-
 					</div>
 
 					<div id="prop-breakdown-empty" class="prop-empty-state" style="display: none;">
@@ -526,21 +531,15 @@
 					</div>
 				</div>
 			</div>
-            <!-- PROJECTIONS VIEW -->
+
             <div id="view-projections" class="view-section">
-                
                 <div class="projections-controls-row">
-                    <!-- Compare Mode View Controls -->
                     <div id="projections-compare-controls" style="display: none; align-items: center; gap: 15px;">
-                        <span class="desktop-only" style="font-weight: bold; color: var(--ifoa-blue);">Compare scenarios:</span>
-                        
-                        <!-- Mobile Select for Compare Mode View -->
+                        <span class="desktop-only" style="font-weight: bold; color: var(--ifoa-blue);">Show scenario:</span>
                         <select id="mobile-proj-compare-select" class="mobile-only custom-select" onchange="syncProjViewSelect(this.value)">
                             <option value="revised">New scenario</option>
                             <option value="current">Original scenario</option>
                         </select>
-
-                        <!-- Desktop Toggle for Compare Mode View -->
                         <div class="toggle-container desktop-only" style="width: auto;">
                             <input type="radio" name="proj_compare_view" id="pcv_revised" value="revised" checked onchange="syncProjViewSelect('revised')">
                             <label for="pcv_revised" style="padding: 10px 15px;">New scenario</label>
@@ -548,8 +547,6 @@
                             <label for="pcv_current" style="padding: 10px 15px;">Original scenario</label>
                         </div>
                     </div>
-
-                    <!-- Graph / Table Toggle -->
                     <div class="data-view-controls">
                         <div class="toggle-container" style="width: auto;">
                             <input type="radio" name="chart_view" id="show_graph" value="graph" checked onchange="toggleDataView('graph')">
@@ -560,7 +557,6 @@
                     </div>
                 </div>
 
-                <!-- Main Chart Wrapper (Used for Revised or Current Plan) -->
                 <div id="proj-main-wrapper">
                     <div class="chart-container" id="graph-container">
                         <div class="custom-legend" id="main-chart-legend">
@@ -584,7 +580,6 @@
                 </div>
             </div>
 
-            <!-- SCENARIO CHANGES VIEW -->
             <div id="view-changes" class="view-section">
                 <div class="insights-grid">
                     <div class="insight-card" id="compare-summary-card">
@@ -596,8 +591,7 @@
                         </div>
                         <div id="compare-summary-block" style="display: none;">
                             <p style="color: #666; margin-top: 0; margin-bottom: 15px; font-size: 0.95rem;">Here is how this comparison differs from your Original scenario:</p>
-                            <ul id="compare-changes-list" class="changes-list">
-                            </ul>
+                            <ul id="compare-changes-list" class="changes-list"></ul>
                         </div>
                         <div id="no-changes-msg" style="display:none; text-align:center; padding: 30px 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd; color: #777; font-style: italic;">
                             No differences to show. Change some inputs on the left while comparing scenarios to see the impact.
@@ -608,7 +602,6 @@
         </div>
     </div>
     
-    <!-- ACCESSIBILITY MODAL -->
     <div class="modal-overlay" id="a11y-overlay">
         <div class="modal-card">
             <div class="modal-header">
@@ -616,180 +609,45 @@
                 <button class="close-modal" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="input-row-single" style="margin-bottom: 20px;">
-                    <label>Dark mode</label>
-                    <div class="toggle-container">
-                        <input type="radio" name="a11y_dark" id="a11y_dark_off" checked onchange="document.body.classList.remove('dark-mode'); window.saveA11ySetting('dark', 'off');">
-                        <label for="a11y_dark_off">Off</label>
-                        <input type="radio" name="a11y_dark" id="a11y_dark_on" onchange="document.body.classList.add('dark-mode'); window.saveA11ySetting('dark', 'on');">
-                        <label for="a11y_dark_on">On</label>
-                    </div>
-                </div>
-                <div class="input-row-single" style="margin-bottom: 20px;">
-                    <label>Dyslexia-friendly font</label>
-                    <div class="toggle-container">
-                        <input type="radio" name="a11y_font" id="a11y_font_off" checked onchange="document.body.classList.remove('dyslexia-font'); window.saveA11ySetting('font', 'off');">
-                        <label for="a11y_font_off">Off</label>
-                        <input type="radio" name="a11y_font" id="a11y_font_on" onchange="document.body.classList.add('dyslexia-font'); window.saveA11ySetting('font', 'on');">
-                        <label for="a11y_font_on">On</label>
-                    </div>
-                </div>
-                <div class="input-row-single" style="margin-bottom: 20px;">
-                    <label>Reduce motion</label>
-                    <div class="toggle-container">
-                        <input type="radio" name="a11y_motion" id="a11y_motion_off" checked onchange="document.body.classList.remove('reduce-motion'); window.saveA11ySetting('motion', 'off');">
-                        <label for="a11y_motion_off">Off</label>
-                        <input type="radio" name="a11y_motion" id="a11y_motion_on" onchange="document.body.classList.add('reduce-motion'); window.saveA11ySetting('motion', 'on');">
-                        <label for="a11y_motion_on">On</label>
-                    </div>
-                </div>
-                <div class="input-row-single" style="margin-bottom: 20px;">
-                    <label>Text size</label>
-                    <div class="toggle-container">
-                        <input type="radio" name="a11y_size" id="a11y_size_normal" checked onchange="document.documentElement.classList.remove('text-large', 'text-xlarge'); window.saveA11ySetting('size', 'normal');">
-                        <label for="a11y_size_normal">Normal</label>
-                        <input type="radio" name="a11y_size" id="a11y_size_large" onchange="document.documentElement.classList.remove('text-xlarge'); document.documentElement.classList.add('text-large'); window.saveA11ySetting('size', 'large');">
-                        <label for="a11y_size_large">Large</label>
-                        <input type="radio" name="a11y_size" id="a11y_size_xl" onchange="document.documentElement.classList.remove('text-large'); document.documentElement.classList.add('text-xlarge'); window.saveA11ySetting('size', 'xl');">
-                        <label for="a11y_size_xl">Extra large</label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" style="justify-content: flex-end;">
+				<div class="a11y-row">
+					<label class="a11y-row-label" for="a11y_dark_toggle">Dark mode</label>
+					<label class="a11y-switch" style="margin: 0;">
+						<input type="checkbox" id="a11y_dark_toggle" onchange="document.body.classList.toggle('dark-mode', this.checked); window.saveA11ySetting('dark', this.checked ? 'on' : 'off');">
+						<span class="a11y-slider"></span>
+					</label>
+				</div>
+				<div class="a11y-row">
+					<label class="a11y-row-label" for="a11y_font_toggle">Dyslexia-friendly font</label>
+					<label class="a11y-switch" style="margin: 0;">
+						<input type="checkbox" id="a11y_font_toggle" onchange="document.body.classList.toggle('dyslexia-font', this.checked); window.saveA11ySetting('font', this.checked ? 'on' : 'off');">
+						<span class="a11y-slider"></span>
+					</label>
+				</div>
+				<div class="a11y-row last-toggle">
+					<label class="a11y-row-label" for="a11y_motion_toggle">Reduce motion</label>
+					<label class="a11y-switch" style="margin: 0;">
+						<input type="checkbox" id="a11y_motion_toggle" onchange="document.body.classList.toggle('reduce-motion', this.checked); window.saveA11ySetting('motion', this.checked ? 'on' : 'off');">
+						<span class="a11y-slider"></span>
+					</label>
+				</div>
+				<div class="input-row-single" style="margin-bottom: 20px;">
+					<label>Text size</label>
+					<div class="toggle-container">
+						<input type="radio" name="a11y_size" id="a11y_size_normal" checked onchange="document.documentElement.classList.remove('text-large', 'text-xlarge'); window.saveA11ySetting('size', 'normal');">
+						<label for="a11y_size_normal">Normal</label>
+						<input type="radio" name="a11y_size" id="a11y_size_large" onchange="document.documentElement.classList.remove('text-xlarge'); document.documentElement.classList.add('text-large'); window.saveA11ySetting('size', 'large');">
+						<label for="a11y_size_large">Large</label>
+						<input type="radio" name="a11y_size" id="a11y_size_xl" onchange="document.documentElement.classList.remove('text-large'); document.documentElement.classList.add('text-xlarge'); window.saveA11ySetting('size', 'xl');">
+						<label for="a11y_size_xl">Extra large</label>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer" style="justify-content: flex-end;">
                 <button class="btn-primary" onclick="document.getElementById('a11y-overlay').classList.remove('active')">Done</button>
             </div>
         </div>
     </div>
 
-    <!-- WIZARD MODAL -->
-    <div class="modal-overlay active" id="wizard-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h2>Setup your profile</h2>
-                <button class="close-modal" onclick="closeWizard()" title="Cancel and go back">&times;</button>
-            </div>
-            <div class="modal-body" id="wiz-scroll">
-                
-                <div class="wizard-progress" id="wizard-progress-container" style="display: none;"></div>
-
-                <div class="wizard-step active" id="step-0">
-                    <h3 class="wizard-title">Are you planning as an individual or a couple?</h3>
-                    <div class="big-mode-selector">
-                        <div class="mode-card" id="w-mode-single" onclick="setMode('single')"><div class="mode-icon">👤</div><div class="mode-title">Single</div></div>
-                        <div class="mode-card" id="w-mode-couple" onclick="setMode('couple')"><div class="mode-icon">👥</div><div class="mode-title">Couple</div></div>
-                    </div>
-                </div>
-
-                <div class="wizard-step" id="step-1">
-                    <h3 class="wizard-title">Let's start with you</h3>
-                    <div class="input-row-single"><label>What is your current age?</label><div class="input-wrapper"><input type="number" id="w_age1" value="29" class="clamp-age calc-ret-trigger has-suffix"><span class="suffix">yrs</span></div></div>
-                    <div class="input-row-single"><label>At what age do you plan to retire?</label><div class="input-wrapper"><input type="number" id="w_ret1" value="68" class="clamp-ret-age calc-ret-trigger has-suffix"><span class="suffix">yrs</span></div></div>
-                    <div class="input-row-single"><label>What is your current salary before tax?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sal1" value="42,000" class="comma-format clamp-1m"></div></div>
-                </div>
-
-                <div class="wizard-step" id="step-2">
-                    <h3 class="wizard-title">Your partner's details</h3>
-                    <div class="input-row-single"><label>What is their current age?</label><div class="input-wrapper"><input type="number" id="w_age2" value="31" class="clamp-age calc-ret-trigger has-suffix"><span class="suffix">yrs</span></div></div>
-                    <div class="input-row-single"><label>What is their current salary before tax?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sal2" value="42,000" class="comma-format clamp-1m"></div></div>
-                </div>
-
-                <div class="wizard-step" id="step-3">
-                    <h3 class="wizard-title">Your student loan</h3>
-                    <div class="input-row-single">
-                        <label>Do you have a student loan to repay?</label>
-                        <div class="toggle-container">
-                            <input type="radio" name="w_has_sl1" id="w_has_sl1_y" value="Yes" onchange="toggleWizSL(1); validateStep();"><label for="w_has_sl1_y">Yes</label>
-                            <input type="radio" name="w_has_sl1" id="w_has_sl1_n" value="No" onchange="toggleWizSL(1); validateStep();"><label for="w_has_sl1_n">No</label>
-                        </div>
-                    </div>
-                    <div id="w_sl_fields1" style="display: none;">
-                        <div class="input-row-single"><label>How much is your outstanding student loan debt?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sl1" value="20,000" class="comma-format clamp-1m"></div></div>
-                        <div class="input-row-single"><label>Which student loan plan are you on?</label><div class="input-wrapper"><select id="w_slp1"><option value="1">Plan 1</option><option selected value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option></select></div></div>
-                    </div>
-                </div>
-
-                <div class="wizard-step" id="step-4">
-                    <h3 class="wizard-title">Partner's student loan</h3>
-                    <div class="input-row-single">
-                        <label>Do they have a student loan to repay?</label>
-                        <div class="toggle-container">
-                            <input type="radio" name="w_has_sl2" id="w_has_sl2_y" value="Yes" onchange="toggleWizSL(2); validateStep();"><label for="w_has_sl2_y">Yes</label>
-                            <input type="radio" name="w_has_sl2" id="w_has_sl2_n" value="No" onchange="toggleWizSL(2); validateStep();"><label for="w_has_sl2_n">No</label>
-                        </div>
-                    </div>
-                    <div id="w_sl_fields2" style="display: none;">
-                        <div class="input-row-single"><label>How much is their outstanding student loan debt?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sl2" value="20,000" class="comma-format clamp-1m"></div></div>
-                        <div class="input-row-single"><label>Which student loan plan are they on?</label><div class="input-wrapper"><select id="w_slp2"><option value="1">Plan 1</option><option selected value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option></select></div></div>
-                    </div>
-                </div>
-
-                <div class="wizard-step" id="step-5">
-                    <h3 class="wizard-title">Your pension</h3>
-                    <div class="input-row-single">
-                        <label>Do you have a pension?</label>
-                        <div class="toggle-container">
-                            <input type="radio" name="w_has_pen1" id="w_has_pen1_y" value="Yes" onchange="toggleWizPen(1); validateStep();"><label for="w_has_pen1_y">Yes</label>
-                            <input type="radio" name="w_has_pen1" id="w_has_pen1_n" value="No" onchange="toggleWizPen(1); validateStep();"><label for="w_has_pen1_n">No</label>
-                        </div>
-                    </div>
-                    <div id="w_pen_fields1" style="display: none;">
-                        <div class="input-row-single"><label>What is the current value of your pension?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval1" value="25,000" class="comma-format clamp-10m"></div></div>
-                        <div class="input-row-single"><label>What percentage of your salary do you contribute?</label><div class="input-wrapper"><input type="number" id="w_pee1" value="5" class="clamp-100 has-suffix"><span class="suffix">%</span></div></div>
-                        <div class="input-row-single"><label>What percentage does your employer contribute?</label><div class="input-wrapper"><input type="number" id="w_per1" value="3" class="clamp-100 has-suffix"><span class="suffix">%</span></div></div>
-                    </div>
-                </div>
-
-                <div class="wizard-step" id="step-6">
-                    <h3 class="wizard-title">Partner's pension</h3>
-                    <div class="input-row-single">
-                        <label>Do they have a pension?</label>
-                        <div class="toggle-container">
-                            <input type="radio" name="w_has_pen2" id="w_has_pen2_y" value="Yes" onchange="toggleWizPen(2); validateStep();"><label for="w_has_pen2_y">Yes</label>
-                            <input type="radio" name="w_has_pen2" id="w_has_pen2_n" value="No" onchange="toggleWizPen(2); validateStep();"><label for="w_has_pen2_n">No</label>
-                        </div>
-                    </div>
-                    <div id="w_pen_fields2" style="display: none;">
-                        <div class="input-row-single"><label>What is the current value of their pension?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval2" value="25,000" class="comma-format clamp-10m"></div></div>
-                        <div class="input-row-single"><label>What percentage of their salary do they contribute?</label><div class="input-wrapper"><input type="number" id="w_pee2" value="5" class="clamp-100 has-suffix"><span class="suffix">%</span></div></div>
-                        <div class="input-row-single"><label>What percentage does their employer contribute?</label><div class="input-wrapper"><input type="number" id="w_per2" value="3" class="clamp-100 has-suffix"><span class="suffix">%</span></div></div>
-                    </div>
-                </div>
-
-                <div class="wizard-step" id="step-7">
-                    <h3 class="wizard-title">Household cash savings</h3>
-                    <div class="input-row-single"><label>How much do you have saved in cash or investments?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_cash" value="5,000" class="comma-format clamp-1m"></div></div>
-                </div>
-
-                <div class="wizard-step" id="step-8">
-                    <h3 class="wizard-title">Rent & living expenses</h3>
-                    <div class="input-row-single"><label>How much do you currently pay in rent each month?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_rent" value="820" class="comma-format clamp-1m"></div></div>
-                    <div class="input-row-single"><label><span id="lbl_w_ex_pre">Living expenses pre-retirement (age 68 for you)</span></label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_pre" value="1,400" class="comma-format clamp-10m has-suffix"><span class="suffix">/ mo</span></div></div>
-                    <div class="input-row-single"><label><span id="lbl_w_ex_post">Living expenses post-retirement (age 68 for you)</span></label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_post" value="1,400" class="comma-format clamp-10m has-suffix"><span class="suffix">/ mo</span></div></div>
-                </div>
-
-                <div class="wizard-step" id="step-9">
-                    <h3 class="wizard-title">Property purchase</h3>
-                    <div class="input-row-single"><label>How much is the home you'd like to buy?</label><div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_hp" value="550,000" class="comma-format clamp-10m"></div></div>
-                    <div class="input-row-single">
-                        <label>Are you a first-time buyer?</label>
-                        <div class="toggle-container">
-                            <input type="radio" name="w_ftb" id="w_ftb_y" value="Yes" onchange="validateStep()"><label for="w_ftb_y">Yes</label>
-                            <input type="radio" name="w_ftb" id="w_ftb_n" value="No" onchange="validateStep()"><label for="w_ftb_n">No</label>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" id="wiz-back" onclick="wizardStep(-1)" style="visibility: hidden;">Back</button>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-primary" style="margin-top:0;" id="wiz-next" onclick="wizardStep(1)" style="width: 120px;" disabled>Next</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settings-overlay">
         <div class="modal-card large">
             <div class="modal-header">
@@ -797,12 +655,12 @@
                 <button class="close-modal" onclick="cancelSettings()">&times;</button>
             </div>
             
-            <div class="tab-navigation" style="margin: 20px 30px 0 30px; width: auto; flex-shrink: 0;">
-                <input type="radio" name="settings_tab" id="settings_tab_1" checked onchange="document.getElementById('set-tab-1').style.display='block'; document.getElementById('set-tab-2').style.display='none'; document.getElementById('set-tab-3').style.display='none';">
-                <label for="settings_tab_1">Your estimates</label>
-                <input type="radio" name="settings_tab" id="settings_tab_2" onchange="document.getElementById('set-tab-1').style.display='none'; document.getElementById('set-tab-2').style.display='block'; document.getElementById('set-tab-3').style.display='none';">
+            <div class="tab-navigation" id="settings-tabs" style="margin: 20px 30px 0 30px; width: auto; flex-shrink: 0;">
+                <input type="radio" name="settings_tab" id="settings_tab_1" checked onchange="window.switchSettingsTab(1, this.nextElementSibling)">
+                <label for="settings_tab_1" class="active">Your estimates</label>
+                <input type="radio" name="settings_tab" id="settings_tab_2" onchange="window.switchSettingsTab(2, this.nextElementSibling)">
                 <label for="settings_tab_2">Tax rules</label>
-                <input type="radio" name="settings_tab" id="settings_tab_3" onchange="document.getElementById('set-tab-1').style.display='none'; document.getElementById('set-tab-2').style.display='none'; document.getElementById('set-tab-3').style.display='block';">
+                <input type="radio" name="settings_tab" id="settings_tab_3" onchange="window.switchSettingsTab(3, this.nextElementSibling)">
                 <label for="settings_tab_3">Other rules</label>
             </div>
 
@@ -841,9 +699,7 @@
                             <span class="tax-year-badge" id="tax-year-badge">Tax year 2025</span>
                         </h3>
                         <p class="params-desc" style="margin-bottom: 25px;">The following assumptions are integrated into the calculation engine and cannot be edited here.</p>
-                        <div class="params-grid" id="readonly-params-grid">
-                            <!-- Populated by JS -->
-                        </div>
+                        <div class="params-grid" id="readonly-params-grid"></div>
                     </div>
                 </div>
 
@@ -854,9 +710,7 @@
                             <span class="tax-year-badge" id="tax-year-badge-2">Tax year 2025</span>
                         </h3>
                         <p class="params-desc" style="margin-bottom: 25px;">The following assumptions are integrated into the calculation engine and cannot be edited here.</p>
-                        <div class="params-grid" id="readonly-params-grid-2">
-                            <!-- Populated by JS -->
-                        </div>
+                        <div class="params-grid" id="readonly-params-grid-2"></div>
                     </div>
                 </div>
             </div>
@@ -867,12 +721,225 @@
             </div>
         </div>
     </div>
+	
+	<!-- ONBOARDING WIZARD OVERLAY -->
+    <div class="modal-overlay active" id="wizard-overlay">
+        <div class="modal-card large" style="width: 750px;">
+            <div class="modal-header">
+                <h2>Welcome to the Rent vs Buy Calculator</h2>
+                <button class="close-modal" onclick="closeWizard()">&times;</button>
+            </div>
+            <div class="wizard-progress" id="wizard-progress-container" style="padding: 15px 30px 0 30px;"></div>
+            <div class="modal-body" id="wiz-scroll">
+                <!-- Step 0: Mode Selection -->
+                <div class="wizard-step active" id="step-0">
+                    <h3 class="wizard-title">Who is this calculation for?</h3>
+                    <div class="big-mode-selector">
+                        <div class="mode-card" id="w-mode-single" tabindex="0" role="button" aria-pressed="false" onclick="setMode('single')" onkeydown="handleModeCardKey(event, 'single')">
+                            <div class="mode-icon">👤</div>
+                            <div class="mode-title">Single</div>
+                        </div>
+                        <div class="mode-card" id="w-mode-couple" tabindex="0" role="button" aria-pressed="false" onclick="setMode('couple')" onkeydown="handleModeCardKey(event, 'couple')">
+                            <div class="mode-icon">👥</div>
+                            <div class="mode-title">Couple</div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- TOAST NOTIFICATIONS -->
+                <!-- Step 1: Ages -->
+                <div class="wizard-step" id="step-1">
+                    <h3 class="wizard-title">Let's start with your ages</h3>
+                    <div class="input-row-single">
+                        <label>Your current age</label>
+                        <div class="input-wrapper"><input type="number" id="w_age1" placeholder="e.g. 29" class="clamp-age"></div>
+                    </div>
+                    <div class="input-row-single show-partner">
+                        <label>Partner's current age</label>
+                        <div class="input-wrapper"><input type="number" id="w_age2" placeholder="e.g. 31" class="clamp-age"></div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Retirement Ages -->
+                <div class="wizard-step" id="step-2">
+                    <h3 class="wizard-title">Retirement planning</h3>
+                    <div class="input-row-single">
+                        <label>Your retirement age</label>
+                        <div class="input-wrapper"><input type="number" id="w_ret1" placeholder="e.g. 68" class="clamp-ret-age"></div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Salaries -->
+                <div class="wizard-step" id="step-3">
+                    <h3 class="wizard-title">Income details</h3>
+                    <div class="input-row-single">
+                        <label>Your salary before tax</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sal1" placeholder="e.g. 42,000" class="comma-format clamp-1m"><span class="suffix">p.a.</span></div>
+                    </div>
+                    <div class="input-row-single show-partner">
+                        <label>Partner's salary before tax</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sal2" placeholder="e.g. 42,000" class="comma-format clamp-1m"><span class="suffix">p.a.</span></div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Student Loans (You) -->
+                <div class="wizard-step" id="step-4">
+                    <h3 class="wizard-title">Your student loan</h3>
+                    <div class="input-row-single">
+                        <label>Do you have a student loan to repay?</label>
+                        <div class="toggle-container">
+                            <input type="radio" name="w_has_sl1" id="w_has_sl1_y" value="Yes" onchange="toggleWizSL(1)">
+                            <label for="w_has_sl1_y">Yes</label>
+                            <input type="radio" name="w_has_sl1" id="w_has_sl1_n" value="No" onchange="toggleWizSL(1)">
+                            <label for="w_has_sl1_n">No</label>
+                        </div>
+                    </div>
+                    <div id="w_sl_fields1" style="display: none;">
+                        <div class="input-row-single">
+                            <label>Remaining loan debt</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sl1" placeholder="e.g. 20,000" class="comma-format clamp-1m"></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Loan plan</label>
+                            <div class="input-wrapper">
+                                <select id="w_slp1">
+                                    <option value="" disabled selected>Select plan</option>
+                                    <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Student Loans (Partner) -->
+                <div class="wizard-step" id="step-5">
+                    <h3 class="wizard-title">Partner's student loan</h3>
+                    <div class="input-row-single">
+                        <label>Does your partner have a student loan?</label>
+                        <div class="toggle-container">
+                            <input type="radio" name="w_has_sl2" id="w_has_sl2_y" value="Yes" onchange="toggleWizSL(2)">
+                            <label for="w_has_sl2_y">Yes</label>
+                            <input type="radio" name="w_has_sl2" id="w_has_sl2_n" value="No" onchange="toggleWizSL(2)">
+                            <label for="w_has_sl2_n">No</label>
+                        </div>
+                    </div>
+                    <div id="w_sl_fields2" style="display: none;">
+                        <div class="input-row-single">
+                            <label>Remaining loan debt</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sl2" placeholder="e.g. 20,000" class="comma-format clamp-1m"></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Loan plan</label>
+                            <div class="input-wrapper">
+                                <select id="w_slp2">
+                                    <option value="" disabled selected>Select plan</option>
+                                    <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Pensions (You) -->
+                <div class="wizard-step" id="step-6">
+                    <h3 class="wizard-title">Your pension</h3>
+                    <div class="input-row-single">
+                        <label>Do you have an existing pension?</label>
+                        <div class="toggle-container">
+                            <input type="radio" name="w_has_pen1" id="w_has_pen1_y" value="Yes" onchange="toggleWizPen(1)">
+                            <label for="w_has_pen1_y">Yes</label>
+                            <input type="radio" name="w_has_pen1" id="w_has_pen1_n" value="No" onchange="toggleWizPen(1)">
+                            <label for="w_has_pen1_n">No</label>
+                        </div>
+                    </div>
+                    <div id="w_pen_fields1" style="display: block;">
+                        <div class="input-row-single">
+                            <label>Current pension pot value</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval1" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Your contribution</label>
+                            <div class="input-wrapper"><input type="number" id="w_pee1" placeholder="e.g. 5" class="clamp-100"><span class="suffix">%</span></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Employer contribution</label>
+                            <div class="input-wrapper"><input type="number" id="w_per1" placeholder="e.g. 3" class="clamp-100"><span class="suffix">%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 7: Pensions (Partner) -->
+                <div class="wizard-step" id="step-7">
+                    <h3 class="wizard-title">Partner's pension</h3>
+                    <div class="input-row-single">
+                        <label>Does your partner have an existing pension?</label>
+                        <div class="toggle-container">
+                            <input type="radio" name="w_has_pen2" id="w_has_pen2_y" value="Yes" onchange="toggleWizPen(2)">
+                            <label for="w_has_pen2_y">Yes</label>
+                            <input type="radio" name="w_has_pen2" id="w_has_pen2_n" value="No" onchange="toggleWizPen(2)">
+                            <label for="w_has_pen2_n">No</label>
+                        </div>
+                    </div>
+                    <div id="w_pen_fields2" style="display: block;">
+                        <div class="input-row-single">
+                            <label>Current pension pot value</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval2" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Your contribution</label>
+                            <div class="input-wrapper"><input type="number" id="w_pee2" placeholder="e.g. 5" class="clamp-100"><span class="suffix">%</span></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Employer contribution</label>
+                            <div class="input-wrapper"><input type="number" id="w_per2" placeholder="e.g. 3" class="clamp-100"><span class="suffix">%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 8: Savings & Expenses -->
+                <div class="wizard-step" id="step-8">
+                    <h3 class="wizard-title">Savings & Living Costs</h3>
+                    <div class="input-row-single">
+                        <label>Household cash savings</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_cash" placeholder="e.g. 5,000" class="comma-format clamp-1m"></div>
+                    </div>
+                    <div class="input-row-single">
+                        <label>Monthly rent</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_rent" placeholder="e.g. 820" class="comma-format clamp-1m"><span class="suffix">/ month</span></div>
+                    </div>
+                    <div class="input-row-single">
+                        <label>Monthly living expenses</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_pre" placeholder="e.g. 1,400" class="comma-format clamp-1m"><span class="suffix">/ month</span></div>
+                    </div>
+                </div>
+
+                <!-- Step 9: House Target -->
+                <div class="wizard-step" id="step-9">
+                    <h3 class="wizard-title">Target Property</h3>
+                    <div class="input-row-single">
+                        <label>Target house price</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m"></div>
+                    </div>
+                    <div class="input-row-single">
+                        <label>Are you a first time buyer?</label>
+                        <div class="toggle-container">
+                            <input type="radio" name="w_ftb" id="w_ftb_y" value="Yes">
+                            <label for="w_ftb_y">Yes</label>
+                            <input type="radio" name="w_ftb" id="w_ftb_n" value="No">
+                            <label for="w_ftb_n">No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="wiz-back" onclick="wizardStep(-1)">Back</button>
+                <button class="btn-primary" id="wiz-next" onclick="wizardStep(1)" disabled style="opacity: 0.5; cursor: not-allowed;">Next</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container" class="toast-container" aria-live="polite" role="status"></div>
 
     <script src="javascript/main.js"></script>
     <script src="javascript/compareUI.js"></script>
-
 </body>
 </html>

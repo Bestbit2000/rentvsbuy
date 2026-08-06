@@ -22,7 +22,7 @@ const helpText = {
     "rent": "The monthly rent you currently pay.",
     "ex_pre": "Your estimated monthly living expenses (excluding rent/mortgage) while you are working.",
     "ex_post": "Your estimated monthly living expenses (excluding rent/mortgage) after you retire.",
-    "hp": "The target purchase price of the property you'd like to buy.",
+    "hp": "The price of the property you want to buy.",
     "ftb": "Select 'Yes' if you are a first-time buyer. This affects the stamp duty you will pay.",
     "fees": "Expected legal, moving, and survey fees associated with buying the home.",
     "maint": "Expected annual maintenance and upkeep costs for the home.",
