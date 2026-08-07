@@ -598,6 +598,11 @@ body.dark-mode .bg-white:not(.bg-navy), body.dark-mode section.bg-white:not(.bg-
 body.dark-mode .bg-gray-50, body.dark-mode section.bg-gray-50 { background-color: #2a2a2a !important; }
 body.dark-mode main { background-color: #121212 !important; }
 
+/* Preserve header and dark sections in dark mode - reset navy color variable */
+body.dark-mode header { --ifoa-navy: #003a5d; background-color: #003a5d !important; color: white; }
+body.dark-mode .bg-navy { --ifoa-navy: #003a5d; background-color: #003a5d !important; }
+body.dark-mode section.bg-navy { --ifoa-navy: #003a5d; background-color: #003a5d !important; color: white; }
+
 /* Dark mode text colors for sufficient contrast */
 body.dark-mode .bg-white:not(.bg-navy) p,
 body.dark-mode .bg-white:not(.bg-navy) span,
