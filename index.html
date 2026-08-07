@@ -36,6 +36,9 @@
                     <a href="index.html#report-summary" class="text-white hover:text-gold transition px-3 py-2 text-sm font-medium">Report</a>
                 </nav>
 
+                <!-- Desktop Accessibility Button -->
+                <button class="hidden md:block text-white hover:opacity-80 px-3 py-2 text-sm font-medium" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
+
                 <!-- Mobile menu button -->
 				<div class="md:hidden flex items-center">
 					<button id="mobile-menu-btn" type="button" class="text-white hover:opacity-80 p-2 flex items-center justify-center bg-transparent border-none cursor-pointer" aria-label="Toggle menu" aria-expanded="false" style="min-height: 44px; min-width: 44px;">
@@ -52,6 +55,7 @@
                 <a href="index.html#calculator-preview" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Discover</a>
                 <a href="index.html#scenarios" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Scenarios</a>
                 <a href="index.html#report-summary" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Report</a>
+                <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Accessibility</button>
             </div>
         </div>
         <div class="header-stripe w-full"></div>
@@ -375,6 +379,109 @@
                 btn.setAttribute('aria-expanded', 'false');
             });
         });
+    </script>
+
+    <!-- Accessibility Component -->
+    <div class="modal-overlay" id="a11y-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>♿ Accessibility options</h2>
+                <button class="close-modal" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="a11y-row">
+                    <label class="a11y-row-label" for="a11y_dark_toggle">Dark mode</label>
+                    <label class="a11y-switch" style="margin: 0;">
+                        <input type="checkbox" id="a11y_dark_toggle" onchange="document.body.classList.toggle('dark-mode', this.checked); window.saveA11ySetting('dark', this.checked ? 'on' : 'off');">
+                        <span class="a11y-slider"></span>
+                    </label>
+                </div>
+                <div class="a11y-row">
+                    <label class="a11y-row-label" for="a11y_font_toggle">Dyslexia-friendly font</label>
+                    <label class="a11y-switch" style="margin: 0;">
+                        <input type="checkbox" id="a11y_font_toggle" onchange="document.body.classList.toggle('dyslexia-font', this.checked); window.saveA11ySetting('font', this.checked ? 'on' : 'off');">
+                        <span class="a11y-slider"></span>
+                    </label>
+                </div>
+                <div class="a11y-row last-toggle">
+                    <label class="a11y-row-label" for="a11y_motion_toggle">Reduce motion</label>
+                    <label class="a11y-switch" style="margin: 0;">
+                        <input type="checkbox" id="a11y_motion_toggle" onchange="document.body.classList.toggle('reduce-motion', this.checked); window.saveA11ySetting('motion', this.checked ? 'on' : 'off');">
+                        <span class="a11y-slider"></span>
+                    </label>
+                </div>
+                <div class="input-row-single" style="margin-bottom: 20px;">
+                    <label>Text size</label>
+                    <div class="toggle-container">
+                        <input type="radio" name="a11y_size" id="a11y_size_normal" checked onchange="document.documentElement.classList.remove('text-large', 'text-xlarge'); window.saveA11ySetting('size', 'normal');">
+                        <label for="a11y_size_normal">Normal</label>
+                        <input type="radio" name="a11y_size" id="a11y_size_large" onchange="document.documentElement.classList.remove('text-xlarge'); document.documentElement.classList.add('text-large'); window.saveA11ySetting('size', 'large');">
+                        <label for="a11y_size_large">Large</label>
+                        <input type="radio" name="a11y_size" id="a11y_size_xl" onchange="document.documentElement.classList.remove('text-large'); document.documentElement.classList.add('text-xlarge'); window.saveA11ySetting('size', 'xl');">
+                        <label for="a11y_size_xl">Extra large</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end;">
+                <button class="btn-primary" onclick="document.getElementById('a11y-overlay').classList.remove('active')">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accessibility Settings Functions -->
+    <script>
+        window.saveA11ySetting = function(key, value) {
+            localStorage.setItem('a11y_' + key, value);
+        };
+
+        window.loadA11ySettings = function() {
+            const settings = {
+                dark: localStorage.getItem('a11y_dark'),
+                font: localStorage.getItem('a11y_font'),
+                motion: localStorage.getItem('a11y_motion'),
+                size: localStorage.getItem('a11y_size')
+            };
+
+            if (settings.dark === 'on') {
+                document.body.classList.add('dark-mode');
+                if (document.getElementById('a11y_dark_toggle')) {
+                    document.getElementById('a11y_dark_toggle').checked = true;
+                }
+            }
+
+            if (settings.font === 'on') {
+                document.body.classList.add('dyslexia-font');
+                if (document.getElementById('a11y_font_toggle')) {
+                    document.getElementById('a11y_font_toggle').checked = true;
+                }
+            }
+
+            if (settings.motion === 'on') {
+                document.body.classList.add('reduce-motion');
+                if (document.getElementById('a11y_motion_toggle')) {
+                    document.getElementById('a11y_motion_toggle').checked = true;
+                }
+            }
+
+            if (settings.size === 'large') {
+                document.documentElement.classList.add('text-large');
+                if (document.getElementById('a11y_size_large')) {
+                    document.getElementById('a11y_size_large').checked = true;
+                }
+            } else if (settings.size === 'xl') {
+                document.documentElement.classList.add('text-xlarge');
+                if (document.getElementById('a11y_size_xl')) {
+                    document.getElementById('a11y_size_xl').checked = true;
+                }
+            }
+        };
+
+        // Load settings on page load
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', window.loadA11ySettings);
+        } else {
+            window.loadA11ySettings();
+        }
     </script>
 </body>
 </html>

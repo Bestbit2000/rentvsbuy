@@ -579,6 +579,10 @@ body.dark-mode .toggle-container input[type="radio"]:focus-visible + label {
     z-index: 1;
 }
 
+body.dark-mode div[style*="background: #f9f9f9"] { background: #1e1e1e !important; border-color: #333 !important; }
+body.dark-mode div[style*="background: #f9f9f9"] p { color: #e0e0e0 !important; }
+body.dark-mode div[style*="background: #f9f9f9"] a { color: #90caf9 !important; }
+
 /* Accessible button texts in dark mode */
 body.dark-mode .btn-primary { background: var(--ifoa-gold) !important; color: #121212 !important; }
 body.dark-mode .btn-primary:hover:not(:disabled) { background: #e6c253 !important; }

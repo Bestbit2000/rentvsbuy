@@ -32,8 +32,8 @@
                 <label for="compare-switch">Compare a scenario</label>
                 <input type="checkbox" id="compare-switch" disabled onchange="toggleCompareMode(); const m = document.getElementById('compare-switch-mob'); if(m) m.checked = this.checked;">
             </div>
-            <button class="settings-btn" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
             <button class="settings-btn" onclick="openSettings()">Rates and rules</button>
+            <button class="settings-btn" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
             <a href="#" class="settings-btn close-calc-btn" onclick="event.preventDefault(); document.getElementById('close-calc-modal').classList.add('active');" style="text-decoration: none;">Close calculator</a>
         </div>
         <div class="mobile-only">
@@ -553,7 +553,6 @@
 						<p class="prop-empty-desc">Based on your current deposit, income and mortgage limits, this home looks unlikely to be affordable before retirement. Try increasing your deposit or income, lowering the target house price, or adjusting your retirement age.</p>
 					</div>
 				</div>
-			</div>
                 <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
                     <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Read full disclaimer</a></p>
                 </div>
@@ -799,9 +798,8 @@
                         <label>Your retirement age</label>
                         <div class="input-wrapper"><input type="number" id="w_ret1" placeholder="e.g. 68" class="clamp-ret-age"></div>
                     </div>
-                    <div class="input-row-single show-partner is-hidden">
-                        <label>Partner's retirement age</label>
-                        <div class="input-wrapper"><input type="number" id="w_ret2" placeholder="e.g. 68" class="clamp-ret-age"></div>
+                    <div class="show-partner is-hidden" style="padding: 15px; background: #f0f4f8; border-left: 4px solid var(--ifoa-blue); margin-top: 20px; border-radius: 4px; font-size: 0.95rem; color: #555;">
+                        <span>Your partner will be assumed to retire at the same time as you.</span>
                     </div>
                 </div>
 
@@ -838,7 +836,7 @@
                         <div class="input-row-single">
                             <label>Loan plan</label>
                             <div class="input-wrapper">
-                                <select id="w_slp1">
+                                <select id="w_slp1" onchange="validateStep()">
                                     <option value="" disabled selected>Select plan</option>
                                     <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
                                 </select>
@@ -867,7 +865,7 @@
                         <div class="input-row-single">
                             <label>Loan plan</label>
                             <div class="input-wrapper">
-                                <select id="w_slp2">
+                                <select id="w_slp2" onchange="validateStep()">
                                     <option value="" disabled selected>Select plan</option>
                                     <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
                                 </select>
@@ -982,8 +980,8 @@
                 </div>
             </div>
             <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
-                <button class="btn-secondary" id="wiz-back" onclick="wizardStep(-1)">Back</button>
-                <button class="btn-primary" id="wiz-next" onclick="wizardStep(1)" disabled style="opacity: 0.5; cursor: not-allowed;">Next</button>
+                <button class="btn-secondary" id="wiz-back">Back</button>
+                <button class="btn-primary" id="wiz-next" disabled style="opacity: 0.5; cursor: not-allowed;">Next</button>
             </div>
         </div>
     </div>
@@ -1072,5 +1070,61 @@
 
     <script src="javascript/main.js"></script>
     <script src="javascript/compareUI.js"></script>
+
+    <!-- Accessibility Settings Functions -->
+    <script>
+        window.saveA11ySetting = function(key, value) {
+            localStorage.setItem('a11y_' + key, value);
+        };
+
+        window.loadA11ySettings = function() {
+            const settings = {
+                dark: localStorage.getItem('a11y_dark'),
+                font: localStorage.getItem('a11y_font'),
+                motion: localStorage.getItem('a11y_motion'),
+                size: localStorage.getItem('a11y_size')
+            };
+
+            if (settings.dark === 'on') {
+                document.body.classList.add('dark-mode');
+                if (document.getElementById('a11y_dark_toggle')) {
+                    document.getElementById('a11y_dark_toggle').checked = true;
+                }
+            }
+
+            if (settings.font === 'on') {
+                document.body.classList.add('dyslexia-font');
+                if (document.getElementById('a11y_font_toggle')) {
+                    document.getElementById('a11y_font_toggle').checked = true;
+                }
+            }
+
+            if (settings.motion === 'on') {
+                document.body.classList.add('reduce-motion');
+                if (document.getElementById('a11y_motion_toggle')) {
+                    document.getElementById('a11y_motion_toggle').checked = true;
+                }
+            }
+
+            if (settings.size === 'large') {
+                document.documentElement.classList.add('text-large');
+                if (document.getElementById('a11y_size_large')) {
+                    document.getElementById('a11y_size_large').checked = true;
+                }
+            } else if (settings.size === 'xl') {
+                document.documentElement.classList.add('text-xlarge');
+                if (document.getElementById('a11y_size_xl')) {
+                    document.getElementById('a11y_size_xl').checked = true;
+                }
+            }
+        };
+
+        // Load settings on page load
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', window.loadA11ySettings);
+        } else {
+            window.loadA11ySettings();
+        }
+    </script>
 </body>
 </html>

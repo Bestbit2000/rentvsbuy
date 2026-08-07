@@ -304,7 +304,7 @@ function switchPerson(person) {
 function toggleCompareMode() {
     const compareSwitch = document.getElementById('compare-switch');
     isCompareMode = compareSwitch ? compareSwitch.checked : false;
-    
+
     if (isCompareMode) {
         baselineInputs = gatherRawInputs();
         try {
@@ -316,6 +316,10 @@ function toggleCompareMode() {
         if(footer) footer.style.display = 'block';
         const summaryBlock = document.getElementById('compare-summary-block');
         if(summaryBlock) summaryBlock.style.display = 'block';
+
+        // Show the "Your changes" tab when compare mode is on
+        const changesTab = document.getElementById('tab-changes');
+        if(changesTab) changesTab.style.display = 'block';
     } else {
         discardWhatIf();
         const footer = document.getElementById('compare-actions-footer');
@@ -325,6 +329,16 @@ function toggleCompareMode() {
         baselineInputs = {};
         baselineResults = null;
         updateResultsOverlay('normal');
+
+        // Hide the "Your changes" tab when compare mode is off
+        const changesTab = document.getElementById('tab-changes');
+        if(changesTab) changesTab.style.display = 'none';
+
+        // Also switch away from the changes view if it's currently active
+        const viewChanges = document.getElementById('view-changes');
+        if(viewChanges && viewChanges.classList.contains('active')) {
+            switchTab(document.querySelector('.tab-btn:not(#tab-changes)'), 'overview');
+        }
     }
 }
 
@@ -496,12 +510,30 @@ function updateWizardProgress() {
     }
 }
 
+function validateWizardFieldValue(inputEl, mustBePositive = false) {
+    if (!inputEl) return true;
+    const raw = String(inputEl.value || '').replace(/,/g, '').trim();
+    return mustBePositive ? (raw !== '' && parseFloat(raw) > 0) : raw !== '';
+}
+
+function clearFieldError(inputEl) {
+    if (!inputEl) return;
+    const wrapper = inputEl.closest('.input-wrapper') || inputEl.closest('.toggle-container');
+    if (wrapper) {
+        wrapper.classList.remove('has-error');
+        const errEl = wrapper.nextElementSibling;
+        if (errEl && errEl.classList.contains('field-error-text')) {
+            errEl.classList.remove('visible');
+        }
+    }
+}
+
 function validateStep() {
     const nextBtn = document.getElementById('wiz-next');
     if (!nextBtn) return;
     let isValid = true;
     let step = stepSequence[currentWizIndex];
-    
+
     if (step === 0) {
         isValid = currentMode !== null;
     } else {
@@ -517,9 +549,21 @@ function validateStep() {
                     }
                 }
             }
+
+            // Additional validation for student loan steps (4 and 5)
+            if ((step === 4 || step === 5) && isValid) {
+                const personNum = step === 4 ? 1 : 2;
+                const hasLoanRadio = currentStepEl.querySelector(`input[name="w_has_sl${personNum}"]:checked`);
+                if (hasLoanRadio && hasLoanRadio.value === 'Yes') {
+                    const loanPlanSelect = currentStepEl.querySelector(`select[id="w_slp${personNum}"]`);
+                    if (loanPlanSelect && loanPlanSelect.value === '') {
+                        isValid = false;
+                    }
+                }
+            }
         }
     }
-    
+
     if (isValid) {
         nextBtn.disabled = false;
         nextBtn.style.opacity = '1';
@@ -530,6 +574,118 @@ function validateStep() {
         nextBtn.style.cursor = 'not-allowed';
     }
 }
+
+// Validate when user tries to proceed (click Next) - shows all errors
+function validateStepBeforeAdvance() {
+    const step = stepSequence[currentWizIndex];
+    const currentStepEl = document.getElementById(`step-${step}`);
+    if (!currentStepEl) return true;
+
+    let allValid = true;
+    let firstErrorEl = null;
+    const isCouple = currentMode === 'couple';
+
+    // Field type mappings for proper error messages
+    const ageFields = ['w_age1', 'w_age2', 'w_ret1'];
+    const currencyFields = ['w_sal1', 'w_sal2', 'w_sl1', 'w_sl2', 'w_cash', 'w_ex_pre', 'w_ex_post'];
+
+    const checkNumberField = (id) => {
+        const el = currentStepEl.querySelector(`#${id}`);
+        if (!el) return true;
+        const isValid = validateWizardFieldValue(el, true);
+        if (!isValid) {
+            const errorMsg = ageFields.includes(id) ? 'Enter a value greater than 0.' : 'Enter an amount greater than £0.';
+            setFieldValidity(el, false, errorMsg);
+            if (!firstErrorEl) firstErrorEl = el;
+            allValid = false;
+        }
+        return isValid;
+    };
+
+    const checkOptionalNumberField = (id) => {
+        const el = currentStepEl.querySelector(`#${id}`);
+        if (!el) return true;
+        return true; // Optional fields always pass
+    };
+
+    const checkRadio = (name) => {
+        const anyRadio = currentStepEl.querySelector(`input[name="${name}"]`);
+        const checkedEl = currentStepEl.querySelector(`input[name="${name}"]:checked`);
+        if (!checkedEl) {
+            setFieldValidity(anyRadio, false, 'Please make a selection.');
+            if (!firstErrorEl) firstErrorEl = anyRadio;
+            allValid = false;
+        }
+        return checkedEl;
+    };
+
+    const checkSelect = (id) => {
+        const el = currentStepEl.querySelector(`#${id}`);
+        if (!el) return true;
+        if (el.value === '') {
+            setFieldValidity(el, false, 'Please make a selection.');
+            if (!firstErrorEl) firstErrorEl = el;
+            allValid = false;
+        }
+        return el.value !== '';
+    };
+
+    // Step-specific validation
+    if (step === 1) {
+        if (!checkNumberField('w_age1')) allValid = false;
+        if (isCouple && !checkNumberField('w_age2')) allValid = false;
+    } else if (step === 2) {
+        if (!checkNumberField('w_ret1')) allValid = false;
+    } else if (step === 3) {
+        if (!checkNumberField('w_sal1')) allValid = false;
+        if (isCouple && !checkNumberField('w_sal2')) allValid = false;
+    } else if (step === 4) {
+        const hasLoan = currentStepEl.querySelector('input[name="w_has_sl1"]:checked');
+        checkRadio('w_has_sl1');
+        if (hasLoan && hasLoan.value === 'Yes') {
+            if (!checkNumberField('w_sl1')) allValid = false;
+            if (!checkSelect('w_slp1')) allValid = false;
+        }
+    } else if (step === 5) {
+        const hasLoan = currentStepEl.querySelector('input[name="w_has_sl2"]:checked');
+        checkRadio('w_has_sl2');
+        if (hasLoan && hasLoan.value === 'Yes') {
+            if (!checkNumberField('w_sl2')) allValid = false;
+            if (!checkSelect('w_slp2')) allValid = false;
+        }
+    } else if (step === 6) {
+        const hasPen = currentStepEl.querySelector('input[name="w_has_pen1"]:checked');
+        checkRadio('w_has_pen1');
+        if (hasPen && hasPen.value === 'Yes') {
+            checkOptionalNumberField('w_pval1');
+            checkOptionalNumberField('w_pee1');
+            checkOptionalNumberField('w_per1');
+        }
+    } else if (step === 7) {
+        const hasPen = currentStepEl.querySelector('input[name="w_has_pen2"]:checked');
+        checkRadio('w_has_pen2');
+        if (hasPen && hasPen.value === 'Yes') {
+            checkOptionalNumberField('w_pval2');
+            checkOptionalNumberField('w_pee2');
+            checkOptionalNumberField('w_per2');
+        }
+    } else if (step === 8) {
+        if (!checkNumberField('w_cash')) allValid = false;
+        if (!checkNumberField('w_ex_pre')) allValid = false;
+        if (!checkNumberField('w_ex_post')) allValid = false;
+    } else if (step === 9) {
+        if (!checkNumberField('w_pval1')) allValid = false;
+    }
+
+    // Focus on first error if validation fails
+    if (!allValid && firstErrorEl) {
+        firstErrorEl.focus();
+        firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    return allValid;
+}
+
 
 function setMode(mode) {
     currentMode = mode;
@@ -546,14 +702,22 @@ function setMode(mode) {
         if(sideSingle) sideSingle.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
-        switchPerson('you');
+        // Only call switchPerson if not in wizard (wizard is active when wizard-overlay has 'active' class)
+        const wizardOverlay = document.getElementById('wizard-overlay');
+        if (!wizardOverlay || !wizardOverlay.classList.contains('active')) {
+            switchPerson('you');
+        }
         stepSequence = [0, 1, 2, 3, 4, 6, 8, 9, 10];
     } else if (mode === 'couple') {
         if(modeCouple) { modeCouple.classList.add('active'); modeCouple.setAttribute('aria-pressed', 'true'); }
         if(sideCouple) sideCouple.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'flex');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.remove('is-hidden'));
-        switchPerson('you');
+        // Only call switchPerson if not in wizard (wizard is active when wizard-overlay has 'active' class)
+        const wizardOverlay2 = document.getElementById('wizard-overlay');
+        if (!wizardOverlay2 || !wizardOverlay2.classList.contains('active')) {
+            switchPerson('you');
+        }
         stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     }
 
@@ -583,6 +747,88 @@ function focusFirstWizardField(stepNum) {
     }
 }
 
+function attachWizardValidationListeners() {
+    // Attach blur listeners to validate when user leaves a field
+    const wizardInputs = document.querySelectorAll('.wizard-step input[type="text"], .wizard-step input[type="number"], .wizard-step select');
+    wizardInputs.forEach(input => {
+        // Remove old listeners
+        input.removeEventListener('input', validateStep);
+        input.removeEventListener('change', validateStep);
+        input.removeEventListener('blur', validateFieldOnBlur);
+        input.removeEventListener('focus', clearFieldError);
+
+        // Add new listeners
+        input.addEventListener('blur', validateFieldOnBlur);
+        // Don't clear errors on focus - let validation control error display
+        // Only clear if user starts typing
+        input.addEventListener('input', function() {
+            clearFieldError(this);
+        });
+    });
+
+    // Update Next button click to validate before advancing
+    const nextBtn = document.getElementById('wiz-next');
+    if (nextBtn) {
+        nextBtn.removeEventListener('click', wizardStepNextClick);
+        nextBtn.addEventListener('click', wizardStepNextClick);
+    }
+
+    // Attach Back button click handler
+    const backBtn = document.getElementById('wiz-back');
+    if (backBtn) {
+        backBtn.removeEventListener('click', () => wizardStep(-1));
+        backBtn.addEventListener('click', () => wizardStep(-1));
+    }
+}
+
+function validateFieldOnBlur(e) {
+    const input = e.target;
+    const step = stepSequence[currentWizIndex];
+    const currentStepEl = document.getElementById(`step-${step}`);
+    if (!currentStepEl) return;
+
+    // Determine what validation to apply based on field ID
+    const fieldId = input.id;
+    let isValid = true;
+    let errorMsg = 'This field is required.';
+    const isCouple = currentMode === 'couple';
+
+    // Check if this is a required field (must be > 0)
+    const requiredFields = [
+        'w_age1', 'w_age2', 'w_ret1', 'w_sal1', 'w_sal2',
+        'w_sl1', 'w_sl2', 'w_cash', 'w_ex_pre', 'w_ex_post'
+    ];
+
+    const optionalFields = ['w_pval1', 'w_pval2', 'w_pee1', 'w_pee2', 'w_per1', 'w_per2'];
+
+    // Determine the right error message based on field type
+    const ageFields = ['w_age1', 'w_age2', 'w_ret1'];
+    const currencyFields = ['w_sal1', 'w_sal2', 'w_sl1', 'w_sl2', 'w_cash', 'w_ex_pre', 'w_ex_post'];
+
+    if (optionalFields.includes(fieldId)) {
+        // Optional fields always pass validation
+        isValid = true;
+    } else if (requiredFields.includes(fieldId)) {
+        isValid = validateWizardFieldValue(input, true);
+        if (ageFields.includes(fieldId)) {
+            errorMsg = 'Enter a value greater than 0.';
+        } else {
+            errorMsg = 'Enter an amount greater than £0.';
+        }
+    } else {
+        // Default validation for other fields
+        isValid = validateWizardFieldValue(input, false);
+    }
+
+    setFieldValidity(input, isValid, errorMsg);
+}
+
+function wizardStepNextClick() {
+    if (validateStepBeforeAdvance()) {
+        wizardStep(1);
+    }
+}
+
 function openWizard() {
     currentWizIndex = 0;
     currentMode = null; // Unselected state on launch
@@ -592,7 +838,17 @@ function openWizard() {
     if(modeSingle) modeSingle.classList.remove('active');
     if(modeCouple) modeCouple.classList.remove('active');
 
-    document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+    // Clear all error messages from all wizard steps on initial load
+    document.querySelectorAll('.wizard-step').forEach(stepEl => {
+        stepEl.querySelectorAll('.field-error-text').forEach(el => {
+            el.remove(); // Actually remove the error elements
+        });
+        stepEl.querySelectorAll('.input-wrapper, .toggle-container').forEach(el => {
+            el.classList.remove('has-error');
+        });
+        stepEl.classList.remove('active');
+    });
+
     let step0 = document.getElementById('step-0');
     if(step0) step0.classList.add('active');
     let wizBack = document.getElementById('wiz-back');
@@ -600,6 +856,7 @@ function openWizard() {
     let wizNext = document.getElementById('wiz-next');
     if(wizNext) wizNext.innerText = "Next";
 
+    attachWizardValidationListeners();
     updateWizardProgress();
     validateStep();
 
@@ -611,18 +868,13 @@ function openWizard() {
 }
 
 function wizardStep(dir) {
-    if (dir === 1) {
-        validateStep();
-        let wizNext = document.getElementById('wiz-next');
-        if (wizNext && wizNext.disabled) return;
-    }
     let prevStep = stepSequence[currentWizIndex];
     let prevEl = document.getElementById(`step-${prevStep}`);
     if (prevEl) prevEl.classList.remove('active');
-    
+
     currentWizIndex += dir;
     if (currentWizIndex < 0) currentWizIndex = 0;
-    
+
     if (currentWizIndex >= stepSequence.length) {
         try { saveWizardAndClose(); } catch(e) {
             let wizardOverlay = document.getElementById('wizard-overlay');
@@ -633,11 +885,20 @@ function wizardStep(dir) {
 
     let nextStep = stepSequence[currentWizIndex];
     let nextEl = document.getElementById(`step-${nextStep}`);
-    if (nextEl) nextEl.classList.add('active');
-    
+    if (nextEl) {
+        // Clear all error messages on the new step by removing error elements and has-error class
+        nextEl.querySelectorAll('.field-error-text').forEach(el => {
+            el.remove(); // Actually remove the element instead of just hiding
+        });
+        nextEl.querySelectorAll('.input-wrapper, .toggle-container').forEach(el => {
+            el.classList.remove('has-error');
+        });
+        nextEl.classList.add('active');
+    }
+
     let scrollEl = document.getElementById('wiz-scroll');
     if (scrollEl) scrollEl.scrollTop = 0;
-    
+
     let wizBack = document.getElementById('wiz-back');
     if(wizBack) wizBack.style.visibility = currentWizIndex === 0 ? 'hidden' : 'visible';
     let wizNext = document.getElementById('wiz-next');
@@ -771,6 +1032,10 @@ function saveSettings() {
 }
 
 window.addEventListener('load', function() {
+    // Hide the "Your changes" tab initially (only show when compare mode is active)
+    const changesTab = document.getElementById('tab-changes');
+    if(changesTab) changesTab.style.display = 'none';
+
     const sidebarInputs = document.querySelectorAll('.sidebar input, .sidebar select');
     sidebarInputs.forEach(input => {
         input.addEventListener('input', handleInputChanged);
@@ -885,6 +1150,12 @@ function setFieldValidity(inputEl, isValid, message) {
 }
 
 function validateRequiredFields() {
+    // Don't validate main page fields if wizard is open
+    const wizardOverlay = document.getElementById('wizard-overlay');
+    if (wizardOverlay && wizardOverlay.classList.contains('active')) {
+        return [];
+    }
+
     const isCouple = currentMode === 'couple';
     const missing = [];
 
@@ -1065,6 +1336,12 @@ function setWealthAffordability(isAffordable) {
 
 function runCalculation() {
     if (typeof globalParams === 'undefined') { return; }
+
+    // Skip calculation if wizard is open
+    const wizardOverlay = document.getElementById('wizard-overlay');
+    if (wizardOverlay && wizardOverlay.classList.contains('active')) {
+        return;
+    }
 
     const missingFields = validateRequiredFields();
     checkCompareModifications();

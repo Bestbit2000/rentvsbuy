@@ -1,0 +1,46 @@
+<!-- Accessibility Component - Include this in all pages -->
+<div class="modal-overlay" id="a11y-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2>♿ Accessibility options</h2>
+            <button class="close-modal" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="a11y-row">
+                <label class="a11y-row-label" for="a11y_dark_toggle">Dark mode</label>
+                <label class="a11y-switch" style="margin: 0;">
+                    <input type="checkbox" id="a11y_dark_toggle" onchange="document.body.classList.toggle('dark-mode', this.checked); window.saveA11ySetting('dark', this.checked ? 'on' : 'off');">
+                    <span class="a11y-slider"></span>
+                </label>
+            </div>
+            <div class="a11y-row">
+                <label class="a11y-row-label" for="a11y_font_toggle">Dyslexia-friendly font</label>
+                <label class="a11y-switch" style="margin: 0;">
+                    <input type="checkbox" id="a11y_font_toggle" onchange="document.body.classList.toggle('dyslexia-font', this.checked); window.saveA11ySetting('font', this.checked ? 'on' : 'off');">
+                    <span class="a11y-slider"></span>
+                </label>
+            </div>
+            <div class="a11y-row last-toggle">
+                <label class="a11y-row-label" for="a11y_motion_toggle">Reduce motion</label>
+                <label class="a11y-switch" style="margin: 0;">
+                    <input type="checkbox" id="a11y_motion_toggle" onchange="document.body.classList.toggle('reduce-motion', this.checked); window.saveA11ySetting('motion', this.checked ? 'on' : 'off');">
+                    <span class="a11y-slider"></span>
+                </label>
+            </div>
+            <div class="input-row-single" style="margin-bottom: 20px;">
+                <label>Text size</label>
+                <div class="toggle-container">
+                    <input type="radio" name="a11y_size" id="a11y_size_normal" checked onchange="document.documentElement.classList.remove('text-large', 'text-xlarge'); window.saveA11ySetting('size', 'normal');">
+                    <label for="a11y_size_normal">Normal</label>
+                    <input type="radio" name="a11y_size" id="a11y_size_large" onchange="document.documentElement.classList.remove('text-xlarge'); document.documentElement.classList.add('text-large'); window.saveA11ySetting('size', 'large');">
+                    <label for="a11y_size_large">Large</label>
+                    <input type="radio" name="a11y_size" id="a11y_size_xl" onchange="document.documentElement.classList.remove('text-large'); document.documentElement.classList.add('text-xlarge'); window.saveA11ySetting('size', 'xl');">
+                    <label for="a11y_size_xl">Extra large</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="justify-content: flex-end;">
+            <button class="btn-primary" onclick="document.getElementById('a11y-overlay').classList.remove('active')">Done</button>
+        </div>
+    </div>
+</div>
