@@ -324,6 +324,7 @@ function toggleCompareMode() {
         if(summaryBlock) summaryBlock.style.display = 'none';
         baselineInputs = {};
         baselineResults = null;
+        updateResultsOverlay('normal');
     }
 }
 
