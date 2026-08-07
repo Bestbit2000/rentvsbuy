@@ -88,8 +88,8 @@
                     <summary>Buying costs</summary>
                     <div class="accordion-content">
                         <div class="input-row-single">
-                            <label>House price</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m compare-track" data-label="House price"></div>
+                            <label>Property price</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m compare-track" data-label="Property price"></div>
                         </div>
                         <div class="input-row-single">
                             <label>Purchase costs</label>
@@ -471,7 +471,7 @@
 											</div>
 											<div class="funding-legend">
 												<div class="legend-item-row">
-													<div class="legend-label-group"><span class="legend-color price-color"></span> House price</div>
+													<div class="legend-label-group"><span class="legend-color price-color"></span> Property price</div>
 													<span id="ui-prop-price" class="legend-value">£0</span>
 												</div>
 												<div class="legend-item-row">
@@ -714,7 +714,7 @@
                         <div class="settings-col">
                             <div class="settings-card">
                                 <h3>Market returns (nominal)</h3>
-                                <div class="input-row-single"><label>House price growth</label><div class="input-wrapper"><input type="number" id="set_hp_inc" step="0.1" value="3.2" class="has-suffix compare-track" data-label="House price growth"><span class="suffix">%</span></div><div class="helper-text">Assumed annual nominal growth rate of property values.</div></div>
+                                <div class="input-row-single"><label>Property price growth</label><div class="input-wrapper"><input type="number" id="set_hp_inc" step="0.1" value="3.2" class="has-suffix compare-track" data-label="Property price growth"><span class="suffix">%</span></div><div class="helper-text">Assumed annual nominal growth rate of property values.</div></div>
                                 <div class="input-row-single"><label>Rent increases</label><div class="input-wrapper"><input type="number" id="set_rent_inc" step="0.1" value="3.4" class="has-suffix compare-track" data-label="Rent increases"><span class="suffix">%</span></div><div class="helper-text">Assumed annual nominal growth rate of rent prices over time.</div></div>
                                 <div class="input-row-single"><label>Cash return</label><div class="input-wrapper"><input type="number" id="set_cash" step="0.1" value="2.0" class="has-suffix compare-track" data-label="Cash return"><span class="suffix">%</span></div><div class="helper-text">Expected nominal return on cash savings (before inflation).</div></div>
                                 <div class="input-row-single"><label>Pension return</label><div class="input-wrapper"><input type="number" id="set_pen" step="0.1" value="5.5" class="has-suffix compare-track" data-label="Pension return"><span class="suffix">%</span></div><div class="helper-text">Expected nominal return on pension investments (before inflation).</div></div>
@@ -797,6 +797,10 @@
                     <div class="input-row-single">
                         <label>Your retirement age</label>
                         <div class="input-wrapper"><input type="number" id="w_ret1" placeholder="e.g. 68" class="clamp-ret-age"></div>
+                    </div>
+                    <div class="input-row-single show-partner">
+                        <label>Partner's retirement age</label>
+                        <div class="input-wrapper"><input type="number" id="w_ret2" placeholder="e.g. 68" class="clamp-ret-age"></div>
                     </div>
                 </div>
 
@@ -952,7 +956,7 @@
                 <div class="wizard-step" id="step-9">
                     <h3 class="wizard-title">Target Property</h3>
                     <div class="input-row-single">
-                        <label>Target house price</label>
+                        <label>Target property price</label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m"></div>
                     </div>
                     <div class="input-row-single">
@@ -971,7 +975,7 @@
                     <p style="font-size: 0.95rem; color: #555; margin-bottom: 20px;">If you have any spare cash after your living expenses are paid for, how much would you like to put into your pension versus spending on other things?</p>
                     <div class="input-row-single">
                         <label>Spare income to invest in pension</label>
-                        <div class="input-wrapper"><input type="number" id="w_spare_pension" placeholder="e.g. 50" class="clamp-100 has-suffix" value="0" onchange="validateStep()"><span class="suffix">%</span></div>
+                        <div class="input-wrapper"><input type="number" id="w_spare_pension" placeholder="e.g. 50" class="clamp-100 has-suffix" onchange="validateStep()"><span class="suffix">%</span></div>
                         <div class="helper-text" style="font-size: 0.85rem; color: #666; margin-top: 10px;">This helps balance short-term spending with long-term retirement security. For example, 50% means half your spare cash builds retirement savings, half is available for lifestyle.</div>
                     </div>
                 </div>
