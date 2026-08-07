@@ -1032,12 +1032,12 @@
 
     <!-- How it works Modal -->
     <div id="how-it-works-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; display: flex; flex-direction: column;">
             <div class="modal-header">
                 <h2 style="margin: 0;">How we work out your results</h2>
                 <button class="close-modal" onclick="document.getElementById('how-it-works-modal').classList.remove('active')">&times;</button>
             </div>
-            <div class="modal-body" style="padding: 20px;">
+            <div class="modal-body" style="padding: 20px; overflow-y: auto; flex: 1;">
                 <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                     <!-- Card 1: The big picture -->
                     <div class="how-it-works-card">
@@ -1085,8 +1085,8 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="justify-content: flex-end; padding: 20px;">
-                <button class="btn-primary" onclick="document.getElementById('how-it-works-modal').classList.remove('active')" style="background-color: var(--ifoa-gold); border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: 500;">Close</button>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="document.getElementById('how-it-works-modal').classList.remove('active')">Close</button>
             </div>
         </div>
     </div>
