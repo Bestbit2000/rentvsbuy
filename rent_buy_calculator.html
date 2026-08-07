@@ -1075,7 +1075,7 @@
     <script>
         window.applyDarkModeColors = function(isDarkMode) {
             if (isDarkMode) {
-                document.querySelectorAll('.bg-white, section.bg-white').forEach(el => {
+                document.querySelectorAll('.bg-white:not(.bg-navy), section.bg-white:not(.bg-navy)').forEach(el => {
                     el.style.backgroundColor = '#1e1e1e';
                 });
                 document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {

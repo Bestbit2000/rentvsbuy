@@ -594,9 +594,21 @@ body.dark-mode .theme-buy .hero-icon-wrapper { background-color: #2a4a6a !import
 
 /* Dark mode background colors for light-themed sections */
 body.dark-mode { background-color: #121212 !important; }
-body.dark-mode .bg-white, body.dark-mode section.bg-white { background-color: #1e1e1e !important; }
+body.dark-mode .bg-white:not(.bg-navy), body.dark-mode section.bg-white:not(.bg-navy) { background-color: #1e1e1e !important; }
 body.dark-mode .bg-gray-50, body.dark-mode section.bg-gray-50 { background-color: #2a2a2a !important; }
 body.dark-mode main { background-color: #121212 !important; }
+
+/* Dark mode text colors for sufficient contrast */
+body.dark-mode .bg-white:not(.bg-navy) p,
+body.dark-mode .bg-white:not(.bg-navy) span,
+body.dark-mode .bg-white:not(.bg-navy) li,
+body.dark-mode .bg-gray-50 p,
+body.dark-mode .bg-gray-50 span,
+body.dark-mode .bg-gray-50 li { color: #e0e0e0 !important; }
+
+body.dark-mode .text-gray-600, body.dark-mode .text-gray-700 { color: #d0d0d0 !important; }
+body.dark-mode .text-gray-400, body.dark-mode .text-gray-500 { color: #a0a0a0 !important; }
+body.dark-mode .text-slate-600, body.dark-mode .text-slate-700 { color: #d0d0d0 !important; }
 body.dark-mode .theme-buy .hero-title, body.dark-mode .theme-buy .hero-highlight { color: #90caf9 !important; }
 body.dark-mode .theme-buy .hero-description { color: #e0f2fe !important; }
 body.dark-mode .theme-rent { background-color: #332a1a !important; border-color: #55442a !important; }
