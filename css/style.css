@@ -700,8 +700,11 @@ body.dark-mode .input-row-single > label { color: #e0e0e0 !important; }
 /* Scenario page dark mode fixes */
 body.dark-mode .bg-red-50, body.dark-mode .bg-blue-50 { background: #1e1e1e !important; border-color: #333 !important; }
 body.dark-mode .bg-red-50 h4, body.dark-mode .bg-blue-50 h4 { color: #90caf9 !important; }
+body.dark-mode .bg-red-50 h3, body.dark-mode .bg-blue-50 h3 { color: #90caf9 !important; }
 body.dark-mode .bg-red-50 p, body.dark-mode .bg-blue-50 p { color: #e0e0e0 !important; }
 body.dark-mode .bg-red-50 > div > p, body.dark-mode .bg-blue-50 > div > p { color: #e0e0e0 !important; }
+body.dark-mode .bg-red-50 * , body.dark-mode .bg-blue-50 * { color: #e0e0e0 !important; }
+body.dark-mode .bg-red-50 h2, body.dark-mode .bg-blue-50 h2 { color: #90caf9 !important; }
 
 /* Quote box styling in dark mode */
 body.dark-mode blockquote { color: #e0e0e0 !important; border-left-color: var(--ifoa-gold) !important; }
@@ -718,6 +721,11 @@ body.dark-mode .bg-gray-50 { background: #1e1e1e !important; }
 body.dark-mode .bg-gray-50 p, body.dark-mode .bg-gray-50 h2, body.dark-mode .bg-gray-50 h3, body.dark-mode .bg-gray-50 h4 { color: #e0e0e0 !important; }
 body.dark-mode .stat-card, body.dark-mode .stat-card-warning { background: #1e1e1e !important; }
 body.dark-mode .stat-card p, body.dark-mode .stat-card-warning p { color: #e0e0e0 !important; }
+
+/* Bottom scenario card dark mode */
+body.dark-mode section.bg-blue-50 h2, body.dark-mode section.bg-white h2 { color: #90caf9 !important; }
+body.dark-mode section.bg-white p { color: #e0e0e0 !important; }
+body.dark-mode section { color: #e0e0e0 !important; }
 
 
 /* =========================================================================
