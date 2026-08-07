@@ -34,7 +34,7 @@
             </div>
             <button class="settings-btn" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
             <button class="settings-btn" onclick="openSettings()">Rates and rules</button>
-            <a href="index.html" class="settings-btn close-calc-btn" style="text-decoration: none;">Close calculator</a>
+            <a href="#" class="settings-btn close-calc-btn" onclick="event.preventDefault(); document.getElementById('close-calc-modal').classList.add('active');" style="text-decoration: none;">Close calculator</a>
         </div>
         <div class="mobile-only">
             <button id="calc-burger-btn" class="burger-btn" aria-label="Toggle menu" aria-expanded="false" style="min-height: 44px; min-width: 44px;" onclick="const menu = document.getElementById('calc-mobile-menu'); menu.classList.toggle('open'); this.setAttribute('aria-expanded', menu.classList.contains('open') ? 'true' : 'false');">
@@ -58,7 +58,7 @@
         <button class="mobile-menu-item" onclick="openSettings(); document.getElementById('calc-mobile-menu').classList.remove('open');">
             Rates and rules
         </button>
-        <a href="index.html" class="mobile-menu-item" style="text-decoration: none;">
+        <a href="#" class="mobile-menu-item" onclick="event.preventDefault(); document.getElementById('close-calc-modal').classList.add('active'); document.getElementById('calc-mobile-menu').classList.remove('open');" style="text-decoration: none;">
             Close calculator
         </a>
     </div>
@@ -75,11 +75,12 @@
             <div class="sidebar-scroll-area">
                 <div class="sidebar-header">
                     <h2 id="sidebar-title">Current scenario</h2>
+                    <label for="side_mode" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">Buying for</label>
                     <div class="toggle-container" style="width: 100%;">
                         <input type="radio" name="side_mode" id="side_single" value="single" onchange="setMode('single')">
-                        <label for="side_single" style="padding: 10px 15px;">Single</label>
+                        <label for="side_single" style="padding: 10px 15px;">Just me</label>
                         <input type="radio" name="side_mode" id="side_couple" value="couple" onchange="setMode('couple')">
-                        <label for="side_couple" style="padding: 10px 15px;">Couple</label>
+                        <label for="side_couple" style="padding: 10px 15px;">With a partner</label>
                     </div>
                 </div>
 
@@ -336,7 +337,7 @@
                 </details>
 
                 <hr style="border: none; border-top: 1px solid #e0e6ed; margin: 30px 0 15px 0;">
-                <a href="#" class="link-start-over" onclick="event.preventDefault(); window.startOver();">Start over</a>
+                <a href="#" class="link-start-over" onclick="event.preventDefault(); window.location.href = window.location.pathname;">Start over</a>
             </div>
 
             <div id="compare-actions-footer" class="compare-actions-footer" style="display: none;">
@@ -429,6 +430,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
+                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Read full disclaimer</a></p>
                 </div>
             </div>
 
@@ -550,6 +554,9 @@
 					</div>
 				</div>
 			</div>
+                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
+                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Read full disclaimer</a></p>
+                </div>
 
             <div id="view-projections" class="view-section">
                 <div id="proj-blocked-msg" class="baseline-placeholder proj-blocked-msg" style="display: none;"></div>
@@ -598,6 +605,9 @@
                         </div>
                     </div>
                 </div>
+                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
+                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Read full disclaimer</a></p>
+                </div>
             </div>
 
             <div id="view-changes" class="view-section">
@@ -612,8 +622,8 @@
                         <div id="compare-summary-block" style="display: none;">
                             <ul id="compare-changes-list" class="changes-list"></ul>
                         </div>
-                        <div id="no-changes-msg" style="display:none; text-align:center; padding: 30px 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd; color: #777; font-style: italic;">
-                            When you make changes to your new scenario they will appear here so you can see a summary of them.
+                        <div id="no-changes-msg" style="text-align:center; padding: 30px 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd; color: #777; font-style: italic;">
+                            When you've made a change, they will show here.
                         </div>
                     </div>
                 </div>
@@ -759,11 +769,11 @@
                     <div class="big-mode-selector">
                         <div class="mode-card" id="w-mode-single" tabindex="0" role="button" aria-pressed="false" onclick="setMode('single')" onkeydown="handleModeCardKey(event, 'single')">
                             <div class="mode-icon">👤</div>
-                            <div class="mode-title">Single</div>
+                            <div class="mode-title">Just me</div>
                         </div>
                         <div class="mode-card" id="w-mode-couple" tabindex="0" role="button" aria-pressed="false" onclick="setMode('couple')" onkeydown="handleModeCardKey(event, 'couple')">
                             <div class="mode-icon">👥</div>
-                            <div class="mode-title">Couple</div>
+                            <div class="mode-title">With a partner</div>
                         </div>
                     </div>
                 </div>
@@ -992,6 +1002,23 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-primary" onclick="document.getElementById('disclaimer-modal').classList.remove('active')" style="width: 100%;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close Calculator Confirmation Modal -->
+    <div id="close-calc-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Close calculator</h2>
+                <button onclick="document.getElementById('close-calc-modal').classList.remove('active')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px; line-height: 1.6; color: #333; font-size: 0.95rem;">
+                <p>You'll lose all the information you've entered if you close the calculator. Are you sure you want to continue?</p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 12px; padding: 20px;">
+                <button class="btn-primary" onclick="window.location.href='index.html'" style="flex: 1; background-color: var(--ifoa-gold);">Yes, close</button>
+                <button onclick="document.getElementById('close-calc-modal').classList.remove('active')" style="flex: 1; background-color: #ccc; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 500;">No, stay</button>
             </div>
         </div>
     </div>
