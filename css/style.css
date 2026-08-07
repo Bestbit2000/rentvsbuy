@@ -749,6 +749,12 @@ body.dark-mode .bg-gold .text-white { color: #003a5d !important; }
 /* Badge text color fix for dark mode */
 body.dark-mode .bg-blue-100.text-blue-800 { color: #003a5d !important; background-color: #90caf9 !important; }
 
+/* Tailwind color class overrides for dark mode - ensure text is readable */
+body.dark-mode .text-blue-800 { color: #003a5d !important; }
+body.dark-mode .text-red-800 { color: #8b0000 !important; }
+body.dark-mode .bg-blue-100 { background-color: #90caf9 !important; }
+body.dark-mode .bg-red-100 { background-color: #ffb3ba !important; }
+
 
 /* =========================================================================
    COMPARE MODE & GRID SYSTEMS
