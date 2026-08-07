@@ -1285,6 +1285,26 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
     const ctx = canvas.getContext('2d');
     if (currentChart) currentChart.destroy();
 
+    // Get plan end age for chart marker
+    const planEndAge = getVal('set_end');
+
+    // Determine standardized axis scale (all £m or all £k based on max value)
+    const maxValue = Math.max(
+        ...buyData.map(v => Math.abs(Number(v))),
+        ...rentData.map(v => Math.abs(Number(v)))
+    );
+    const useMillions = maxValue >= 1000000;
+
+    // Create standardized formatter function
+    const formatAxisValue = (value) => {
+        if (value === 0) return '£0';
+        if (useMillions) {
+            return '£' + (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'm';
+        } else {
+            return '£' + (value / 1000) + 'k';
+        }
+    };
+
     const eventMarkersPlugin = {
         id: 'eventMarkers',
         afterDatasetsDraw(chart) {
@@ -1313,6 +1333,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
 
             drawMarker(purchaseAge, '🏠', '#003a5d');
             drawMarker(retirementAge, '⛱️', '#003a5d');
+            drawMarker(planEndAge, '📋', '#003a5d');
         }
     };
 
@@ -1390,10 +1411,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                     ticks: {
                         font: (c) => (goesNegative && c.tick && c.tick.value === 0) ? { weight: 'bold' } : {},
                         callback: function(value) {
-                            if (Math.abs(value) >= 1000000) {
-                                return '£' + (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'm';
-                            }
-                            return '£' + (value / 1000) + 'k';
+                            return formatAxisValue(value);
                         }
                     }
                 }
