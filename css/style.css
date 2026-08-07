@@ -608,10 +608,10 @@ body.dark-mode section.bg-navy { --ifoa-navy: #003a5d; background-color: #003a5d
 
 /* Dark mode text colors for sufficient contrast */
 body.dark-mode .bg-white:not(.bg-navy) p,
-body.dark-mode .bg-white:not(.bg-navy) span,
+body.dark-mode .bg-white:not(.bg-navy) span:not(.badge-outcome-blue):not(.badge-outcome-red),
 body.dark-mode .bg-white:not(.bg-navy) li,
 body.dark-mode .bg-gray-50 p,
-body.dark-mode .bg-gray-50 span,
+body.dark-mode .bg-gray-50 span:not(.badge-outcome-blue):not(.badge-outcome-red),
 body.dark-mode .bg-gray-50 li { color: #e0e0e0 !important; }
 
 body.dark-mode .text-gray-600, body.dark-mode .text-gray-700 { color: #d0d0d0 !important; }
@@ -765,6 +765,12 @@ body.dark-mode .badge-outcome-blue {
   color: #003a5d !important;
 }
 
+/* Override the span color rule for badges in dark mode */
+body.dark-mode .bg-white .badge-outcome-blue,
+body.dark-mode .bg-gray-50 .badge-outcome-blue {
+  color: #003a5d !important;
+}
+
 .badge-outcome-red {
   display: inline-block;
   background-color: #ffebee;
@@ -777,6 +783,12 @@ body.dark-mode .badge-outcome-blue {
 
 body.dark-mode .badge-outcome-red {
   background-color: #ffb3ba;
+  color: #8b0000 !important;
+}
+
+/* Override the span color rule for badges in dark mode */
+body.dark-mode .bg-white .badge-outcome-red,
+body.dark-mode .bg-gray-50 .badge-outcome-red {
   color: #8b0000 !important;
 }
 
