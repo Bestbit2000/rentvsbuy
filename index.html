@@ -392,7 +392,7 @@
                 <div class="a11y-row">
                     <label class="a11y-row-label" for="a11y_dark_toggle">Dark mode</label>
                     <label class="a11y-switch" style="margin: 0;">
-                        <input type="checkbox" id="a11y_dark_toggle" onchange="document.body.classList.toggle('dark-mode', this.checked); window.saveA11ySetting('dark', this.checked ? 'on' : 'off');">
+                        <input type="checkbox" id="a11y_dark_toggle" onchange="document.body.classList.toggle('dark-mode', this.checked); window.applyDarkModeColors(this.checked); window.saveA11ySetting('dark', this.checked ? 'on' : 'off');">
                         <span class="a11y-slider"></span>
                     </label>
                 </div>
@@ -430,6 +430,24 @@
 
     <!-- Accessibility Settings Functions -->
     <script>
+        window.applyDarkModeColors = function(isDarkMode) {
+            if (isDarkMode) {
+                document.querySelectorAll('.bg-white, section.bg-white').forEach(el => {
+                    el.style.backgroundColor = '#1e1e1e';
+                });
+                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
+                    el.style.backgroundColor = '#2a2a2a';
+                });
+            } else {
+                document.querySelectorAll('.bg-white, section.bg-white').forEach(el => {
+                    el.style.backgroundColor = '';
+                });
+                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
+                    el.style.backgroundColor = '';
+                });
+            }
+        };
+
         window.saveA11ySetting = function(key, value) {
             localStorage.setItem('a11y_' + key, value);
         };
@@ -444,6 +462,7 @@
 
             if (settings.dark === 'on') {
                 document.body.classList.add('dark-mode');
+                window.applyDarkModeColors(true);
                 if (document.getElementById('a11y_dark_toggle')) {
                     document.getElementById('a11y_dark_toggle').checked = true;
                 }
