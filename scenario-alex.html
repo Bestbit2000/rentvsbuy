@@ -38,8 +38,8 @@
 
                  <!-- Mobile menu button -->
 				<div class="md:hidden flex items-center">
-					<button id="mobile-menu-btn" type="button" class="text-white hover:opacity-80 focus:outline-none p-1.5 flex items-center justify-center bg-transparent border-none cursor-pointer" aria-label="Toggle menu">
-						<svg class="h-7 w-7" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+					<button id="mobile-menu-btn" type="button" class="text-white hover:opacity-80 focus:outline-none p-2 flex items-center justify-center bg-transparent border-none cursor-pointer" aria-label="Toggle menu" aria-expanded="false" style="min-height: 44px; min-width: 44px;">
+						<svg class="h-7 w-7" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
 						</svg>
 					</button>
@@ -62,7 +62,7 @@
         <div class="bg-gray-50 pt-6 pb-2 border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <a href="javascript:history.back()" class="inline-flex items-center text-sm font-medium text-navy hover:text-gold transition">
-                    <svg class="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <svg class="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back
                 </a>
             </div>
@@ -78,7 +78,7 @@
                         <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-2">Alex, 21</h1>
                         <h2 class="text-2xl text-gold font-medium mb-6">The "Unwilling Boomerang"</h2>
                         
-                        <blockquote class="text-xl text-gray-600 italic border-l-4 border-gold pl-6 py-2">
+                        <blockquote class="text-xl text-gray-700 italic border-l-4 border-gold pl-6 py-2">
                             "I love my parents, but I need to be able to order a pizza at midnight without answering twenty questions. My living situation is actively killing my social life."
                         </blockquote>
                     </div>
@@ -95,27 +95,27 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card">
-                        <p class="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">Income & Debt</p>
-                        <p class="text-2xl font-bold text-navy">£32,000 <span class="text-sm font-normal text-gray-600">salary</span></p>
-                        <p class="text-md text-red-600 mt-2">£53,000 <span class="text-sm text-gray-600">student loan</span></p>
+                        <p class="text-sm text-gray-700 font-bold uppercase tracking-wider mb-1">Income & Debt</p>
+                        <p class="text-2xl font-bold text-navy">£32,000 <span class="text-sm font-normal text-gray-700">salary</span></p>
+                        <p class="text-md text-red-600 mt-2">£53,000 <span class="text-sm text-gray-700">student loan</span></p>
                     </div>
                     
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card">
-                        <p class="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">Outgoings</p>
-                        <p class="text-2xl font-bold text-navy">£800 <span class="text-sm font-normal text-gray-600">/mo rent</span></p>
-                        <p class="text-md text-orange-500 mt-2">£1,250 <span class="text-sm text-gray-600">/mo lifestyle</span></p>
+                        <p class="text-sm text-gray-700 font-bold uppercase tracking-wider mb-1">Outgoings</p>
+                        <p class="text-2xl font-bold text-navy">£800 <span class="text-sm font-normal text-gray-700">/mo rent</span></p>
+                        <p class="text-md text-orange-500 mt-2">£1,250 <span class="text-sm text-gray-700">/mo lifestyle</span></p>
                     </div>
 
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card">
-                        <p class="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">Savings</p>
-                        <p class="text-2xl font-bold text-navy">£500 <span class="text-sm font-normal text-gray-600">in bank</span></p>
-                        <p class="text-md text-gray-600 mt-2">£0 <span class="text-sm text-gray-600">in pension</span></p>
+                        <p class="text-sm text-gray-700 font-bold uppercase tracking-wider mb-1">Savings</p>
+                        <p class="text-2xl font-bold text-navy">£500 <span class="text-sm font-normal text-gray-700">in bank</span></p>
+                        <p class="text-md text-gray-700 mt-2">£0 <span class="text-sm text-gray-700">in pension</span></p>
                     </div>
 
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card">
-                        <p class="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">The Goal</p>
+                        <p class="text-sm text-gray-700 font-bold uppercase tracking-wider mb-1">The Goal</p>
                         <p class="text-2xl font-bold text-navy">£200,000</p>
-                        <p class="text-md text-gray-600 mt-2">1-bed flat</p>
+                        <p class="text-md text-gray-700 mt-2">1-bed flat</p>
                     </div>
                 </div>
 
@@ -126,7 +126,7 @@
                              <div class="absolute inset-0 bg-gradient-to-t from-navy/80 to-transparent flex flex-col justify-end p-6">
                                  <div class="bg-white/90 backdrop-blur-sm inline-block rounded-lg px-4 py-2 w-max shadow-md border border-white/50">
                                      <span class="block text-3xl font-extrabold text-navy leading-none">38</span>
-                                     <span class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mt-1">Purchase Age</span>
+                                     <span class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mt-1">Purchase Age</span>
                                  </div>
                              </div>
                         </div>
@@ -136,12 +136,12 @@
                                 If Alex changes nothing, targeting a house purchase is still his best financial strategy. However, he will be <strong>38 years old</strong> before he can afford to buy his flat—four years later than the current UK average for first-time buyers.
                             </p>
                             <div class="flex items-start bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                                <svg class="h-6 w-6 text-green-500 mr-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-6 w-6 text-green-500 mr-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                 </svg>
                                 <div>
                                     <p class="font-bold text-navy">Buying > Renting</p>
-                                    <p class="text-sm text-gray-600">Even buying at 38, he generates <strong>£396,000 more in lifetime wealth</strong> compared to renting for life, largely due to escaping rent costs in retirement.</p>
+                                    <p class="text-sm text-gray-700">Even buying at 38, he generates <strong>£396,000 more in lifetime wealth</strong> compared to renting for life, largely due to escaping rent costs in retirement.</p>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12">
                     <h3 class="text-3xl font-bold mb-4">How can Alex speed up the process?</h3>
-                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Age 38 feels a long way off for a 21-year-old. Our model tested different life choices and interventions to see how Alex could buy his home sooner.</p>
+                    <p class="text-lg text-gray-700 max-w-2xl mx-auto">Age 38 feels a long way off for a 21-year-old. Our model tested different life choices and interventions to see how Alex could buy his home sooner.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -163,7 +163,7 @@
                     <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
                         <div class="bg-navy px-6 py-4">
                             <h4 class="text-xl font-bold text-white flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="w-6 h-6 mr-2 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                 </svg>
                                 The "Bank of Mum & Dad"
@@ -174,18 +174,18 @@
                             
                             <div class="space-y-6">
                                 <div class="border-l-4 border-gold pl-4">
-                                    <h5 class="font-bold text-navy text-lg">Scenario A: Free Rent</h5>
-                                    <p class="text-sm text-gray-600 mb-2">If his parents stop charging the £800/mo rent.</p>
+                                    <h4 class="font-bold text-navy text-lg">Scenario A: Free Rent</h4>
+                                    <p class="text-sm text-gray-700 mb-2">If his parents stop charging the £800/mo rent.</p>
                                     <div class="bg-gray-50 rounded p-3 flex justify-between items-center">
                                         <span class="text-sm font-medium">New Purchase Age:</span>
                                         <span class="text-lg font-bold text-green-600">27</span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-1">He buys 11 years earlier.</p>
+                                    <p class="text-xs text-gray-700 mt-1">He buys 11 years earlier.</p>
                                 </div>
 
                                 <div class="border-l-4 border-gold pl-4">
-                                    <h5 class="font-bold text-navy text-lg">Scenario B: A £10,000 Gift</h5>
-                                    <p class="text-sm text-gray-600 mb-2">A one-off lump sum contribution to his deposit.</p>
+                                    <h4 class="font-bold text-navy text-lg">Scenario B: A £10,000 Gift</h4>
+                                    <p class="text-sm text-gray-700 mb-2">A one-off lump sum contribution to his deposit.</p>
                                     <div class="bg-gray-50 rounded p-3 flex justify-between items-center mb-2">
                                         <span class="text-sm font-medium">New Purchase Age:</span>
                                         <span class="text-lg font-bold text-green-600">36</span>
@@ -194,7 +194,7 @@
                                         <span class="text-sm font-medium text-navy">Added Lifetime Wealth:</span>
                                         <span class="text-lg font-bold text-navy">+£67,000</span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-2">A £10k gift grows to create nearly 7x that amount in lifetime wealth.</p>
+                                    <p class="text-xs text-gray-700 mt-2">A £10k gift grows to create nearly 7x that amount in lifetime wealth.</p>
                                 </div>
                             </div>
                         </div>
@@ -204,7 +204,7 @@
                     <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
                         <div class="bg-gold px-6 py-4">
                             <h4 class="text-xl font-bold text-white flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="w-6 h-6 mr-2 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                                 Changing Lifestyle Habits
@@ -215,8 +215,8 @@
                             
                             <div class="space-y-6">
                                 <div class="border-l-4 border-navy pl-4">
-                                    <h5 class="font-bold text-navy text-lg">Scenario C: Cutting Expenses</h5>
-                                    <p class="text-sm text-gray-600 mb-2">Reducing discretionary spending from £1,250 down to £500 a month.</p>
+                                    <h4 class="font-bold text-navy text-lg">Scenario C: Cutting Expenses</h4>
+                                    <p class="text-sm text-gray-700 mb-2">Reducing discretionary spending from £1,250 down to £500 a month.</p>
                                     
                                     <div class="bg-gray-50 rounded p-4 mb-4">
                                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
@@ -232,7 +232,7 @@
                                     <p class="text-sm text-gray-700 italic bg-blue-50 p-3 rounded">
                                         "How you spend the money you have makes a significant impact on both overall wealth accumulation over your lifetime and when you can buy a house."
                                     </p>
-                                    <p class="text-xs text-gray-500 mt-3">By cutting back, he buys 11 years earlier and dramatically increases his final net worth from the base £1.35M.</p>
+                                    <p class="text-xs text-gray-700 mt-3">By cutting back, he buys 11 years earlier and dramatically increases his final net worth from the base £1.35M.</p>
                                 </div>
                             </div>
                         </div>
@@ -249,14 +249,14 @@
                         <img src="images/headshot_becky.png" alt="Becky" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x400/c3a344/ffffff?text=Becky'">
                     </div>
                     <div class="flex-grow text-center md:text-left">
-                        <h3 class="text-2xl font-bold text-navy mb-2">Next Scenario: Becky, 24</h3>
+                        <h2 class="text-2xl font-bold text-navy mb-2">Next Scenario: Becky, 24</h2>
                         <p class="text-gray-700 mb-4 md:mb-0">
                             The "Independence Protector". Becky rents her own flat but faces a choice between keeping her space and ever being able to afford a home. See how her choices compare to Alex's.
                         </p>
                     </div>
                     <div class="flex-shrink-0">
                         <a href="scenario_becky.html" class="btn-outline px-8 py-3 font-bold block text-center">
-                            Read Becky's Story
+                            Read Becky's financial timeline
                         </a>
                     </div>
                 </div>
@@ -266,7 +266,7 @@
         <section class="py-20 bg-gray-50 border-t border-gray-200">
             <div class="max-w-4xl mx-auto px-4 text-center">
                 <h2 class="text-3xl font-bold mb-6 text-navy">What does your timeline look like?</h2>
-                <p class="text-xl text-gray-600 mb-8">You don't have to guess. Use the calculator to explore how your rent, spending habits, and target house price affect your long-term wealth.</p>
+                <p class="text-xl text-gray-700 mb-8">You don't have to guess. Use the calculator to explore how your rent, spending habits, and target house price affect your long-term wealth.</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="rent_buy_calculator.html" class="btn-primary px-10 py-5 font-bold text-xl shadow-xl transition transform hover:scale-105 inline-flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -287,6 +287,8 @@
 
         btn.addEventListener('click', () => {
             menu.classList.toggle('open');
+            const isOpen = menu.classList.contains('open');
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
 
         // Close mobile menu when a link is clicked
@@ -294,6 +296,7 @@
         mobileLinks.forEach(link => {
             link.addEventListener('click', () => {
                 menu.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
             });
         });
     </script>
