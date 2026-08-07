@@ -684,6 +684,12 @@ body.dark-mode #projections-compare-controls span {
     color: #90caf9 !important;
 }
 
+body.dark-mode .modal-body { background: #1e1e1e !important; color: #e0e0e0 !important; }
+body.dark-mode .modal-body p { color: #e0e0e0 !important; }
+
+.a11y-row-label { font-size: 0.95rem; font-weight: 500; color: #333; }
+body.dark-mode .a11y-row-label { color: #e0e0e0 !important; }
+
 
 /* =========================================================================
    COMPARE MODE & GRID SYSTEMS

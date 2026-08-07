@@ -784,7 +784,7 @@
 
                 <!-- Step 1: Ages -->
                 <div class="wizard-step" id="step-1">
-                    <h3 class="wizard-title">Let's start with your ages</h3>
+                    <h3 class="wizard-title" id="step1-title">Let's start with your age</h3>
                     <div class="input-row-single">
                         <label>Your current age</label>
                         <div class="input-wrapper"><input type="number" id="w_age1" placeholder="e.g. 29" class="clamp-age"></div>
@@ -1020,12 +1020,12 @@
                 <h2 style="margin: 0;">Close calculator</h2>
                 <button class="close-modal" onclick="document.getElementById('close-calc-modal').classList.remove('active')">&times;</button>
             </div>
-            <div class="modal-body" style="padding: 20px; line-height: 1.6; color: #333; font-size: 0.95rem;">
+            <div class="modal-body" style="padding: 20px; line-height: 1.6; font-size: 0.95rem;">
                 <p>You'll lose all the information you've entered if you close the calculator. Are you sure you want to continue?</p>
             </div>
             <div class="modal-footer" style="display: flex; gap: 12px; padding: 20px;">
                 <button class="btn-primary" onclick="window.location.href='index.html'" style="flex: 1; background-color: var(--ifoa-gold);">Yes, close</button>
-                <button onclick="document.getElementById('close-calc-modal').classList.remove('active')" style="flex: 1; background-color: #ccc; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 500;">No, stay</button>
+                <button onclick="document.getElementById('close-calc-modal').classList.remove('active')" class="btn-secondary" style="flex: 1; margin-top: 0;">No, stay</button>
             </div>
         </div>
     </div>

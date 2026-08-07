@@ -702,6 +702,8 @@ function setMode(mode) {
         if(sideSingle) sideSingle.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
+        const step1Title = document.getElementById('step1-title');
+        if(step1Title) step1Title.textContent = "Let's start with your age";
         // Only call switchPerson if not in wizard (wizard is active when wizard-overlay has 'active' class)
         const wizardOverlay = document.getElementById('wizard-overlay');
         if (!wizardOverlay || !wizardOverlay.classList.contains('active')) {
@@ -713,6 +715,8 @@ function setMode(mode) {
         if(sideCouple) sideCouple.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'flex');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.remove('is-hidden'));
+        const step1Title = document.getElementById('step1-title');
+        if(step1Title) step1Title.textContent = "Let's start with your ages";
         // Only call switchPerson if not in wizard (wizard is active when wizard-overlay has 'active' class)
         const wizardOverlay2 = document.getElementById('wizard-overlay');
         if (!wizardOverlay2 || !wizardOverlay2.classList.contains('active')) {
