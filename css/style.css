@@ -22,7 +22,7 @@ body:not(.calc-body) .btn-primary:hover { background-color: #00223b; transform: 
 body:not(.calc-body) .btn-secondary { background-color: var(--ifoa-gold); color: white; transition: background-color 0.3s; border-radius: 9999px; }
 body:not(.calc-body) .btn-secondary:hover { background-color: #a88b39; }
 
-.btn-outline { background-color: white; color: var(--ifoa-navy); border: 2px solid var(--ifoa-navy); transition: all 0.3s; border-radius: 9999px; }
+.btn-outline { background-color: white; color: var(--ifoa-navy); border: 2px solid var(--ifoa-navy); transition: all 0.3s; border-radius: 9999px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; }
 .btn-outline:hover { background-color: #f3f4f6; }
 
 .persona-card { transition: transform 0.2s, box-shadow 0.2s; }
@@ -59,6 +59,11 @@ body.calc-body { font-family: var(--font-main); background: var(--bg); margin: 0
 .compare-toggle input[type="checkbox"]:checked { background: var(--ifoa-gold); }
 .compare-toggle input[type="checkbox"]:checked::after { transform: translateX(20px); }
 
+/* Compare is unavailable until every required input has been filled in */
+.compare-toggle.is-disabled, .mobile-menu-item.is-disabled { opacity: 0.45; cursor: not-allowed; }
+.compare-toggle.is-disabled label, .mobile-menu-item.is-disabled label { cursor: not-allowed; }
+.compare-toggle input[type="checkbox"]:disabled { cursor: not-allowed; }
+
 .settings-btn { background: transparent; border: none; color: white; padding: 8px 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 0.95rem; font-family: inherit; }
 .settings-btn:hover { color: var(--ifoa-gold); background: transparent; }
 
@@ -69,7 +74,7 @@ body.calc-body { font-family: var(--font-main); background: var(--bg); margin: 0
 .sidebar-scroll-area { padding: 25px; overflow-y: auto; overflow-x: hidden; flex-grow: 1; }
 .compare-actions-footer { padding: 20px 25px; background: white; border-top: 1px solid #e0e6ed; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); flex-shrink: 0; z-index: 10; }
 
-body .btn-primary.btn-make-base { background-color: var(--ifoa-navy) !important; color: white !important; width: 100%; margin: 0 0 12px 0; transition: all 0.2s; }
+body .btn-primary.btn-make-base { background-color: var(--ifoa-navy) !important; color: white !important; width: 100%; margin: 0 0 12px 0; transition: all 0.2s; min-height: 44px; padding: 12px 24px !important; }
 body .btn-primary.btn-make-base:hover:not(:disabled) { background-color: #00223b !important; }
 body .btn-primary.btn-make-base:disabled { background-color: #ccc !important; color: #666 !important; cursor: not-allowed !important; opacity: 0.7; }
 
@@ -141,12 +146,14 @@ details[open] summary::after { content: '▲'; }
 .toggle-container input[type="radio"]:checked + label:hover { background-color: var(--ifoa-gold); color: white; }
 
 /* Buttons */
-.btn-primary { background: var(--ifoa-gold); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05rem; transition: all 0.2s; box-shadow: 0 4px 10px rgba(191, 161, 93, 0.3); display: inline-block; text-align: center; }
+a:focus-visible, button:focus-visible, input[type="button"]:focus-visible, input[type="submit"]:focus-visible { outline: 2px solid var(--ifoa-navy); outline-offset: 3px; }
+
+.btn-primary { background: var(--ifoa-gold); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05rem; transition: all 0.2s; box-shadow: 0 4px 10px rgba(191, 161, 93, 0.3); display: inline-block; text-align: center; min-height: 44px; min-width: 44px; display: flex; align-items: center; justify-content: center; }
 .btn-primary:hover:not(:disabled) { background: #a88d4d; transform: translateY(-1px); }
 .btn-primary:active:not(:disabled) { transform: translateY(1px); }
 .btn-primary:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; opacity: 0.6; }
-.btn-full { width: 100%; display: block; margin-top: 20px; padding: 15px; font-size: 1.1rem; }
-.btn-secondary { background: #e0e6ed; color: var(--ifoa-blue); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+.btn-full { width: 100%; display: block; margin-top: 20px; padding: 15px; font-size: 1.1rem; min-height: 44px; }
+.btn-secondary { background: #e0e6ed; color: var(--ifoa-blue); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-secondary:hover { background: #cfd8e3; }
 .start-again-link { display: block; text-align: center; margin-top: 15px; color: #888; font-size: 0.9rem; text-decoration: underline; cursor: pointer; transition: color 0.2s; }
 .start-again-link:hover { color: var(--danger); }
@@ -167,6 +174,8 @@ details[open] summary::after { content: '▲'; }
     justify-content: center;
     gap: 6px;
     flex-shrink: 0;
+    min-height: 44px;
+    min-width: 44px;
 }
 .btn-undo:hover {
     background: #ffebee;
@@ -365,6 +374,35 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .prop-empty-title { font-weight: bold; font-size: 1.1rem; color: #b91c1c; margin-bottom: 8px; }
 .prop-empty-desc { font-style: italic; color: #777; max-width: 480px; margin: 0 auto; }
 
+/* Per-column "nothing to show" panel, used so compare mode keeps both columns */
+.prop-panel-empty { align-items: center; justify-content: center; text-align: center; border-top-color: #d9a3a3; background: #fdf7f7; }
+.prop-panel-empty .prop-empty-icon { margin-bottom: 10px; }
+
+/* Affordability layout switch for the Property details tab.
+   Single scenario: one full-width message. Compare mode: keep the two columns
+   so the original and new scenarios can still be read side by side. */
+.prop-breakdown-wrapper { display: grid; gap: 25px; grid-template-columns: 1fr; }
+
+/* Single scenario: cost and funding sit side by side when the pane is wide
+   enough, and fall back to stacking when it isn't. Compare mode keeps them
+   stacked so each row can show its original/new columns. */
+#results-pane:not(.compare-mode-active) .prop-breakdown-wrapper { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: stretch; }
+#results-pane:not(.compare-mode-active) .prop-breakdown-wrapper > .prop-compare-section { display: flex; flex-direction: column; min-width: 0; }
+#results-pane:not(.compare-mode-active) .prop-compare-section > .compare-grid { flex: 1 1 auto; }
+#results-pane:not(.compare-mode-active) .prop-compare-section .revised-col { display: flex; flex-direction: column; }
+#results-pane:not(.compare-mode-active) .prop-compare-section .revised-col > div:not(.col-title) { flex: 1 1 auto; display: flex; flex-direction: column; }
+#results-pane:not(.compare-mode-active) .prop-compare-section .revised-col > div:not(.col-title) > * { flex: 1 1 auto; }
+#prop-card.is-unaffordable #prop-breakdown-content { display: none; }
+#prop-card.is-unaffordable #prop-breakdown-empty { display: block; }
+.compare-mode-active #prop-card.is-unaffordable #prop-breakdown-content { display: grid; }
+.compare-mode-active #prop-card #prop-breakdown-empty { display: none; }
+
+/* Wealth difference has nothing to compare when a purchase never happens */
+.wealth-empty-card { align-items: center; justify-content: center; text-align: center; }
+.wealth-empty-icon { color: #b91c1c; margin-bottom: 12px; }
+.wealth-empty-title { font-weight: bold; font-size: 1.1rem; color: #b91c1c; margin-bottom: 8px; }
+.wealth-empty-desc { font-style: italic; color: #777; max-width: 480px; margin: 0 auto; line-height: 1.5; }
+
 /* --- PROJECTIONS VIEW LAYOUT --- */
 .projections-controls-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0e6ed; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; flex-shrink: 0; }
 
@@ -393,9 +431,22 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .legend-box { display: flex; align-items: center; gap: 8px; color: #000; }
 .line { display: inline-block; width: 30px; height: 3px; }
 .line-buy { background: var(--ifoa-blue); }
-.line-rent { border-top: 3px dashed var(--ifoa-gold); background: transparent; }
+.line-rent, .line-base-rent { background: var(--ifoa-gold); position: relative; }
+/* Circle marker so the renting line reads as strongly as the buying line */
+.line-rent::after, .line-base-rent::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ifoa-gold);
+    border: 1.5px solid #fff;
+    box-sizing: border-box;
+}
 .line-base-buy { background: var(--ifoa-blue); }
-.line-base-rent { border-top: 3px dashed var(--ifoa-gold); background: transparent;}
 .emoji-note { color: #000; font-weight: bold; }
 .canvas-wrapper { flex-grow: 1; position: relative; width: 100%; min-height: 0; height: 100%; }
 
@@ -584,6 +635,9 @@ body.dark-mode .prop-empty-state { background: #1e1e1e !important; border-color:
 body.dark-mode .prop-empty-title { color: #ef9a9a !important; }
 body.dark-mode .prop-empty-icon { color: #ef9a9a !important; }
 body.dark-mode .prop-empty-desc { color: #e0e0e0 !important; }
+body.dark-mode .prop-panel-empty { background: #241a1a !important; border-color: #4a2c2c !important; }
+body.dark-mode .wealth-empty-title, body.dark-mode .wealth-empty-icon { color: #ef9a9a !important; }
+body.dark-mode .wealth-empty-desc { color: #cbd5e1 !important; }
 body.dark-mode .close-modal:hover { background: #333; color: #ef9a9a; }
 body.dark-mode .cost-sdlt { background: #3d5a72 !important; }
 body.dark-mode .cost-fees { background: #4a5560 !important; }
@@ -620,7 +674,22 @@ body.dark-mode #projections-compare-controls span {
 .compare-mode-active .compare-grid .col-title, .compare-mode-active .compare-grid .baseline-col { display: block; }
 
 .timing-hero-card, .result-hero-card, .insight-card { width: 100%; box-sizing: border-box; height: 100%; }
+
+/* Desktop compare mode: cards sitting side by side in a row match each other's
+   height, so a longer message on one side doesn't leave a ragged edge.
+   Scoped to compare mode — a single scenario has only one column to size. */
+@media (min-width: 951px) {
+    .compare-mode-active .compare-grid { align-items: stretch; }
+    .compare-mode-active .compare-grid > .compare-col { display: flex; flex-direction: column; min-width: 0; }
+    .compare-mode-active .compare-grid > .compare-col > .col-title { flex: 0 0 auto; }
+    .compare-mode-active .compare-grid > .compare-col > div:not(.col-title) { flex: 1 1 auto; display: flex; flex-direction: column; }
+    .compare-mode-active .compare-grid > .compare-col > div:not(.col-title) > * { flex: 1 1 auto; }
+    .compare-mode-active #hero-card-container, .compare-mode-active #timing-card-container { display: flex; flex-direction: column; flex: 1 1 auto; }
+    .compare-mode-active #hero-card-container > *, .compare-mode-active #timing-card-container > * { flex: 1 1 auto; }
+}
 .baseline-placeholder { padding: 30px 20px; text-align: center; background: #f9f9f9; border-radius: 12px; border: 2px dashed #ddd; color: #777; font-style: italic; line-height: 1.5; height: 100%; display: flex; align-items: center; justify-content: center; }
+/* Stands in for the chart/table while required inputs are missing */
+.proj-blocked-msg { flex-grow: 1; height: auto; min-height: 220px; box-sizing: border-box; }
 
 body.dark-mode .compare-grid .baseline-col .col-title { color: #90caf9; }
 body.dark-mode .compare-grid .revised-col .col-title { color: var(--ifoa-gold); }

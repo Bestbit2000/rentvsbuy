@@ -28,9 +28,9 @@
             </div>
         </a>
         <div class="header-actions desktop-only">
-            <div class="compare-toggle">
+            <div class="compare-toggle is-disabled" id="compare-toggle-desktop" title="Fill in all the required fields to compare a scenario">
                 <label for="compare-switch">Compare a scenario</label>
-                <input type="checkbox" id="compare-switch" onchange="toggleCompareMode(); const m = document.getElementById('compare-switch-mob'); if(m) m.checked = this.checked;">
+                <input type="checkbox" id="compare-switch" disabled onchange="toggleCompareMode(); const m = document.getElementById('compare-switch-mob'); if(m) m.checked = this.checked;">
             </div>
             <button class="settings-btn" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
             <button class="settings-btn" onclick="openSettings()">Rates and rules</button>
@@ -46,10 +46,10 @@
     </header>
 
     <div id="calc-mobile-menu" class="calc-mobile-menu-panel">
-        <div class="mobile-menu-item">
+        <div class="mobile-menu-item is-disabled" id="compare-toggle-mobile" title="Fill in all the required fields to compare a scenario">
             <label for="compare-switch-mob" style="margin:0; cursor:pointer;">Compare scenarios</label>
             <div class="compare-toggle">
-                <input type="checkbox" id="compare-switch-mob" onchange="document.getElementById('compare-switch').checked = this.checked; toggleCompareMode(); document.getElementById('compare-switch').dispatchEvent(new Event('change'));">
+                <input type="checkbox" id="compare-switch-mob" disabled onchange="document.getElementById('compare-switch').checked = this.checked; toggleCompareMode(); document.getElementById('compare-switch').dispatchEvent(new Event('change'));">
             </div>
         </div>
         <button class="mobile-menu-item" onclick="document.getElementById('a11y-overlay').classList.add('active'); document.getElementById('calc-mobile-menu').classList.remove('open');">
@@ -363,7 +363,7 @@
             </div>
 
             <div id="view-overview" class="view-section active">
-                <h3 class="section-heading" style="margin-top: 0;">The verdict</h3>
+                <h3 class="section-heading" style="margin-top: 0;">The likely outcome</h3>
                 <div class="compare-grid">
                     <div class="compare-col baseline-col">
                         <div class="col-title">Original scenario</div>
@@ -379,7 +379,7 @@
                     </div>
                 </div>
 
-                <h3 class="section-heading">When can you buy?</h3>
+                <h3 class="section-heading">When could you buy?</h3>
                 <div class="compare-grid">
                     <div class="compare-col baseline-col">
                         <div class="col-title">Original scenario</div>
@@ -406,7 +406,14 @@
                     <div class="compare-col revised-col">
                         <div class="col-title">New scenario</div>
                         <div id="active-wealth">
-                            <div class="insight-card">
+                            <div class="insight-card wealth-empty-card" id="wealth-empty-card" style="display: none;">
+                                <div class="wealth-empty-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="16"></line><line x1="6" y1="20" x2="6" y2="16"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>
+                                </div>
+                                <div class="wealth-empty-title">No wealth comparison to show</div>
+                                <p class="wealth-empty-desc">This home looks unlikely to be affordable before retirement, so there is no buying outcome to weigh against renting. Adjust your inputs to make a purchase possible and the comparison will appear here.</p>
+                            </div>
+                            <div class="insight-card" id="wealth-bars-card">
                                 <div class="bar-row">
                                     <div class="bar-label"><span>Buying</span> <span class="bar-val" id="ui-buy-wealth">£0</span></div>
                                     <div class="bar-track"><div class="bar-fill buy-fill" id="ui-buy-bar" style="width: 0%;"></div></div>
@@ -429,7 +436,6 @@
 				<div class="insight-card prop-insight-card" id="prop-card">
 					<div id="prop-breakdown-content" class="prop-breakdown-wrapper">
 						<div class="prop-compare-section">
-							<h4 class="prop-compare-row-heading">Purchase Costs</h4>
 							<div class="compare-grid">
 								<div class="compare-col baseline-col">
 									<div class="col-title">Original scenario</div>
@@ -440,6 +446,13 @@
 								<div class="compare-col revised-col">
 									<div class="col-title">New scenario</div>
 									<div id="active-prop-cost">
+										<div class="prop-panel prop-panel-empty" style="display: none;">
+											<div class="prop-empty-icon" aria-hidden="true">
+												<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" opacity="0.4"></path><rect x="9" y="11" width="6" height="8" rx="1" ry="1"></rect><path d="M10 11V9a2 2 0 0 1 4 0v2"></path></svg>
+											</div>
+											<div class="prop-empty-title">No purchase costs to show</div>
+											<p class="prop-empty-desc">This home looks unlikely to be affordable before retirement, so there are no purchase costs to break down.</p>
+										</div>
 										<div class="prop-panel prop-panel-cost">
 											<div class="prop-panel-label">
 												<span class="prop-panel-icon" aria-hidden="true">
@@ -478,7 +491,6 @@
 						</div>
 						
 						<div class="prop-compare-section">
-							<h4 class="prop-compare-row-heading">Funding Source</h4>
 							<div class="compare-grid">
 								<div class="compare-col baseline-col">
 									<div class="col-title">Original scenario</div>
@@ -489,6 +501,13 @@
 								<div class="compare-col revised-col">
 									<div class="col-title">New scenario</div>
 									<div id="active-prop-funding">
+										<div class="prop-panel prop-panel-empty" style="display: none;">
+											<div class="prop-empty-icon" aria-hidden="true">
+												<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M17 9V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2" opacity="0.4"></path><path d="M13 12a4 4 0 0 0 0 8h6a1 1 0 0 0 1-1z" opacity="0.4"></path><line x1="3" y1="3" x2="21" y2="21"></line></svg>
+											</div>
+											<div class="prop-empty-title">No funding to show</div>
+											<p class="prop-empty-desc">Without an affordable purchase there is no mortgage or deposit to split out.</p>
+										</div>
 										<div class="prop-panel prop-panel-funding">
 											<div class="prop-panel-label">
 												<span class="prop-panel-icon" aria-hidden="true">
@@ -522,18 +541,19 @@
 						</div>
 					</div>
 
-					<div id="prop-breakdown-empty" class="prop-empty-state" style="display: none;">
+					<div id="prop-breakdown-empty" class="prop-empty-state">
 						<div class="prop-empty-icon" aria-hidden="true">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" opacity="0.4"></path><rect x="9" y="11" width="6" height="8" rx="1" ry="1"></rect><path d="M10 11V9a2 2 0 0 1 4 0v2"></path></svg>
 						</div>
-						<div class="prop-empty-title">A house isn't affordable</div>
-						<p class="prop-empty-desc">Based on your current deposit, income and mortgage limits, this home isn't affordable before retirement. Try increasing your deposit or income, lowering the target house price, or adjusting your retirement age.</p>
+						<div class="prop-empty-title">A house may not be affordable</div>
+						<p class="prop-empty-desc">Based on your current deposit, income and mortgage limits, this home looks unlikely to be affordable before retirement. Try increasing your deposit or income, lowering the target house price, or adjusting your retirement age.</p>
 					</div>
 				</div>
 			</div>
 
             <div id="view-projections" class="view-section">
-                <div class="projections-controls-row">
+                <div id="proj-blocked-msg" class="baseline-placeholder proj-blocked-msg" style="display: none;"></div>
+                <div class="projections-controls-row" id="projections-controls-row">
                     <div id="projections-compare-controls" style="display: none; align-items: center; gap: 15px;">
                         <span class="desktop-only" style="font-weight: bold; color: var(--ifoa-blue);">Show scenario:</span>
                         <select id="mobile-proj-compare-select" class="mobile-only custom-select" onchange="syncProjViewSelect(this.value)">

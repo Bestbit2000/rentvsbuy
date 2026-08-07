@@ -11,8 +11,8 @@ const heroTemplates = {
                 </svg>
             </div>
             <div class="hero-text-content">
-                <h2 class="hero-title">Buying is the stronger financial choice</h2>
-                <p class="hero-description">Over your chosen timeframe, buying this property could leave you <span class="hero-highlight">${diff}</span> wealthier than renting.</p>
+                <h2 class="hero-title">Buying is likely to be the stronger financial choice</h2>
+                <p class="hero-description">Over your chosen timeframe, buying this property could leave you around <span class="hero-highlight">${diff}</span> wealthier than renting.</p>
             </div>
         </div>
     `,
@@ -32,8 +32,8 @@ const heroTemplates = {
                 </svg>
             </div>
             <div class="hero-text-content">
-                <h2 class="hero-title">Renting yields higher lifetime wealth</h2>
-                <p class="hero-description">Based on your inputs, renting and investing your spare cash leaves you <span class="hero-highlight">${diff}</span> wealthier than buying.</p>
+                <h2 class="hero-title">Renting is likely to give higher lifetime wealth</h2>
+                <p class="hero-description">Based on your inputs, renting and investing your spare cash could leave you around <span class="hero-highlight">${diff}</span> wealthier than buying.</p>
             </div>
         </div>
     `,
@@ -48,7 +48,7 @@ const heroTemplates = {
             </div>
             <div class="hero-text-content">
                 <h2 class="hero-title">Adjust your buying plan</h2>
-                <p class="hero-description">Based on your current deposit and income, an <span class="hero-highlight">${hp}</span> home isn't reachable yet.</p>
+                <p class="hero-description">Based on your current deposit and income, an <span class="hero-highlight">${hp}</span> home looks unlikely to be reachable yet.</p>
             </div>
         </div>
     `,
@@ -61,8 +61,8 @@ const heroTemplates = {
                 </svg>
             </div>
             <div class="hero-text-content">
-                <h2 class="hero-title" style="color: #333;">It's a break-even scenario</h2>
-                <p class="hero-description">Over your chosen timeframe, buying and renting yield nearly identical financial outcomes. Your decision may depend on lifestyle preferences rather than strictly wealth accumulation.</p>
+                <h2 class="hero-title" style="color: #333;">This is likely to be a close call</h2>
+                <p class="hero-description">Over your chosen timeframe, buying and renting are likely to give similar financial outcomes. Your decision may depend on lifestyle preferences rather than strictly wealth accumulation.</p>
             </div>
         </div>
     `
@@ -95,7 +95,7 @@ const timingUnaffordableTemplate = (descText) => `
             </svg>
         </div>
         <div class="timing-text-content">
-            <h3 class="timing-title">A house isn't affordable</h3>
+            <h3 class="timing-title">A house may not be affordable</h3>
             <p class="timing-description">${descText}</p>
         </div>
     </div>
@@ -731,16 +731,9 @@ function saveWizardAndClose() {
         let overlay = document.getElementById('wizard-overlay');
         if(overlay) overlay.classList.remove('active');
         
-        let compSwitch = document.getElementById('compare-switch');
-        if(compSwitch) compSwitch.disabled = false;
-        
-        let compToggle = document.querySelector('.compare-toggle');
-        if(compToggle) {
-            compToggle.style.opacity = '1';
-            compToggle.style.cursor = 'pointer';
-        }
-
-        runCalculation(); 
+        // The compare switch is enabled by runCalculation() below, but only once
+        // every required field has actually been filled in.
+        runCalculation();
     } catch(e) {
         let overlay = document.getElementById('wizard-overlay');
         if(overlay) overlay.classList.remove('active');
@@ -959,12 +952,55 @@ function validateRequiredFields() {
     return missing;
 }
 
+const INCOMPLETE_DATA_MESSAGE = 'Fill in the highlighted fields on the left to see your results.';
+
+// Enables/disables the "Compare a scenario" switch (desktop and mobile) so a
+// comparison can only be started once every required input has been supplied.
+function updateCompareAvailability(isComplete) {
+    const desktopSwitch = document.getElementById('compare-switch');
+    const mobileSwitch = document.getElementById('compare-switch-mob');
+
+    // Never lock the user out of a comparison they have already started.
+    if (!isComplete && desktopSwitch && desktopSwitch.checked) return;
+
+    [desktopSwitch, mobileSwitch].forEach(el => {
+        if (el) el.disabled = !isComplete;
+    });
+
+    const tooltip = isComplete ? '' : 'Fill in all the required fields to compare a scenario';
+    ['compare-toggle-desktop', 'compare-toggle-mobile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('is-disabled', !isComplete);
+        if (tooltip) el.setAttribute('title', tooltip);
+        else el.removeAttribute('title');
+    });
+}
+
+// Hides the projections chart/table while required inputs are missing and shows
+// the same message used on the Overview and Property details tabs.
+function updateProjectionsOverlay(state) {
+    const blockedMsg = document.getElementById('proj-blocked-msg');
+    const mainWrapper = document.getElementById('proj-main-wrapper');
+    const controlsRow = document.getElementById('projections-controls-row');
+    const isBlocked = state === 'blocked';
+
+    if (blockedMsg) {
+        blockedMsg.textContent = INCOMPLETE_DATA_MESSAGE;
+        blockedMsg.style.display = isBlocked ? 'flex' : 'none';
+    }
+    if (mainWrapper) mainWrapper.style.display = isBlocked ? 'none' : 'flex';
+    if (controlsRow) controlsRow.style.display = isBlocked ? 'none' : '';
+}
+
 function updateResultsOverlay(state) {
     const zones = ['hero', 'timing', 'wealth', 'prop-cost', 'prop-funding'];
     const messages = {
-        blocked: 'Fill in the highlighted fields on the left to see your results.',
+        blocked: INCOMPLETE_DATA_MESSAGE,
         empty: 'This matches your original scenario. Change something on the left to see the effect.'
     };
+
+    updateProjectionsOverlay(state);
 
     zones.forEach(key => {
         const activeEl = document.getElementById(`active-${key}`);
@@ -987,11 +1023,35 @@ function updateResultsOverlay(state) {
     });
 
     if (state === 'blocked') {
-        const propBreakdownContent = document.getElementById('prop-breakdown-content');
-        if (propBreakdownContent) propBreakdownContent.style.display = 'grid';
-        const propBreakdownEmpty = document.getElementById('prop-breakdown-empty');
-        if (propBreakdownEmpty) propBreakdownEmpty.style.display = 'none';
+        setPropertyAffordability(true);
+        setWealthAffordability(true);
     }
+}
+
+// Switches the Property details tab between the affordable breakdown and the
+// "not affordable" message. CSS decides whether that message is shown once
+// (single scenario) or per column (compare mode), so both columns survive.
+function setPropertyAffordability(isAffordable) {
+    const propCard = document.getElementById('prop-card');
+    if (propCard) propCard.classList.toggle('is-unaffordable', !isAffordable);
+
+    ['active-prop-cost', 'active-prop-funding'].forEach(id => {
+        const container = document.getElementById(id);
+        if (!container) return;
+        const realPanel = container.querySelector('.prop-panel:not(.prop-panel-empty)');
+        const emptyPanel = container.querySelector('.prop-panel-empty');
+        if (realPanel) realPanel.style.display = isAffordable ? 'flex' : 'none';
+        if (emptyPanel) emptyPanel.style.display = isAffordable ? 'none' : 'flex';
+    });
+}
+
+// There is no buying outcome to compare when the home can't be bought, so the
+// wealth bars are replaced with an explanation rather than two matching totals.
+function setWealthAffordability(isAffordable) {
+    const barsCard = document.getElementById('wealth-bars-card');
+    const emptyCard = document.getElementById('wealth-empty-card');
+    if (barsCard) barsCard.style.display = isAffordable ? 'flex' : 'none';
+    if (emptyCard) emptyCard.style.display = isAffordable ? 'none' : 'flex';
 }
 
 function runCalculation() {
@@ -999,6 +1059,8 @@ function runCalculation() {
 
     const missingFields = validateRequiredFields();
     checkCompareModifications();
+
+    updateCompareAvailability(missingFields.length === 0);
 
     if (missingFields.length > 0) {
         const resultsPane = document.getElementById('results-pane');
@@ -1049,17 +1111,17 @@ function runCalculation() {
         const currentYear = new Date().getFullYear();
         const purchaseYear = currentYear + purcTerm;
         const age1AtPurc = inputs.Case_Life_1_Current_age + purcTerm;
-        let titleText = `Buy when you are aged ${age1AtPurc}`;
-        let descText = `You can afford to buy this home in <strong>${purchaseYear}</strong>.`;
+        let titleText = `Buy when you are around age ${age1AtPurc}`;
+        let descText = `You may be able to afford this home in <strong>${purchaseYear}</strong>.`;
 
         if (currentMode === 'couple') {
             const age2AtPurc = (getVal('s_age2') || getVal('s_age1')) + purcTerm;
-            titleText = `Buy when you are aged ${age1AtPurc}`;
-            descText = `You can afford to buy this home in <strong>${purchaseYear}</strong>, when your partner would be <strong>${age2AtPurc}</strong>.`;
+            titleText = `Buy when you are around age ${age1AtPurc}`;
+            descText = `You may be able to afford this home in <strong>${purchaseYear}</strong>, when your partner would be around <strong>${age2AtPurc}</strong>.`;
         }
         if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); timingContainer.style.display = 'flex'; }
     } else {
-        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit, income and mortgage limits, this home isn't affordable before retirement. Try increasing your deposit or income, lowering the target house price, or adjusting your retirement age.`); timingContainer.style.display = 'flex'; }
+        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit, income and mortgage limits, this home looks unlikely to be affordable before retirement. Try increasing your deposit or income, lowering the target house price, or adjusting your retirement age.`); timingContainer.style.display = 'flex'; }
     }
 
     let maxW = Math.max(buyEndVal, rentEndVal, 1);
@@ -1078,13 +1140,13 @@ function runCalculation() {
     
     const uiBenefitVal = document.getElementById('ui-benefit-val');
     if (benefit > 100) {
-        if(uiBenefitVal) uiBenefitVal.innerText = "+" + formatSigFigDown(benefit) + " (buying wins)";
+        if(uiBenefitVal) uiBenefitVal.innerText = "+" + formatSigFigDown(benefit) + " (buying could be more beneficial)";
     } else if (benefit < -100) {
         if(benBox) benBox.classList.add('negative');
-        if(uiBenefitVal) uiBenefitVal.innerText = formatSigFigDown(Math.abs(benefit)) + " (renting wins)";
+        if(uiBenefitVal) uiBenefitVal.innerText = formatSigFigDown(Math.abs(benefit)) + " (renting could be more beneficial)";
     } else {
         if(benBox) benBox.classList.add('neutral');
-        if(uiBenefitVal) uiBenefitVal.innerText = "Break-even scenario";
+        if(uiBenefitVal) uiBenefitVal.innerText = "Likely to be close to break-even";
     }
 
     if (isCompareMode && baselineResults) {
@@ -1097,13 +1159,13 @@ function runCalculation() {
 
         if(baseDelta) {
             if (Math.abs(deltaOfDeltas) < 100) {
-                baseDelta.innerText = "No change vs baseline";
+                baseDelta.innerText = "No material change vs baseline";
                 baseDelta.style.color = "#555";
             } else if (deltaOfDeltas > 0) {
-                baseDelta.innerText = `Buying is +${formatSigFigDown(deltaOfDeltas)} better than baseline`;
+                baseDelta.innerText = `Buying could be +${formatSigFigDown(deltaOfDeltas)} better than baseline`;
                 baseDelta.style.color = "var(--success)";
             } else {
-                baseDelta.innerText = `Renting is +${formatSigFigDown(Math.abs(deltaOfDeltas))} better than baseline`;
+                baseDelta.innerText = `Renting could be +${formatSigFigDown(Math.abs(deltaOfDeltas))} better than baseline`;
                 baseDelta.style.color = "var(--danger)";
             }
         }
@@ -1111,12 +1173,10 @@ function runCalculation() {
         if(baseDelta) baseDelta.style.display = 'none';
     }
 
-    if (purcTerm >= 0) {
-        const propBreakdownContent = document.getElementById('prop-breakdown-content');
-        if(propBreakdownContent) propBreakdownContent.style.display = 'grid';
-        const propBreakdownEmpty = document.getElementById('prop-breakdown-empty');
-        if(propBreakdownEmpty) propBreakdownEmpty.style.display = 'none';
+    setPropertyAffordability(purcTerm >= 0);
+    setWealthAffordability(purcTerm >= 0);
 
+    if (purcTerm >= 0) {
         let totalCost = results.buyHouseCostEval[purcTerm] || 0;
         let houseVal = results.buyHouseVal[purcTerm] || 0;
         let fees = results.buyPurchaseFeesEval[purcTerm] || 0;
@@ -1164,12 +1224,6 @@ function runCalculation() {
         if(fundMortBar) fundMortBar.style.width = `${mortPct}%`;
         let fundCashBar = document.querySelector('#active-prop-funding .fund-cash') || document.getElementById('ui-fund-cash-bar');
         if(fundCashBar) fundCashBar.style.width = `${cashPct}%`;
-
-    } else {
-        const propBreakdownContent = document.getElementById('prop-breakdown-content');
-        if(propBreakdownContent) propBreakdownContent.style.display = 'none';
-        const propBreakdownEmpty = document.getElementById('prop-breakdown-empty');
-        if(propBreakdownEmpty) propBreakdownEmpty.style.display = 'block';
     }
 
     const cLabels = results.labels.slice(0, maxIdx);
@@ -1254,9 +1308,43 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
         }
     };
 
+    // Wealth running out is the headline risk, so make the £0 line unmissable
+    // and tint everything below it when the projection dips negative.
+    const goesNegative = buyData.concat(rentData).some(v => Number(v) < 0);
+
+    const negativeZonePlugin = {
+        id: 'negativeZone',
+        beforeDatasetsDraw(chart) {
+            if (!goesNegative || !chart.chartArea) return;
+            const { ctx, chartArea: { left, right, top, bottom }, scales: { y } } = chart;
+            const zeroY = y.getPixelForValue(0);
+            if (!isFinite(zeroY) || zeroY <= top || zeroY >= bottom) return;
+
+            ctx.save();
+            ctx.fillStyle = 'rgba(198, 40, 40, 0.08)';
+            ctx.fillRect(left, zeroY, right - left, bottom - zeroY);
+            ctx.beginPath();
+            ctx.moveTo(left, zeroY);
+            ctx.lineTo(right, zeroY);
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = 'rgba(198, 40, 40, 0.9)';
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
+
+    // Space the renting markers out so the line stays readable on long projections.
+    const rentPointRadius = (ctx) => {
+        const total = ctx.dataset.data.length;
+        if (total === 0) return 0;
+        const step = Math.max(1, Math.round(total / 14));
+        const isMarker = ctx.dataIndex % step === 0 || ctx.dataIndex === total - 1;
+        return isMarker ? 4 : 0;
+    };
+
     let datasets = [
         { label: 'Total Wealth (Buying)', data: buyData, borderColor: '#003a5d', backgroundColor: 'transparent', borderWidth: 3, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 6 },
-        { label: 'Total Wealth (Renting)', data: rentData, borderColor: '#bfa15d', backgroundColor: 'transparent', borderWidth: 3, borderDash: [6, 6], fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 6 }
+        { label: 'Total Wealth (Renting)', data: rentData, borderColor: '#bfa15d', backgroundColor: 'transparent', borderWidth: 3, fill: false, tension: 0.3, pointStyle: 'circle', pointRadius: rentPointRadius, pointBackgroundColor: '#bfa15d', pointBorderColor: '#ffffff', pointBorderWidth: 1.5, pointHoverRadius: 6 }
     ];
 
     currentChart = new Chart(ctx, {
@@ -1285,15 +1373,25 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                     title: { display: true, text: 'Age (You)' },
                     ticks: { maxTicksLimit: 10, maxRotation: 0, autoSkip: true }
                 },
-                y: { title: { display: true, text: 'Total Wealth (£)' }, ticks: { callback: function(value) {
-                    if (Math.abs(value) >= 1000000) {
-                        return '£' + (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'm';
+                y: {
+                    title: { display: true, text: 'Total Wealth (£)' },
+                    grid: {
+                        color: (c) => (goesNegative && c.tick.value === 0) ? 'rgba(198, 40, 40, 0.9)' : 'rgba(0, 0, 0, 0.1)',
+                        lineWidth: (c) => (goesNegative && c.tick.value === 0) ? 2.5 : 1
+                    },
+                    ticks: {
+                        font: (c) => (goesNegative && c.tick && c.tick.value === 0) ? { weight: 'bold' } : {},
+                        callback: function(value) {
+                            if (Math.abs(value) >= 1000000) {
+                                return '£' + (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'm';
+                            }
+                            return '£' + (value / 1000) + 'k';
+                        }
                     }
-                    return '£' + (value / 1000) + 'k';
-                } } }
+                }
             }
         },
-        plugins: [eventMarkersPlugin]
+        plugins: [eventMarkersPlugin, negativeZonePlugin]
     });
 
     let tableHTML = `<thead><tr><th>Age</th><th>Buying wealth</th><th>Renting wealth</th><th style="text-align: left;">Life event</th></tr></thead><tbody>`;

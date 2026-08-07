@@ -72,16 +72,16 @@ window.handleSaveBaseScenario = function() {
     window.updateCompareActionsState();
 };
 
-// Fix 4: Force precise format "Buy when you are aged X"
+// Fix 4: Force precise format "Buy when you are around age X"
 window.formatTimingTitlesSingleAge = function() {
     const timingTitles = document.querySelectorAll('.timing-title');
     timingTitles.forEach(el => {
         let text = el.textContent;
-        // Match occurrences like "Buy at age 35" or "Buy at ages 35 & 37"
-        const match = text.match(/(?:Buy at age[s]?)\s*(\d+)/i);
+        // Match occurrences like "Buy at age 35", "Buy at ages 35 & 37" or "Buy when you are aged 35"
+        const match = text.match(/(?:Buy at age[s]?|Buy when you are aged)\s*(\d+)/i);
         if (match) {
             const ageNum = match[1];
-            el.textContent = `Buy when you are aged ${ageNum}`;
+            el.textContent = `Buy when you are around age ${ageNum}`;
         }
     });
     
@@ -91,7 +91,8 @@ window.formatTimingTitlesSingleAge = function() {
         const timingDescs = document.querySelectorAll('.timing-description');
         timingDescs.forEach(desc => {
             if (desc.innerHTML.includes('when your partner would be')) {
-                desc.innerHTML = desc.innerHTML.replace(/, when your partner would be \d+/, '');
+                // Tolerant of the surrounding markup and of "around <age>" phrasing
+                desc.innerHTML = desc.innerHTML.replace(/, when your partner would be.*?(?=\.|$)/, '');
             }
         });
     }
