@@ -997,7 +997,7 @@
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
                 <h2 style="margin: 0;">Important information about this calculator</h2>
-                <button onclick="document.getElementById('disclaimer-modal').classList.remove('active')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+                <button class="close-modal" onclick="document.getElementById('disclaimer-modal').classList.remove('active')">&times;</button>
             </div>
             <div class="modal-body" style="padding: 20px; line-height: 1.6; color: #333; font-size: 0.95rem;">
                 <ul style="margin: 0; padding-left: 20px;">
@@ -1018,7 +1018,7 @@
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
                 <h2 style="margin: 0;">Close calculator</h2>
-                <button onclick="document.getElementById('close-calc-modal').classList.remove('active')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+                <button class="close-modal" onclick="document.getElementById('close-calc-modal').classList.remove('active')">&times;</button>
             </div>
             <div class="modal-body" style="padding: 20px; line-height: 1.6; color: #333; font-size: 0.95rem;">
                 <p>You'll lose all the information you've entered if you close the calculator. Are you sure you want to continue?</p>
@@ -1035,7 +1035,7 @@
         <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
                 <h2 style="margin: 0;">How we work out your results</h2>
-                <button onclick="document.getElementById('how-it-works-modal').classList.remove('active')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+                <button class="close-modal" onclick="document.getElementById('how-it-works-modal').classList.remove('active')">&times;</button>
             </div>
             <div class="modal-body" style="padding: 20px;">
                 <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
@@ -1135,13 +1135,14 @@
             display: flex;
             gap: 16px;
             padding: 16px;
-            background: #f8f9fa;
+            background: #f0f1f3;
             border-radius: 8px;
             border-left: 4px solid var(--ifoa-gold, #ffc107);
             transition: box-shadow 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
         .how-it-works-card:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
         .how-it-works-icon {
             font-size: 32px;
@@ -1151,7 +1152,11 @@
         }
         body.dark-mode .how-it-works-card {
             background: #2a2a2a;
-            border-left-color: var(--ifoa-gold, #ffc107);
+            border-left-color: #ffc107;
+            box-shadow: none;
+        }
+        body.dark-mode .how-it-works-card:hover {
+            box-shadow: none;
         }
         body.dark-mode .how-it-works-card h3 {
             color: #e0e0e0 !important;
