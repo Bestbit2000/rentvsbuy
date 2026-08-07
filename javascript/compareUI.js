@@ -214,9 +214,9 @@ window.addEventListener('DOMContentLoaded', () => {
             if (globalParams.income_tax) grid.innerHTML += `<div class="param-box"><h4>Income tax bands</h4>${formatBands(globalParams.income_tax)}</div>`;
             if (globalParams.national_insurance) grid.innerHTML += `<div class="param-box"><h4>National insurance</h4>${formatBands(globalParams.national_insurance)}</div>`;
             if (globalParams.stamp_duty && globalParams.stamp_duty.first_time_buyer) {
-                let html = `<div class="param-box"><h4>Stamp duty (first time buyer)</h4>`;
+                let html = `<div class="param-box"><h4>Stamp duty (first-time buyer)</h4>`;
                 html += formatBands(globalParams.stamp_duty.first_time_buyer.bands);
-                html += `<div style="margin-top: 12px; font-size: 0.8rem; color: var(--ifoa-blue); font-style: italic;">First time buyer (FTB) relief limit: £${globalParams.stamp_duty.first_time_buyer.limit.toLocaleString()}</div></div>`;
+                html += `<div style="margin-top: 12px; font-size: 0.8rem; color: var(--ifoa-blue); font-style: italic;">First-time buyer (FTB) relief limit: £${globalParams.stamp_duty.first_time_buyer.limit.toLocaleString()}</div></div>`;
                 grid.innerHTML += html;
             }
             if (globalParams.stamp_duty && globalParams.stamp_duty.second_time_buyer) {

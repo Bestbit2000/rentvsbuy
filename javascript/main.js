@@ -552,6 +552,7 @@ function setMode(mode) {
         if(sideCouple) sideCouple.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'flex');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.remove('is-hidden'));
+        switchPerson('you');
         stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     }
 
@@ -823,6 +824,13 @@ window.addEventListener('load', function() {
                 }
             }
         }
+
+        // Apply comma formatting to currency inputs
+        document.querySelectorAll('.comma-format').forEach(el => {
+            if (el.value && !isNaN(el.value)) {
+                el.value = parseFloat(el.value).toLocaleString('en-GB');
+            }
+        });
 
         setMode('couple');
         toggleSL();
@@ -1121,7 +1129,7 @@ function runCalculation() {
         }
         if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); timingContainer.style.display = 'flex'; }
     } else {
-        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit, income and mortgage limits, this home looks unlikely to be affordable before retirement. Try increasing your deposit or income, lowering the target house price, or adjusting your retirement age.`); timingContainer.style.display = 'flex'; }
+        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit and income, this home looks unlikely to be affordable before retirement. Try increasing your deposit or income, or lowering the target house price.`); timingContainer.style.display = 'flex'; }
     }
 
     let maxW = Math.max(buyEndVal, rentEndVal, 1);

@@ -99,11 +99,11 @@
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_maint" placeholder="e.g. 5,500" class="comma-format clamp-10m has-suffix compare-track" data-label="Annual maintenance"><span class="suffix">p.a.</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label>First time buyer?</label>
+                            <label>First-time buyer?</label>
                             <div class="toggle-container">
-                                <input type="radio" name="s_ftb" id="s_ftb_y" value="Yes" class="compare-track" data-label="First time buyer" onchange="handleInputChanged()">
+                                <input type="radio" name="s_ftb" id="s_ftb_y" value="Yes" class="compare-track" data-label="First-time buyer" onchange="handleInputChanged()">
                                 <label for="s_ftb_y">Yes</label>
-                                <input type="radio" name="s_ftb" id="s_ftb_n" value="No" class="compare-track" data-label="First time buyer" onchange="handleInputChanged()">
+                                <input type="radio" name="s_ftb" id="s_ftb_n" value="No" class="compare-track" data-label="First-time buyer" onchange="handleInputChanged()">
                                 <label for="s_ftb_n">No</label>
                             </div>
                         </div>
@@ -614,7 +614,7 @@
                             <ul id="compare-changes-list" class="changes-list"></ul>
                         </div>
                         <div id="no-changes-msg" style="display:none; text-align:center; padding: 30px 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd; color: #777; font-style: italic;">
-                            No differences to show. Change some inputs on the left while comparing scenarios to see the impact.
+                            You haven't made any changes yet. When you do they will be shown here.
                         </div>
                     </div>
                 </div>
@@ -962,6 +962,74 @@
     </div>
 
     <div id="toast-container" class="toast-container" aria-live="polite" role="status"></div>
+
+    <!-- Disclaimer Footer -->
+    <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
+        <p style="margin: 0;">Remember that results are estimates only. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Ask for advice before you make any decisions. Read full disclaimer</a></p>
+    </div>
+
+    <!-- Disclaimer Modal -->
+    <div id="disclaimer-modal" style="display: none;" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Important information about this calculator</h2>
+                <button onclick="document.getElementById('disclaimer-modal').classList.remove('active')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px; line-height: 1.6; color: #333; font-size: 0.95rem;">
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li style="margin-bottom: 15px;"><strong>Estimates only:</strong> The numbers, timelines, and wealth comparisons you see here are just guesses based on the details you put in. They are meant to give you a rough idea, not a guaranteed result.</li>
+                    <li style="margin-bottom: 15px;"><strong>The future is unpredictable:</strong> House prices, interest rates, rent, and inflation go up and down. Because no one can predict the future, your actual financial outcome could be very different from what the tool shows.</li>
+                    <li style="margin-bottom: 15px;"><strong>Do not rely on this alone:</strong> Please do not make big life decisions—like buying a home, changing your mortgage, or altering your pension—based only on what this calculator tells you.</li>
+                    <li><strong>Talk to an expert:</strong> We always recommend speaking with a regulated independent financial adviser or a qualified mortgage broker who can look at your whole financial situation before you make a move.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="document.getElementById('disclaimer-modal').classList.remove('active')" style="width: 100%;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay:not(.active) {
+            display: none;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e6ed;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e0e6ed;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+    </style>
 
     <script src="javascript/main.js"></script>
     <script src="javascript/compareUI.js"></script>
