@@ -25,6 +25,9 @@ body:not(.calc-body) .btn-secondary:hover { background-color: #a88b39; }
 .btn-outline { background-color: white; color: var(--ifoa-navy); border: 2px solid var(--ifoa-navy); transition: all 0.3s; border-radius: 9999px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; }
 .btn-outline:hover { background-color: #f3f4f6; }
 
+body.dark-mode .btn-outline { background-color: transparent; color: #90caf9 !important; border-color: #90caf9 !important; }
+body.dark-mode .btn-outline:hover { background-color: rgba(144, 202, 249, 0.1); }
+
 .persona-card { transition: transform 0.2s, box-shadow 0.2s; }
 .persona-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
 
