@@ -1385,7 +1385,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#222', titleColor: '#fff', bodyColor: '#fff', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 12, boxPadding: 6, cornerRadius: 8,
+                    backgroundColor: '#222', titleColor: '#fff', bodyColor: '#fff', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 16, boxPadding: 8, cornerRadius: 8, titleFont: { size: 14 }, bodyFont: { size: 13 },
                     callbacks: {
                         label: function(context) {
                             let label = context.dataset.label || '';
