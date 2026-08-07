@@ -33,6 +33,7 @@
                 <input type="checkbox" id="compare-switch" disabled onchange="toggleCompareMode(); const m = document.getElementById('compare-switch-mob'); if(m) m.checked = this.checked;">
             </div>
             <button class="settings-btn" onclick="openSettings()">Rates and rules</button>
+            <button class="settings-btn" onclick="document.getElementById('how-it-works-modal').classList.add('active')">How it works</button>
             <button class="settings-btn" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
             <a href="#" class="settings-btn close-calc-btn" onclick="event.preventDefault(); document.getElementById('close-calc-modal').classList.add('active');" style="text-decoration: none;">Close calculator</a>
         </div>
@@ -57,6 +58,9 @@
         </button>
         <button class="mobile-menu-item" onclick="openSettings(); document.getElementById('calc-mobile-menu').classList.remove('open');">
             Rates and rules
+        </button>
+        <button class="mobile-menu-item" onclick="document.getElementById('how-it-works-modal').classList.add('active'); document.getElementById('calc-mobile-menu').classList.remove('open');">
+            How it works
         </button>
         <a href="#" class="mobile-menu-item" onclick="event.preventDefault(); document.getElementById('close-calc-modal').classList.add('active'); document.getElementById('calc-mobile-menu').classList.remove('open');" style="text-decoration: none;">
             Close calculator
@@ -1026,6 +1030,67 @@
         </div>
     </div>
 
+    <!-- How it works Modal -->
+    <div id="how-it-works-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 style="margin: 0;">How we work out your results</h2>
+                <button onclick="document.getElementById('how-it-works-modal').classList.remove('active')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                    <!-- Card 1: The big picture -->
+                    <div class="how-it-works-card">
+                        <div class="how-it-works-icon">🎯</div>
+                        <div>
+                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">The big picture</h3>
+                            <p style="margin: 0; color: #555; line-height: 1.5;">We use a trusted model built by members of the Personal Financial Planning Working Party at the Institute and Faculty of Actuaries to compare two different futures: renting forever versus renting for now until you can buy a home to live in for the rest of your life.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Money in today's values -->
+                    <div class="how-it-works-card">
+                        <div class="how-it-works-icon">💰</div>
+                        <div>
+                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Keeping things simple with money</h3>
+                            <p style="margin: 0; color: #555; line-height: 1.5;">Everything is shown in today's money. We automatically factor in future inflation so you don't have to guess what things will cost years down the line.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Your take-home pay -->
+                    <div class="how-it-works-card">
+                        <div class="how-it-works-icon">💼</div>
+                        <div>
+                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Your take-home pay</h3>
+                            <p style="margin: 0; color: #555; line-height: 1.5;">We estimate how your salary might grow over your career based on average UK pay rises. From that, we automatically take off things like tax, National Insurance, student loan repayments, and pension contributions.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Saving for a home -->
+                    <div class="how-it-works-card">
+                        <div class="how-it-works-icon">🏠</div>
+                        <div>
+                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Saving for a home</h3>
+                            <p style="margin: 0; color: #555; line-height: 1.5;">Whatever money you have left over gets split between cash savings and your pension based on your choices. Every year, the model checks if your savings and earnings are enough to get a mortgage—while also accounting for purchase fees and stamp duty.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Looking ahead to retirement -->
+                    <div class="how-it-works-card">
+                        <div class="how-it-works-icon">🎓</div>
+                        <div>
+                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Looking ahead to retirement</h3>
+                            <p style="margin: 0; color: #555; line-height: 1.5;">When you reach retirement age, the model assumes you take 25% of your pension tax-free. The rest of your pension helps pay for your living costs, and if you're still renting, your rent will continue to be paid out of your remaining funds.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end; padding: 20px;">
+                <button class="btn-primary" onclick="document.getElementById('how-it-works-modal').classList.remove('active')" style="background-color: var(--ifoa-gold); border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: 500;">Close</button>
+            </div>
+        </div>
+    </div>
+
     <style>
         .modal-overlay {
             position: fixed;
@@ -1065,6 +1130,34 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+        }
+        .how-it-works-card {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--ifoa-gold, #ffc107);
+            transition: box-shadow 0.2s ease;
+        }
+        .how-it-works-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .how-it-works-icon {
+            font-size: 32px;
+            min-width: 40px;
+            text-align: center;
+            line-height: 1;
+        }
+        body.dark-mode .how-it-works-card {
+            background: #2a2a2a;
+            border-left-color: var(--ifoa-gold, #ffc107);
+        }
+        body.dark-mode .how-it-works-card h3 {
+            color: #e0e0e0 !important;
+        }
+        body.dark-mode .how-it-works-card p {
+            color: #d0d0d0 !important;
         }
     </style>
 
