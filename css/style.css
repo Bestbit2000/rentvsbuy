@@ -540,7 +540,7 @@ body.calc-body .header-actions { display: flex; align-items: center; gap: 10px; 
 /* =========================================================================
    DARK MODE IMPLEMENTATION
    ========================================================================= */
-body.dark-mode { --bg: #121212; --ifoa-navy: #90caf9; --ifoa-gold: #ffd54f; --ifoa-grey: #e0e0e0; --ifoa-light-blue: #1e293b; color: #e0e0e0; background-color: var(--bg); }
+body.dark-mode { --bg: #121212; --ifoa-navy: #90caf9; --ifoa-gold: #c3a344; --ifoa-grey: #e0e0e0; --ifoa-light-blue: #1e293b; color: #e0e0e0; background-color: var(--bg); }
 
 /* Dark mode high-contrast focus rings */
 body.dark-mode :focus-visible {
@@ -745,6 +745,9 @@ body.dark-mode .text-\[10px\].font-bold.text-gray-700 { color: white !important;
 /* Gold/Yellow header text in dark mode */
 body.dark-mode .bg-gold h4 { color: #003a5d !important; }
 body.dark-mode .bg-gold .text-white { color: #003a5d !important; }
+
+/* Badge text color fix for dark mode */
+body.dark-mode .bg-blue-100.text-blue-800 { color: #003a5d !important; background-color: #90caf9 !important; }
 
 
 /* =========================================================================
