@@ -749,11 +749,36 @@ body.dark-mode .bg-gold .text-white { color: #003a5d !important; }
 /* Badge text color fix for dark mode */
 body.dark-mode .bg-blue-100.text-blue-800 { color: #003a5d !important; background-color: #90caf9 !important; }
 
-/* Tailwind color class overrides for dark mode - ensure text is readable */
-body.dark-mode .text-blue-800 { color: #003a5d !important; }
-body.dark-mode .text-red-800 { color: #8b0000 !important; }
-body.dark-mode .bg-blue-100 { background-color: #90caf9 !important; }
-body.dark-mode .bg-red-100 { background-color: #ffb3ba !important; }
+/* Custom badge styles for light and dark modes */
+.badge-outcome-blue {
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: bold;
+}
+
+body.dark-mode .badge-outcome-blue {
+  background-color: #90caf9;
+  color: #003a5d !important;
+}
+
+.badge-outcome-red {
+  display: inline-block;
+  background-color: #ffebee;
+  color: #b71c1c;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: bold;
+}
+
+body.dark-mode .badge-outcome-red {
+  background-color: #ffb3ba;
+  color: #8b0000 !important;
+}
 
 
 /* =========================================================================
