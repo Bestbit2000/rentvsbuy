@@ -107,7 +107,7 @@ let currentChart = null;
 let debounceTimer = null;
 let currentMode = null; 
 let currentWizIndex = 0;
-let stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+let stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 let savedSettings = {}; 
 
 let isCompareMode = false;
@@ -546,14 +546,14 @@ function setMode(mode) {
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
         switchPerson('you');
-        stepSequence = [0, 1, 2, 3, 4, 6, 8, 9];
+        stepSequence = [0, 1, 2, 3, 4, 6, 8, 9, 10];
     } else if (mode === 'couple') {
         if(modeCouple) { modeCouple.classList.add('active'); modeCouple.setAttribute('aria-pressed', 'true'); }
         if(sideCouple) sideCouple.checked = true;
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'flex');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.remove('is-hidden'));
         switchPerson('you');
-        stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     }
 
     // Trigger recalculation if engine is available (non-wizard mode)
@@ -661,8 +661,8 @@ function saveWizardAndClose() {
             ['w_sal1','s_sal1'], ['w_sal2','s_sal2'], ['w_cash','s_cash'],
             ['w_pval1','s_pval1'], ['w_pval2','s_pval2'], ['w_pee1','s_pee1'],
             ['w_pee2','s_pee2'], ['w_per1','s_per1'], ['w_per2','s_per2'],
-            ['w_sl1','s_sl1'], ['w_sl2','s_sl2'], ['w_slp1','s_slp1'], ['w_slp2','s_slp2'], 
-            ['w_rent','s_rent'], ['w_ex_pre','s_ex_pre'], ['w_hp','s_hp']
+            ['w_sl1','s_sl1'], ['w_sl2','s_sl2'], ['w_slp1','s_slp1'], ['w_slp2','s_slp2'],
+            ['w_rent','s_rent'], ['w_ex_pre','s_ex_pre'], ['w_hp','s_hp'], ['w_spare_pension','s_save_pen']
         ];
         map.forEach(pair => {
             let el1 = document.getElementById(pair[0]);

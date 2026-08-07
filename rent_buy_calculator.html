@@ -944,13 +944,23 @@
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m"></div>
                     </div>
                     <div class="input-row-single">
-                        <label>Are you a first time buyer?</label>
+                        <label>Are you a first-time buyer?</label>
                         <div class="toggle-container">
                             <input type="radio" name="w_ftb" id="w_ftb_y" value="Yes">
                             <label for="w_ftb_y">Yes</label>
                             <input type="radio" name="w_ftb" id="w_ftb_n" value="No">
                             <label for="w_ftb_n">No</label>
                         </div>
+                    </div>
+                </div>
+
+                <div class="wizard-step" id="step-10">
+                    <h3 class="wizard-title">Pension Investment Planning</h3>
+                    <p style="font-size: 0.95rem; color: #555; margin-bottom: 20px;">After your property is paid for, you'll have spare cash each month. How much would you like to put into your pension versus spending on other things?</p>
+                    <div class="input-row-single">
+                        <label>Spare income to invest in pension</label>
+                        <div class="input-wrapper"><input type="number" id="w_spare_pension" placeholder="e.g. 50" class="clamp-100 has-suffix" value="50" onchange="validateStep()"><span class="suffix">%</span></div>
+                        <div class="helper-text" style="font-size: 0.85rem; color: #666; margin-top: 10px;">This helps balance short-term spending with long-term retirement security. For example, 50% means half your spare cash builds retirement savings, half is available for lifestyle.</div>
                     </div>
                 </div>
             </div>
