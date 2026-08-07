@@ -430,9 +430,6 @@
                         </div>
                     </div>
                 </div>
-                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
-                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Read full disclaimer</a></p>
-                </div>
             </div>
 
 			<div id="view-property" class="view-section">
@@ -604,9 +601,6 @@
                         </div>
                     </div>
                 </div>
-                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
-                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Read full disclaimer</a></p>
-                </div>
             </div>
 
             <div id="view-changes" class="view-section">
@@ -622,14 +616,17 @@
                             <ul id="compare-changes-list" class="changes-list"></ul>
                         </div>
                         <div id="no-changes-msg" style="display:none; text-align:center; padding: 30px 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd; color: #777; font-style: italic;">
-                            You haven't made any changes yet. When you do they will be shown here.
+                            When you make changes to your new scenario they will appear here so you can see a summary of them.
                         </div>
                     </div>
+                </div>
+                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
+                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" style="color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500;">Read full disclaimer</a></p>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="modal-overlay" id="a11y-overlay">
         <div class="modal-card">
             <div class="modal-header">
@@ -982,7 +979,7 @@
     <div id="toast-container" class="toast-container" aria-live="polite" role="status"></div>
 
     <!-- Disclaimer Modal -->
-    <div id="disclaimer-modal" style="display: none;" class="modal-overlay">
+    <div id="disclaimer-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
                 <h2 style="margin: 0;">Important information about this calculator</h2>
