@@ -1051,23 +1051,6 @@ function validateCurrentPartnerStep() {
             alert('Please select Yes or No for pension');
             return false;
         }
-        if (hasPension === 'Yes') {
-            const balance = document.getElementById('partner-pension-balance')?.value;
-            const pee = document.getElementById('partner-pee')?.value;
-            const per = document.getElementById('partner-per')?.value;
-            if (!balance || balance.trim() === '') {
-                alert('Please enter the pension pot value');
-                return false;
-            }
-            if (!pee || pee.trim() === '') {
-                alert('Please enter your contribution percentage');
-                return false;
-            }
-            if (!per || per.trim() === '') {
-                alert('Please enter employer contribution percentage');
-                return false;
-            }
-        }
     }
 
     return true;
