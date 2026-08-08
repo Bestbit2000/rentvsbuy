@@ -407,7 +407,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .wealth-empty-desc { font-style: italic; color: #777; max-width: 480px; margin: 0 auto; line-height: 1.5; }
 
 /* --- PROJECTIONS VIEW LAYOUT --- */
-.projections-controls-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0e6ed; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; flex-shrink: 0; }
+.projections-controls-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 15px; flex-shrink: 0; }
 
 #view-projections {
     display: none;

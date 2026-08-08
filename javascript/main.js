@@ -1710,7 +1710,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                                 tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="3"/></svg>';
                             }
 
-                            tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>' + valueOnly + '</strong></div></div>';
+                            tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>£' + valueOnly + '</strong></div></div>';
                         });
 
                         tooltipHTML += '</div>';
