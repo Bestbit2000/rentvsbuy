@@ -1094,7 +1094,8 @@
                     <h3 class="wizard-title">Partner's age</h3>
                     <div class="input-row-single">
                         <label>Partner's current age</label>
-                        <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 31" class="clamp-age" title="Enter your partner's current age in years." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
+                        <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 31" class="clamp-age" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
+                        <div class="helper-text">Enter your partner's current age in years.</div>
                     </div>
                 </div>
 
@@ -1103,7 +1104,8 @@
                     <h3 class="wizard-title">Partner's income</h3>
                     <div class="input-row-single">
                         <label>Annual salary before tax</label>
-                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 42,000" class="comma-format clamp-1m" title="Your partner's current annual gross salary, before tax and deductions." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">p.a.</span></div>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 42,000" class="comma-format clamp-1m" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">p.a.</span></div>
+                        <div class="helper-text">Your partner's current annual gross salary, before tax and deductions.</div>
                     </div>
                 </div>
 
@@ -1122,16 +1124,18 @@
                     <div id="partner-sl-details" style="display: none;">
                         <div class="input-row-single">
                             <label>Remaining loan debt</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 20,000" class="comma-format clamp-1m" title="The total remaining balance of your partner's student loan debt." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 20,000" class="comma-format clamp-1m" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
+                            <div class="helper-text">The total remaining balance of your partner's student loan debt.</div>
                         </div>
                         <div class="input-row-single">
                             <label>Loan plan</label>
                             <div class="input-wrapper">
-                                <select id="partner-sl-plan" onchange="validatePartnerStep()" title="The specific student loan plan your partner is on. This determines your repayment threshold and interest rate.">
+                                <select id="partner-sl-plan" onchange="validatePartnerStep()">
                                     <option value="" disabled selected>Select plan</option>
                                     <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
                                 </select>
                             </div>
+                            <div class="helper-text">The specific student loan plan your partner is on. This determines your repayment threshold and interest rate.</div>
                         </div>
                     </div>
                 </div>
@@ -1151,15 +1155,18 @@
                     <div id="partner-pension-details" style="display: none;">
                         <div class="input-row-single">
                             <label>Current pension pot value</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 25,000" class="comma-format clamp-10m" title="The current total value of your partner's pension pot(s)." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 25,000" class="comma-format clamp-10m" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
+                            <div class="helper-text">The current total value of your partner's pension pot(s).</div>
                         </div>
                         <div class="input-row-single">
                             <label>Your partner's contribution</label>
-                            <div class="input-wrapper"><input type="number" id="partner-pee" placeholder="e.g. 5" class="clamp-100" title="The percentage of your partner's salary that they contribute." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
+                            <div class="input-wrapper"><input type="number" id="partner-pee" placeholder="e.g. 5" class="clamp-100" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
+                            <div class="helper-text">The percentage of your partner's salary that they contribute.</div>
                         </div>
                         <div class="input-row-single">
                             <label>Partner's employer contribution</label>
-                            <div class="input-wrapper"><input type="number" id="partner-per" placeholder="e.g. 3" class="clamp-100" title="The percentage of your partner's salary that their employer contributes." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
+                            <div class="input-wrapper"><input type="number" id="partner-per" placeholder="e.g. 3" class="clamp-100" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
+                            <div class="helper-text">The percentage of your partner's salary that their employer contributes.</div>
                         </div>
                     </div>
                 </div>
