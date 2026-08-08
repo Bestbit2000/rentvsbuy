@@ -1625,7 +1625,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 // Draw SVG icon
                 ctx.restore();
                 ctx.save();
-                ctx.translate(xPos - 12, top + 8);
+                ctx.translate(xPos - 12, top - 15);
                 ctx.scale(1, 1);
                 ctx.fillStyle = color;
                 const path = new Path2D(iconPath);

@@ -588,13 +588,13 @@
                             <label for="pcv_current" style="padding: 10px 15px;">Original scenario</label>
                         </div>
                     </div>
-                    <div class="data-view-controls">
-                        <span style="font-weight: 500; margin-right: 10px; display: inline-block; align-self: center;">Show as:</span>
-                        <div class="toggle-container" style="width: auto;">
+                    <div class="data-view-controls" style="display: flex; align-items: center; gap: 15px;">
+                        <span class="desktop-only" style="font-weight: bold; color: var(--ifoa-blue);">Show as:</span>
+                        <div class="toggle-container desktop-only" style="width: auto;">
                             <input type="radio" name="chart_view" id="show_graph" value="graph" checked onchange="toggleDataView('graph')">
-                            <label for="show_graph" style="padding: 10px 20px;">Chart</label>
+                            <label for="show_graph" style="padding: 10px 15px;">Chart</label>
                             <input type="radio" name="chart_view" id="show_table" value="table" onchange="toggleDataView('table')">
-                            <label for="show_table" style="padding: 10px 20px;">Table</label>
+                            <label for="show_table" style="padding: 10px 15px;">Table</label>
                         </div>
                     </div>
                 </div>
