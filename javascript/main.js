@@ -975,6 +975,10 @@ function startOver() {
         }
     });
 
+    // Clean up URL to remove skipWizard parameter
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState(null, '', cleanUrl);
+
     // Open wizard with 'internal' origin to restore state on close
     openWizard('internal');
 }
