@@ -105,10 +105,12 @@ const timingUnaffordableTemplate = (descText) => `
 const formatMoney = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
 let currentChart = null;
 let debounceTimer = null;
-let currentMode = null; 
+let currentMode = null;
 let currentWizIndex = 0;
 let stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-let savedSettings = {}; 
+let savedSettings = {};
+let wizardOrigin = null; // Tracks whether wizard opened from external page or "Start over"
+let savedCalculatorState = {}; // Saves calculator state when "Start over" is clicked
 
 let isCompareMode = false;
 let baselineInputs = {};
@@ -833,7 +835,8 @@ function wizardStepNextClick() {
     }
 }
 
-function openWizard() {
+function openWizard(origin = 'external') {
+    wizardOrigin = origin; // Track where wizard was opened from ('external' or 'internal')
     currentWizIndex = 0;
     currentMode = 'single'; // Default to "Just me" on launch
 
@@ -916,7 +919,55 @@ function wizardStep(dir) {
 function closeWizard() {
     let wizardOverlay = document.getElementById('wizard-overlay');
     if(wizardOverlay) wizardOverlay.classList.remove('active');
-    forceCalculation();
+
+    // Handle different close scenarios
+    if (wizardOrigin === 'internal') {
+        // Wizard opened from "Start over" - restore saved state without losing data
+        restoreCalculatorState();
+        forceCalculation();
+    } else if (wizardOrigin === 'external') {
+        // Wizard opened from external page - navigate back
+        window.history.back();
+    } else {
+        // Default behavior
+        forceCalculation();
+    }
+}
+
+function saveCalculatorState() {
+    // Save all calculator sidebar input values before opening wizard
+    const sidebarInputs = document.querySelectorAll('#main-sidebar input, #main-sidebar select');
+    sidebarInputs.forEach(input => {
+        const key = input.id || input.name;
+        if (input.type === 'checkbox' || input.type === 'radio') {
+            savedCalculatorState[key] = input.checked;
+        } else {
+            savedCalculatorState[key] = input.value;
+        }
+    });
+}
+
+function restoreCalculatorState() {
+    // Restore all calculator values from saved state
+    Object.entries(savedCalculatorState).forEach(([key, value]) => {
+        const element = document.getElementById(key) || document.querySelector(`input[name="${key}"], select[name="${key}"]`);
+        if (element) {
+            if (element.type === 'checkbox' || element.type === 'radio') {
+                element.checked = value;
+            } else {
+                element.value = value;
+            }
+            element.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    });
+}
+
+function startOver() {
+    // Save current calculator state before opening wizard
+    saveCalculatorState();
+    openWizard('internal');
+    const wizardOverlay = document.getElementById('wizard-overlay');
+    if(wizardOverlay) wizardOverlay.classList.add('active');
 }
 
 function saveWizardAndClose() {
