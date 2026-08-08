@@ -235,8 +235,8 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .custom-select { padding: 10px 15px; font-size: 0.95rem; border-radius: 8px; border: 1px solid #ccc; font-weight: bold; color: var(--ifoa-blue); background-color: white; cursor: pointer; }
 
 /* Tabs */
-.tabs { display: flex; background: transparent; padding: 0; border-radius: 0; margin-bottom: 20px; border-bottom: 2px solid #e0e6ed; }
-.tab-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 0.95rem; font-weight: bold; background: transparent; color: #888; text-transform: uppercase; border: none; border-bottom: 4px solid transparent; border-radius: 0; cursor: pointer; transition: all 0.3s ease; margin-bottom: -2px; }
+.tabs { display: flex; justify-content: flex-start; background: transparent; padding: 0; border-radius: 0; margin-bottom: 20px; border-bottom: 2px solid #e0e6ed; }
+.tab-btn { padding: 10px 20px; text-align: center; font-size: 0.95rem; font-weight: bold; background: transparent; color: #888; text-transform: uppercase; border: none; border-bottom: 4px solid transparent; border-radius: 0; cursor: pointer; transition: all 0.3s ease; margin-bottom: -2px; }
 .tab-btn:hover { color: var(--ifoa-blue); }
 .tab-btn.active { background: transparent; color: var(--ifoa-gold); border-bottom-color: var(--ifoa-gold); box-shadow: none; }
 
