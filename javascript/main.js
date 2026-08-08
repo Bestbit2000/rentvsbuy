@@ -1095,12 +1095,9 @@ function completePartnerOnboarding() {
         const pensionBalance = document.getElementById('partner-pension-balance')?.value;
         const pensionContrib = document.getElementById('partner-pee')?.value;
         const pensionEmp = document.getElementById('partner-per')?.value;
-        document.getElementById('s_pp2').value = pensionBalance;
-        document.getElementById('s_pc2').value = pensionContrib;
-        // Also set employer contribution if field exists
-        if (document.getElementById('s_pep2')) {
-            document.getElementById('s_pep2').value = pensionEmp;
-        }
+        if (pensionBalance) document.getElementById('s_pp2').value = pensionBalance;
+        if (pensionContrib) document.getElementById('s_pee2').value = pensionContrib;
+        if (pensionEmp) document.getElementById('s_per2').value = pensionEmp;
     } else if (hasPension === 'No') {
         if (penNoRadio) penNoRadio.checked = true;
     }
