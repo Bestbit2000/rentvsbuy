@@ -478,6 +478,20 @@ body.dark-mode .line-buy { background: #90caf9; }
 .row-purchase { background-color: rgba(0, 58, 93, 0.08); font-weight: bold; color: var(--ifoa-blue);}
 .row-retire { background-color: rgba(191, 161, 93, 0.15); font-weight: bold; color: #8a733e;}
 
+/* Projections table event column */
+.event-col-desktop { display: none; }
+.event-mobile { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 6px; font-size: 0.85rem; }
+.event-mobile svg { width: 14px; height: 14px; }
+.event-text { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.event-text svg { width: 16px; height: 16px; margin-bottom: 2px; }
+.event-text div { font-size: 0.85rem; text-align: center; line-height: 1.3; }
+.age-cell { display: flex; flex-direction: column; align-items: center; }
+
+@media (min-width: 768px) {
+    .event-col-desktop { display: table-cell; }
+    .event-mobile { display: none; }
+}
+
 /* --- MODALS --- */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0, 38, 64, 0.8); backdrop-filter: blur(8px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .modal-overlay.active { opacity: 1; visibility: visible; }
