@@ -1704,7 +1704,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; color: ' + (isDarkMode ? '#e0e0e0' : '#333') + ';">';
 
                             if (isRenting) {
-                                tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="2" stroke-dasharray="4,4"/><circle cx="10" cy="2" r="2" fill="' + lineColor + '"/><circle cx="20" cy="2" r="2" fill="' + lineColor + '"/><circle cx="30" cy="2" r="2" fill="' + lineColor + '"/></svg>';
+                                tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="3"/><circle cx="8" cy="2" r="2" fill="' + lineColor + '"/><circle cx="20" cy="2" r="2" fill="' + lineColor + '"/><circle cx="32" cy="2" r="2" fill="' + lineColor + '"/></svg>';
                             } else {
                                 tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="3"/></svg>';
                             }
@@ -1716,13 +1716,24 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
 
                         tooltipEl.innerHTML = tooltipHTML;
                         tooltipEl.style.display = 'block';
-                        tooltipEl.style.position = 'absolute';
+                        tooltipEl.style.position = 'fixed';
                         tooltipEl.style.pointerEvents = 'none';
                         tooltipEl.style.zIndex = '1000';
 
-                        const pos = context.tooltip.caretX;
-                        tooltipEl.style.left = (pos + 10) + 'px';
-                        tooltipEl.style.top = (context.tooltip.caretY - 10) + 'px';
+                        const canvasRect = ctx.canvas.getBoundingClientRect();
+                        const tooltipWidth = tooltipEl.offsetWidth;
+                        let x = canvasRect.left + context.tooltip.caretX + 12;
+                        let y = canvasRect.top + context.tooltip.caretY - tooltipEl.offsetHeight - 8;
+
+                        if (x + tooltipWidth > window.innerWidth - 10) {
+                            x = canvasRect.left + context.tooltip.caretX - tooltipWidth - 12;
+                        }
+                        if (y < 10) {
+                            y = canvasRect.top + context.tooltip.caretY + 8;
+                        }
+
+                        tooltipEl.style.left = x + 'px';
+                        tooltipEl.style.top = y + 'px';
                     }
                 }
             },
