@@ -1,0 +1,6 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <!-- Classic Gable House with Left Chimney and Cutout Door -->
+  <!-- A unified single path tracing the outer combined perimeter clockwise,
+       with the inner door path traced counter-clockwise to create the hole. -->
+  <path d="M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z" />
+</svg>
