@@ -1570,6 +1570,9 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
     // Get plan end age for chart marker
     const planEndAge = getVal('set_end');
 
+    // Check if dark mode is enabled
+    const isDarkMode = document.body.classList.contains('dark-mode');
+
     // Determine standardized axis scale (all £m or all £k based on max value)
     const maxValue = Math.max(
         ...buyData.map(v => Math.abs(Number(v))),
@@ -1654,7 +1657,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
     };
 
     let datasets = [
-        { label: 'Total Wealth (Buying)', data: buyData, borderColor: '#003a5d', backgroundColor: 'transparent', borderWidth: 3, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 6 },
+        { label: 'Total Wealth (Buying)', data: buyData, borderColor: isDarkMode ? '#90caf9' : '#003a5d', backgroundColor: 'transparent', borderWidth: 3, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 6 },
         { label: 'Total Wealth (Renting)', data: rentData, borderColor: '#bfa15d', backgroundColor: 'transparent', borderWidth: 3, fill: false, tension: 0.3, pointStyle: 'circle', pointRadius: rentPointRadius, pointBackgroundColor: '#bfa15d', pointBorderColor: '#ffffff', pointBorderWidth: 1.5, pointHoverRadius: 6 }
     ];
 
@@ -1668,7 +1671,6 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 tooltip: {
                     enabled: false,
                     external: function(context) {
-                        const isDarkMode = document.body.classList.contains('dark-mode');
                         const tooltipEl = document.getElementById('chartTooltip') || (() => {
                             const div = document.createElement('div');
                             div.id = 'chartTooltip';
@@ -1705,9 +1707,9 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; color: ' + (isDarkMode ? '#e0e0e0' : '#333') + ';">';
 
                             if (isRenting) {
-                                tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="3"/><circle cx="8" cy="2" r="2" fill="' + lineColor + '"/><circle cx="20" cy="2" r="2" fill="' + lineColor + '"/><circle cx="32" cy="2" r="2" fill="' + lineColor + '"/></svg>';
+                                tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/><circle cx="20" cy="6" r="5" fill="' + lineColor + '"/></svg>';
                             } else {
-                                tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="3"/></svg>';
+                                tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/></svg>';
                             }
 
                             tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>£' + valueOnly + '</strong></div></div>';
@@ -1739,17 +1741,18 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 }
             },
             scales: {
-                x: { 
-                    title: { display: true, text: 'Age (You)' },
-                    ticks: { maxTicksLimit: 10, maxRotation: 0, autoSkip: true }
+                x: {
+                    title: { display: true, text: 'Age (You)', color: isDarkMode ? '#e0e0e0' : '#666' },
+                    ticks: { maxTicksLimit: 10, maxRotation: 0, autoSkip: true, color: isDarkMode ? '#e0e0e0' : '#666' }
                 },
                 y: {
-                    title: { display: true, text: 'Total Wealth (£)' },
+                    title: { display: true, text: 'Total Wealth (£)', color: isDarkMode ? '#e0e0e0' : '#666' },
                     grid: {
-                        color: (c) => (goesNegative && c.tick.value === 0) ? 'rgba(198, 40, 40, 0.9)' : 'rgba(0, 0, 0, 0.1)',
+                        color: (c) => (goesNegative && c.tick.value === 0) ? 'rgba(198, 40, 40, 0.9)' : (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'),
                         lineWidth: (c) => (goesNegative && c.tick.value === 0) ? 2.5 : 1
                     },
                     ticks: {
+                        color: isDarkMode ? '#e0e0e0' : '#666',
                         font: (c) => (goesNegative && c.tick && c.tick.value === 0) ? { weight: 'bold' } : {},
                         callback: function(value) {
                             return formatAxisValue(value);
