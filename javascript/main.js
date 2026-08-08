@@ -837,12 +837,9 @@ function wizardStepNextClick() {
 function openWizard(origin = 'external') {
     wizardOrigin = origin; // Track where wizard was opened from ('external' or 'internal')
     currentWizIndex = 0;
-    currentMode = 'single'; // Default to "Just me" on launch
 
-    const modeSingle = document.getElementById('w-mode-single');
-    const modeCouple = document.getElementById('w-mode-couple');
-    if(modeSingle) modeSingle.classList.add('active');
-    if(modeCouple) modeCouple.classList.remove('active');
+    // Set mode to 'single' by default, which also sets up the UI correctly
+    setMode('single');
 
     // Clear all error messages from all wizard steps on initial load
     document.querySelectorAll('.wizard-step').forEach(stepEl => {
@@ -1585,9 +1582,6 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
     const ctx = canvas.getContext('2d');
     if (currentChart) currentChart.destroy();
 
-    // Get plan end age for chart marker
-    const planEndAge = getVal('set_end');
-
     // Check if dark mode is enabled
     const isDarkMode = document.body.classList.contains('dark-mode');
 
@@ -1636,7 +1630,6 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
 
             drawMarker(purchaseAge, '🏠', isDarkMode ? '#90caf9' : '#003a5d');
             drawMarker(retirementAge, '⛱️', isDarkMode ? '#90caf9' : '#003a5d');
-            drawMarker(planEndAge, '📋', isDarkMode ? '#90caf9' : '#003a5d');
         }
     };
 

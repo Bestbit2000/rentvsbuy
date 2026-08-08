@@ -407,17 +407,24 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .wealth-empty-desc { font-style: italic; color: #777; max-width: 480px; margin: 0 auto; line-height: 1.5; }
 
 /* --- PROJECTIONS VIEW LAYOUT --- */
-.projections-controls-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 15px; flex-shrink: 0; }
-
 #view-projections {
     display: none;
-    flex-direction: column;
+    flex-direction: row;
     flex-grow: 1;
     height: 100%;
     min-height: 0;
+    gap: 20px;
 }
 #view-projections.active {
     display: flex;
+}
+
+.projections-controls-row {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-shrink: 0;
+    width: 200px;
 }
 
 #proj-main-wrapper {
@@ -425,7 +432,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
     display: flex;
     flex-direction: column;
     min-height: 0;
-    width: 100%;
+    width: auto;
 }
 
 /* --- CHART & TABLE VIEWS (Vertical Fill Update) --- */
