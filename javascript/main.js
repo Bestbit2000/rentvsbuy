@@ -1666,16 +1666,63 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#222', titleColor: '#fff', bodyColor: '#fff', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 16, boxPadding: 8, cornerRadius: 8, titleFont: { size: 14 }, bodyFont: { size: 13 },
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) label += ': ';
-                            if (context.parsed.y !== null) {
-                                label += formatMoney.format(context.parsed.y);
-                            }
-                            return label;
+                    enabled: false,
+                    external: function(context) {
+                        const isDarkMode = document.body.classList.contains('dark-mode');
+                        const tooltipEl = document.getElementById('chartTooltip') || (() => {
+                            const div = document.createElement('div');
+                            div.id = 'chartTooltip';
+                            document.body.appendChild(div);
+                            return div;
+                        })();
+
+                        if (context.tooltip.opacity === 0) {
+                            tooltipEl.style.display = 'none';
+                            return;
                         }
+
+                        let tooltipHTML = '<div style="' +
+                            'background-color: ' + (isDarkMode ? '#1a1a1a' : '#fff') + '; ' +
+                            'border: 1px solid ' + (isDarkMode ? '#444' : '#ddd') + '; ' +
+                            'border-radius: 8px; ' +
+                            'padding: 12px 16px; ' +
+                            'font-family: inherit; ' +
+                            'font-size: 13px; ' +
+                            'box-shadow: 0 2px 8px ' + (isDarkMode ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.1)') + '; ' +
+                            '">';
+
+                        if (context.tooltip.title && context.tooltip.title.length > 0) {
+                            tooltipHTML += '<div style="font-weight: bold; margin-bottom: 8px; color: ' + (isDarkMode ? '#fff' : '#000') + ';">' +
+                                context.tooltip.title[0] + '</div>';
+                        }
+
+                        context.tooltip.body.forEach((item, index) => {
+                            const isRenting = index === 1;
+                            const lineColor = isRenting ? '#bfa15d' : (isDarkMode ? '#90caf9' : '#003a5d');
+                            const value = item.lines[0];
+
+                            tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; color: ' + (isDarkMode ? '#e0e0e0' : '#333') + ';">';
+
+                            if (isRenting) {
+                                tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="2" stroke-dasharray="4,4"/><circle cx="10" cy="2" r="2" fill="' + lineColor + '"/><circle cx="20" cy="2" r="2" fill="' + lineColor + '"/><circle cx="30" cy="2" r="2" fill="' + lineColor + '"/></svg>';
+                            } else {
+                                tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="3"/></svg>';
+                            }
+
+                            tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>' + value + '</strong></div></div>';
+                        });
+
+                        tooltipHTML += '</div>';
+
+                        tooltipEl.innerHTML = tooltipHTML;
+                        tooltipEl.style.display = 'block';
+                        tooltipEl.style.position = 'absolute';
+                        tooltipEl.style.pointerEvents = 'none';
+                        tooltipEl.style.zIndex = '1000';
+
+                        const pos = context.tooltip.caretX;
+                        tooltipEl.style.left = (pos + 10) + 'px';
+                        tooltipEl.style.top = (context.tooltip.caretY - 10) + 'px';
                     }
                 }
             },
