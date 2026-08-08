@@ -478,11 +478,8 @@ body.dark-mode .line-buy { background: #90caf9; }
 .row-purchase { background-color: rgba(0, 58, 93, 0.08); font-weight: bold; color: var(--ifoa-blue);}
 .row-retire { background-color: rgba(191, 161, 93, 0.15); font-weight: bold; color: #8a733e;}
 
-/* Hide legend/key since event info is now in table */
-#main-chart-legend,
-.custom-legend,
-div[style*="legend"] { display: none !important; }
-.chart-container > .custom-legend { display: none !important; }
+/* Hide legend in table view only (not in chart) */
+.table-container .custom-legend { display: none !important; }
 
 /* Projections table event column */
 .event-col-desktop { display: table-cell !important; }
