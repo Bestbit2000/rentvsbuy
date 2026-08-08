@@ -987,9 +987,13 @@ function startOver() {
         }
     });
 
-    // Clean up URL to remove skipWizard parameter
-    const cleanUrl = window.location.pathname;
-    window.history.replaceState(null, '', cleanUrl);
+    // Clean up URL to remove skipWizard parameter (wrap in try-catch for file:// security)
+    try {
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState(null, '', cleanUrl);
+    } catch (e) {
+        console.log('Note: history.replaceState not available in this context:', e.message);
+    }
 
     // Open wizard with 'internal' origin to restore state on close
     console.log('calling openWizard with internal');
