@@ -1615,7 +1615,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
             if (!chart.chartArea) return; 
             const { ctx, data, chartArea: { top, bottom }, scales: { x } } = chart;
             
-            const drawMarker = (age, iconPath, color) => {
+            const drawMarker = (age, iconPath, color, isRetirement = false) => {
                 if (age === null || age === undefined || age === "") return;
                 const idx = data.labels.indexOf(Number(age));
                 if (idx === -1) return;
@@ -1632,7 +1632,11 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 // Draw SVG icon
                 ctx.restore();
                 ctx.save();
-                ctx.translate(xPos - 12, top - 8);
+                ctx.translate(xPos, top - 8 + 12);
+                if (isRetirement) {
+                    ctx.rotate((15 * Math.PI) / 180);
+                }
+                ctx.translate(-12, -12);
                 ctx.scale(1, 1);
                 ctx.fillStyle = color;
                 const path = new Path2D(iconPath);
@@ -1640,8 +1644,8 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 ctx.restore();
             };
 
-            drawMarker(purchaseAge, iconPaths.property, isDarkMode ? '#90caf9' : '#003a5d');
-            drawMarker(retirementAge, iconPaths.retirement, isDarkMode ? '#90caf9' : '#003a5d');
+            drawMarker(purchaseAge, iconPaths.property, isDarkMode ? '#90caf9' : '#003a5d', false);
+            drawMarker(retirementAge, iconPaths.retirement, isDarkMode ? '#90caf9' : '#003a5d', true);
         }
     };
 
