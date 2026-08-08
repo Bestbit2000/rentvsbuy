@@ -1,3 +1,13 @@
+// Round to 3 significant figures for display purposes
+function roundTo3SigFigs(value) {
+    if (value === 0) return 0;
+    const absValue = Math.abs(value);
+    const magnitude = Math.floor(Math.log10(absValue));
+    const decimalPlaces = 2 - magnitude;
+    const factor = Math.pow(10, decimalPlaces);
+    return Math.round(absValue * factor) / factor * (value < 0 ? -1 : 1);
+}
+
 // --- HTML Templates for the Dynamic Hero Card ---
 const heroTemplates = {
     buy: (diff) => `
@@ -2136,7 +2146,10 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             const isRenting = index === 1;
                             const lineColor = isRenting ? '#bfa15d' : (isDarkMode ? '#90caf9' : '#003a5d');
                             const fullText = item.lines[0];
-                            const valueOnly = fullText.split(': ').pop();
+                            let valueOnly = fullText.split(': ').pop().replace(/[£,]/g, '');
+                            valueOnly = parseFloat(valueOnly.replace(/,/g, ''));
+                            const roundedValue = roundTo3SigFigs(valueOnly);
+                            const formattedValue = formatMoney.format(roundedValue);
 
                             tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; color: ' + (isDarkMode ? '#e0e0e0' : '#333') + ';">';
 
@@ -2146,7 +2159,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                                 tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/></svg>';
                             }
 
-                            tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>£' + valueOnly + '</strong></div></div>';
+                            tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>' + formattedValue + '</strong></div></div>';
                         });
 
                         tooltipHTML += '</div>';
@@ -2230,8 +2243,8 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
         tableHTML += `
         <tr class="${rowClass}">
             <td>${age}${iconHTML}</td>
-            <td>${formatMoney.format(buyData[i])}</td>
-            <td>${formatMoney.format(rentData[i])}</td>
+            <td>${formatMoney.format(roundTo3SigFigs(buyData[i]))}</td>
+            <td>${formatMoney.format(roundTo3SigFigs(rentData[i]))}</td>
             <td style="text-align: left;">${eventText}</td>
         </tr>`;
     }
