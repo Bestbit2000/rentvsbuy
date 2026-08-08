@@ -921,17 +921,25 @@ function closeWizard() {
     if(wizardOverlay) wizardOverlay.classList.remove('active');
 
     // Handle different close scenarios
+    console.log('closeWizard called, wizardOrigin:', wizardOrigin);
+
     if (wizardOrigin === 'internal') {
-        // Wizard opened from "Start over" - restore saved state without losing data
+        // Wizard opened from "Start over" - stay on page and restore saved state
+        console.log('Internal close - restoring calculator state');
         restoreCalculatorState();
         forceCalculation();
     } else if (wizardOrigin === 'external') {
         // Wizard opened from external page - navigate back
+        console.log('External close - navigating back');
         window.history.back();
     } else {
-        // Default behavior
+        // Default behavior - just close the wizard and show calculator
+        console.log('Default close');
         forceCalculation();
     }
+
+    // Reset wizardOrigin for next time
+    wizardOrigin = null;
 }
 
 function saveCalculatorState() {
