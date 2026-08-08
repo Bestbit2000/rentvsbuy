@@ -109,8 +109,7 @@ let currentMode = null;
 let currentWizIndex = 0;
 let stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 let savedSettings = {};
-let wizardOrigin = null; // Tracks whether wizard opened from external page or "Start over"
-let savedCalculatorState = {}; // Saves calculator state when "Start over" is clicked
+let wizardOrigin = null; // Tracks whether wizard opened from external page
 
 let isCompareMode = false;
 let baselineInputs = {};
@@ -937,58 +936,6 @@ function closeWizard() {
     wizardOrigin = null;
 }
 
-function saveCalculatorState() {
-    // Save all calculator sidebar input values before opening wizard
-    const sidebarInputs = document.querySelectorAll('#main-sidebar input, #main-sidebar select');
-    sidebarInputs.forEach(input => {
-        const key = input.id || input.name;
-        if (input.type === 'checkbox' || input.type === 'radio') {
-            savedCalculatorState[key] = input.checked;
-        } else {
-            savedCalculatorState[key] = input.value;
-        }
-    });
-}
-
-function restoreCalculatorState() {
-    // Restore all calculator values from saved state
-    Object.entries(savedCalculatorState).forEach(([key, value]) => {
-        const element = document.getElementById(key) || document.querySelector(`input[name="${key}"], select[name="${key}"]`);
-        if (element) {
-            if (element.type === 'checkbox' || element.type === 'radio') {
-                element.checked = value;
-            } else {
-                element.value = value;
-            }
-            element.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-    });
-}
-
-function startOver() {
-    // Save current calculator state before opening wizard
-    saveCalculatorState();
-
-    // Clear all wizard input fields to start fresh
-    document.querySelectorAll('.wizard-step input, .wizard-step select, .wizard-step textarea').forEach(el => {
-        if (el.type === 'checkbox' || el.type === 'radio') {
-            el.checked = false;
-        } else {
-            el.value = '';
-        }
-    });
-
-    // Clean up URL to remove skipWizard parameter (wrap in try-catch for file:// security)
-    try {
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState(null, '', cleanUrl);
-    } catch (e) {
-        // Silently fail if history API not available
-    }
-
-    // Open wizard with 'internal' origin to restore state on close
-    openWizard('internal');
-}
 
 function saveWizardAndClose() {
     try {
