@@ -1699,7 +1699,8 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                         context.tooltip.body.forEach((item, index) => {
                             const isRenting = index === 1;
                             const lineColor = isRenting ? '#bfa15d' : (isDarkMode ? '#90caf9' : '#003a5d');
-                            const value = item.lines[0];
+                            const fullText = item.lines[0];
+                            const valueOnly = fullText.split(': ').pop();
 
                             tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; color: ' + (isDarkMode ? '#e0e0e0' : '#333') + ';">';
 
@@ -1709,7 +1710,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                                 tooltipHTML += '<svg width="40" height="4" style="vertical-align: middle;"><line x1="0" y1="2" x2="40" y2="2" stroke="' + lineColor + '" stroke-width="3"/></svg>';
                             }
 
-                            tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>' + value + '</strong></div></div>';
+                            tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>' + valueOnly + '</strong></div></div>';
                         });
 
                         tooltipHTML += '</div>';
