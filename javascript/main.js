@@ -804,7 +804,9 @@ function closePartnerOnboarding(revertToSingle = true) {
         if(modeCouple) { modeCouple.classList.remove('active'); modeCouple.setAttribute('aria-pressed', 'false'); }
         document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
-        if (typeof updateDynamicUI === 'function') {
+        if (typeof handleInputChanged === 'function') {
+            handleInputChanged();
+        } else if (typeof updateDynamicUI === 'function') {
             updateDynamicUI();
         }
     }
@@ -975,14 +977,6 @@ function validatePartnerStep() {
     } else if (step === 3) {
         const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
         isValid = hasPension !== undefined && hasPension !== null && hasPension !== '';
-        if (isValid && hasPension === 'Yes') {
-            const balance = document.getElementById('partner-pension-balance')?.value;
-            const pee = document.getElementById('partner-pee')?.value;
-            const per = document.getElementById('partner-per')?.value;
-            isValid = (balance && String(balance).trim() !== '') &&
-                     (pee && String(pee).trim() !== '') &&
-                     (per && String(per).trim() !== '');
-        }
     }
 
     const nextBtn = document.getElementById('partner-next-btn');

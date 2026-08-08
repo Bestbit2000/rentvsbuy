@@ -973,11 +973,11 @@
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval2" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Your contribution</label>
+                            <label>Your partner's contribution</label>
                             <div class="input-wrapper"><input type="number" id="w_pee2" placeholder="e.g. 5" class="clamp-100"><span class="suffix">%</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Employer contribution</label>
+                            <label>Partner's employer contribution</label>
                             <div class="input-wrapper"><input type="number" id="w_per2" placeholder="e.g. 3" class="clamp-100"><span class="suffix">%</span></div>
                         </div>
                     </div>
@@ -1115,9 +1115,9 @@
                     <div class="input-row-single">
                         <label>Does your partner have a student loan?</label>
                         <div class="toggle-container">
-                            <input type="radio" name="partner-has-sl" id="partner-has-sl-y" value="Yes" onchange="togglePartnerSL(); validatePartnerStep();">
+                            <input type="radio" name="partner-has-sl" id="partner-has-sl-y" value="Yes" onchange="togglePartnerSL(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-sl-y">Yes</label>
-                            <input type="radio" name="partner-has-sl" id="partner-has-sl-n" value="No" onchange="togglePartnerSL(); validatePartnerStep();">
+                            <input type="radio" name="partner-has-sl" id="partner-has-sl-n" value="No" onchange="togglePartnerSL(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-sl-n">No</label>
                         </div>
                     </div>
@@ -1146,9 +1146,9 @@
                     <div class="input-row-single">
                         <label>Does your partner have an existing pension?</label>
                         <div class="toggle-container">
-                            <input type="radio" name="partner-has-pension" id="partner-has-pension-y" value="Yes" onchange="togglePartnerPen(); validatePartnerStep();">
+                            <input type="radio" name="partner-has-pension" id="partner-has-pension-y" value="Yes" onchange="togglePartnerPen(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-pension-y">Yes</label>
-                            <input type="radio" name="partner-has-pension" id="partner-has-pension-n" value="No" onchange="togglePartnerPen(); validatePartnerStep();">
+                            <input type="radio" name="partner-has-pension" id="partner-has-pension-n" value="No" onchange="togglePartnerPen(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-pension-n">No</label>
                         </div>
                     </div>
