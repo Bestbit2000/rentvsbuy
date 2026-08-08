@@ -1650,7 +1650,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
             if (!chart.chartArea) return; 
             const { ctx, data, chartArea: { top, bottom }, scales: { x } } = chart;
             
-            const drawMarker = (age, iconPath, color) => {
+            const drawMarker = (age, iconPath, color, isRetirement = false) => {
                 if (age === null || age === undefined || age === "") return;
                 const idx = data.labels.indexOf(Number(age));
                 if (idx === -1) return;
@@ -1667,7 +1667,12 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 // Draw SVG icon
                 ctx.restore();
                 ctx.save();
-                ctx.translate(xPos - 12, top - 15);
+                ctx.translate(xPos - 12, top - 8);
+                if (isRetirement) {
+                    ctx.translate(12, 12);
+                    ctx.rotate((15 * Math.PI) / 180);
+                    ctx.translate(-12, -12);
+                }
                 ctx.scale(1, 1);
                 ctx.fillStyle = color;
                 const path = new Path2D(iconPath);
@@ -1675,8 +1680,8 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 ctx.restore();
             };
 
-            drawMarker(purchaseAge, iconPaths.property, isDarkMode ? '#90caf9' : '#003a5d');
-            drawMarker(retirementAge, iconPaths.retirement, isDarkMode ? '#90caf9' : '#003a5d');
+            drawMarker(purchaseAge, iconPaths.property, isDarkMode ? '#90caf9' : '#003a5d', false);
+            drawMarker(retirementAge, iconPaths.retirement, isDarkMode ? '#90caf9' : '#003a5d', true);
         }
     };
 
@@ -1805,10 +1810,15 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                         let x = canvasRect.left + context.tooltip.caretX + 12;
                         let y = canvasRect.top + context.tooltip.caretY - tooltipEl.offsetHeight - 8;
 
-                        if (x + tooltipWidth > window.innerWidth - 10) {
+                        // Better mobile tooltip positioning
+                        const padding = 10;
+                        if (x + tooltipWidth > window.innerWidth - padding) {
                             x = canvasRect.left + context.tooltip.caretX - tooltipWidth - 12;
                         }
-                        if (y < 10) {
+                        if (x < padding) {
+                            x = padding;
+                        }
+                        if (y < padding) {
                             y = canvasRect.top + context.tooltip.caretY + 8;
                         }
 
