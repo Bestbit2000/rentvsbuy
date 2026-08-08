@@ -965,9 +965,18 @@ function restoreCalculatorState() {
 function startOver() {
     // Save current calculator state before opening wizard
     saveCalculatorState();
+
+    // Clear all wizard input fields to start fresh
+    document.querySelectorAll('.wizard-step input, .wizard-step select, .wizard-step textarea').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            el.checked = false;
+        } else {
+            el.value = '';
+        }
+    });
+
+    // Open wizard with 'internal' origin to restore state on close
     openWizard('internal');
-    const wizardOverlay = document.getElementById('wizard-overlay');
-    if(wizardOverlay) wizardOverlay.classList.add('active');
 }
 
 function saveWizardAndClose() {
