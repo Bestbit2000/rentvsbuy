@@ -427,14 +427,16 @@ function checkCompareModifications() {
             if (el.type !== 'radio' || (el.type === 'radio' && el.checked)) {
                 let labelText = el.getAttribute('data-label') || el.id;
                 let oldVal = baselineInputs[el.id];
+                let newVal = el.value;
                 if(el.type === 'radio') {
                     let group = document.querySelectorAll(`input[name="${el.name}"]`);
                     let oldRadio = Array.from(group).find(r => baselineInputs[r.id] === true);
-                    oldVal = oldRadio ? oldRadio.value : "Previous";
+                    oldVal = oldRadio ? (document.querySelector(`label[for="${oldRadio.id}"]`)?.textContent.trim() || oldRadio.value) : "Previous";
+                    newVal = document.querySelector(`label[for="${el.id}"]`)?.textContent.trim() || el.value;
                 }
-                changedInputsList.push(`${labelText}: ${oldVal} ➔ ${el.value}`);
+                changedInputsList.push(`${labelText}: ${oldVal} ➔ ${newVal}`);
                 let li = document.createElement('li');
-                li.innerHTML = `<strong>${labelText}:</strong> ${oldVal} ➔ ${el.value}`;
+                li.innerHTML = `<strong>${labelText}:</strong> ${oldVal} ➔ ${newVal}`;
                 ul.appendChild(li);
             }
         } else {
