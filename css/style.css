@@ -220,7 +220,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .theme-error .hero-icon-wrapper { background-color: #FEE2E2; color: #B91C1C; }
 .theme-error .hero-title, .theme-error .hero-highlight { color: #B91C1C; }
 
-.timing-hero-card { display: flex; align-items: center; padding: 25px 30px; border-radius: 12px; border: 1px solid #e0e6ed; margin-top: 20px; gap: 20px; background-color: white; box-shadow: var(--card-shadow); }
+.timing-hero-card { display: flex; align-items: center; padding: 25px 30px; border-radius: 12px; border: 1px solid #e0e6ed; gap: 20px; background-color: white; box-shadow: var(--card-shadow); }
 .timing-icon-wrapper { display: flex; justify-content: center; align-items: center; width: 64px; height: 64px; background-color: #eaf2f8; border-radius: 50%; color: var(--ifoa-blue); flex-shrink: 0; }
 .timing-text-content { display: flex; flex-direction: column; gap: 6px; }
 .timing-title { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--ifoa-blue); }
@@ -831,8 +831,8 @@ body.dark-mode .bg-gray-50 .badge-outcome-red {
    Scoped to compare mode — a single scenario has only one column to size. */
 @media (min-width: 951px) {
     .compare-mode-active .compare-grid { align-items: stretch; }
-    .compare-mode-active .compare-grid > .compare-col { display: flex; flex-direction: column; min-width: 0; }
-    .compare-mode-active .compare-grid > .compare-col > .col-title { flex: 0 0 auto; }
+    .compare-mode-active .compare-grid > .compare-col { display: flex; flex-direction: column; min-width: 0; align-items: flex-start; }
+    .compare-mode-active .compare-grid > .compare-col > .col-title { flex: 0 0 auto; line-height: 1.2; }
     .compare-mode-active .compare-grid > .compare-col > div:not(.col-title) { flex: 1 1 auto; display: flex; flex-direction: column; }
     .compare-mode-active .compare-grid > .compare-col > div:not(.col-title) > * { flex: 1 1 auto; }
     .compare-mode-active #hero-card-container, .compare-mode-active #timing-card-container { display: flex; flex-direction: column; flex: 1 1 auto; }

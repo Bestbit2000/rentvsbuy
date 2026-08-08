@@ -1705,7 +1705,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             '">';
 
                         if (context.tooltip.title && context.tooltip.title.length > 0) {
-                            tooltipHTML += '<div style="font-weight: bold; margin-bottom: 8px; color: ' + (isDarkMode ? '#fff' : '#000') + ';">' +
+                            tooltipHTML += '<div style="font-weight: bold; margin-bottom: 8px; color: ' + (isDarkMode ? '#fff' : '#000') + ';">Age ' +
                                 context.tooltip.title[0] + '</div>';
                         }
 
