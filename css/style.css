@@ -67,7 +67,7 @@ body.calc-body { font-family: var(--font-main); background: var(--bg); margin: 0
 .compare-toggle.is-disabled label, .mobile-menu-item.is-disabled label { cursor: not-allowed; }
 .compare-toggle input[type="checkbox"]:disabled { cursor: not-allowed; }
 
-.settings-btn { background: transparent; border: none; color: white; padding: 8px 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 0.95rem; font-family: inherit; }
+.settings-btn { background: transparent; border: none; color: white; padding: 8px 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; font-weight: 400; font-size: 0.95rem; font-family: inherit; }
 .settings-btn:hover { color: var(--ifoa-gold); background: transparent; }
 
 .wrapper { display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; width: 100%; position: relative; }
