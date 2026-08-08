@@ -479,7 +479,10 @@ body.dark-mode .line-buy { background: #90caf9; }
 .row-retire { background-color: rgba(191, 161, 93, 0.15); font-weight: bold; color: #8a733e;}
 
 /* Hide legend/key since event info is now in table */
-#main-chart-legend { display: none !important; }
+#main-chart-legend,
+.custom-legend,
+div[style*="legend"] { display: none !important; }
+.chart-container > .custom-legend { display: none !important; }
 
 /* Projections table event column */
 .event-col-desktop { display: none; }
