@@ -692,6 +692,14 @@ body.dark-mode .cost-fees { background: #4a5560 !important; }
 body.dark-mode .sdlt-color { background: #3d5a72 !important; }
 body.dark-mode .fees-color { background: #4a5560 !important; }
 
+/* Legend icons styling */
+.legend-icon { fill: #003a5d; }
+.legend-icons { color: #000; }
+
+/* Dark mode legend */
+body.dark-mode .legend-icon { fill: #90caf9; }
+body.dark-mode .legend-icons { color: #e0e0e0; }
+
 /* Sticky Footer Force Dark Mode */
 body.dark-mode .compare-actions-footer { background: #1e1e1e !important; border-top-color: #333 !important; }
 body.dark-mode .link-reset { color: #90caf9 !important; }

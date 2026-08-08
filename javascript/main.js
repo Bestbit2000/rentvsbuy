@@ -1713,8 +1713,30 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             '">';
 
                         if (context.tooltip.title && context.tooltip.title.length > 0) {
+                            const hoveredAge = Number(context.tooltip.title[0]);
                             tooltipHTML += '<div style="font-weight: bold; margin-bottom: 8px; color: ' + (isDarkMode ? '#fff' : '#000') + ';">Age ' +
                                 context.tooltip.title[0] + '</div>';
+
+                            // Show event if hovering over purchase or retirement age
+                            const isPurchase = hoveredAge === Number(purchaseAge) && purchaseAge !== null;
+                            const isRetirement = hoveredAge === Number(retirementAge);
+
+                            if (isPurchase && isRetirement) {
+                                const propertyPath = "M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z";
+                                tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: ' + (isDarkMode ? 'rgba(144, 202, 249, 0.1)' : 'rgba(0, 58, 93, 0.05)') + '; border-radius: 4px; color: ' + (isDarkMode ? '#90caf9' : '#003a5d') + ';">';
+                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (isDarkMode ? '#90caf9' : '#003a5d') + '" style="flex-shrink: 0;"><path d="' + propertyPath + '"/></svg>';
+                                tooltipHTML += '<strong>Purchase & Retirement</strong></div>';
+                            } else if (isPurchase) {
+                                const propertyPath = "M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z";
+                                tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: ' + (isDarkMode ? 'rgba(144, 202, 249, 0.1)' : 'rgba(0, 58, 93, 0.05)') + '; border-radius: 4px; color: ' + (isDarkMode ? '#90caf9' : '#003a5d') + ';">';
+                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (isDarkMode ? '#90caf9' : '#003a5d') + '" style="flex-shrink: 0;"><path d="' + propertyPath + '"/></svg>';
+                                tooltipHTML += '<strong>House Purchase</strong></div>';
+                            } else if (isRetirement) {
+                                const retirementPath = "M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z M11 11H13V22H11V11Z";
+                                tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: ' + (isDarkMode ? 'rgba(255, 213, 79, 0.1)' : 'rgba(191, 161, 93, 0.1)') + '; border-radius: 4px; color: ' + (isDarkMode ? '#ffd54f' : '#8a733e') + ';">';
+                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (isDarkMode ? '#ffd54f' : '#8a733e') + '" style="flex-shrink: 0;"><path d="' + retirementPath + '"/></svg>';
+                                tooltipHTML += '<strong>Retirement</strong></div>';
+                            }
                         }
 
                         context.tooltip.body.forEach((item, index) => {
