@@ -409,11 +409,10 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 /* --- PROJECTIONS VIEW LAYOUT --- */
 #view-projections {
     display: none;
-    flex-direction: row;
+    flex-direction: column;
     flex-grow: 1;
     height: 100%;
     min-height: 0;
-    gap: 20px;
 }
 #view-projections.active {
     display: flex;
@@ -421,10 +420,13 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 
 .projections-controls-row {
     display: flex;
-    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
     gap: 15px;
     flex-shrink: 0;
-    width: 200px;
 }
 
 #proj-main-wrapper {
@@ -432,7 +434,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
     display: flex;
     flex-direction: column;
     min-height: 0;
-    width: auto;
+    width: 100%;
 }
 
 /* --- CHART & TABLE VIEWS (Vertical Fill Update) --- */
