@@ -1814,40 +1814,16 @@ function runCalculation() {
     let benBox = document.getElementById('ui-benefit-box');
     if(benBox) benBox.classList.remove('negative', 'neutral');
     let baseDelta = document.getElementById('ui-compare-delta');
-    
+    if(baseDelta) baseDelta.style.display = 'none';
+
     const uiBenefitVal = document.getElementById('ui-benefit-val');
-    if (benefit > 100) {
-        if(uiBenefitVal) uiBenefitVal.innerText = "+" + formatSigFigDown(benefit) + " (buying could be more beneficial)";
-    } else if (benefit < -100) {
-        if(benBox) benBox.classList.add('negative');
-        if(uiBenefitVal) uiBenefitVal.innerText = formatSigFigDown(Math.abs(benefit)) + " (renting could be more beneficial)";
+    const absThreshold = 100;
+    if (benefit > absThreshold) {
+        if(uiBenefitVal) uiBenefitVal.innerHTML = `Buying could give <strong>£${formatSigFigDown(benefit)} more wealth</strong> compared to renting.`;
+    } else if (benefit < -absThreshold) {
+        if(uiBenefitVal) uiBenefitVal.innerHTML = `Renting could give <strong>£${formatSigFigDown(Math.abs(benefit))} more wealth</strong> compared to buying.`;
     } else {
-        if(benBox) benBox.classList.add('neutral');
-        if(uiBenefitVal) uiBenefitVal.innerText = "Likely to be close to break-even";
-    }
-
-    if (isCompareMode && baselineResults) {
-        if(baseDelta) baseDelta.style.display = 'block';
-        let currentDiff = buyEndVal - rentEndVal; 
-        let baseBuyVal = baselineResults.buyWealth[maxIdx - 1] || 0;
-        let baseRentVal = baselineResults.rentWealth[maxIdx - 1] || 0;
-        let baseDiff = baseBuyVal - baseRentVal;
-        let deltaOfDeltas = currentDiff - baseDiff;
-
-        if(baseDelta) {
-            if (Math.abs(deltaOfDeltas) < 100) {
-                baseDelta.innerText = "No material change vs baseline";
-                baseDelta.style.color = "#555";
-            } else if (deltaOfDeltas > 0) {
-                baseDelta.innerText = `Buying could be +${formatSigFigDown(deltaOfDeltas)} better than baseline`;
-                baseDelta.style.color = "var(--success)";
-            } else {
-                baseDelta.innerText = `Renting could be +${formatSigFigDown(Math.abs(deltaOfDeltas))} better than baseline`;
-                baseDelta.style.color = "var(--danger)";
-            }
-        }
-    } else {
-        if(baseDelta) baseDelta.style.display = 'none';
+        if(uiBenefitVal) uiBenefitVal.innerHTML = `Both renting and buying will give around the same wealth.`;
     }
 
     setPropertyAffordability(purcTerm >= 0);

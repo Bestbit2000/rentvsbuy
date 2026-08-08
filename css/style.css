@@ -304,7 +304,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .benefit-box { margin-top: auto; padding: 15px; background: #e8f5e9; color: var(--success); border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.1rem; border: 1px solid #c8e6c9; }
 .benefit-box.negative { background: #ffebee; color: var(--danger); border-color: #ffcdd2; }
 .benefit-box.neutral { background: #f0f4f8; color: var(--ifoa-blue); border-color: #e0e6ed; }
-
+.benefit-statement { margin-top: auto; padding: 15px; color: var(--text-primary); text-align: center; font-size: 1rem; line-height: 1.6; border-radius: 8px; }
 
 /* Changes List Item layout */
 .changes-list {
@@ -588,6 +588,7 @@ body.dark-mode .bar-track, body.dark-mode .funding-bar { background: #333 !impor
 
 body.dark-mode .benefit-box { background: #1b3320 !important; color: #81c784 !important; border-color: #2e7d32 !important; }
 body.dark-mode .benefit-box.negative { background: #4a1919 !important; color: #e57373 !important; border-color: #c62828 !important; }
+body.dark-mode .benefit-statement { color: #e0e0e0 !important; }
 
 body.dark-mode .toggle-container { background: #333 !important; }
 body.dark-mode .toggle-container label { color: #bbb !important; } 
