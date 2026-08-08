@@ -1819,9 +1819,9 @@ function runCalculation() {
     const uiBenefitVal = document.getElementById('ui-benefit-val');
     const absThreshold = 100;
     if (benefit > absThreshold) {
-        if(uiBenefitVal) uiBenefitVal.innerHTML = `Buying could give <strong>£${formatSigFigDown(benefit)} more wealth</strong> compared to renting.`;
+        if(uiBenefitVal) uiBenefitVal.innerHTML = `<strong>Buying could give ${formatSigFigDown(benefit)} more wealth</strong> compared to renting.`;
     } else if (benefit < -absThreshold) {
-        if(uiBenefitVal) uiBenefitVal.innerHTML = `Renting could give <strong>£${formatSigFigDown(Math.abs(benefit))} more wealth</strong> compared to buying.`;
+        if(uiBenefitVal) uiBenefitVal.innerHTML = `<strong>Renting could give ${formatSigFigDown(Math.abs(benefit))} more wealth</strong> compared to buying.`;
     } else {
         if(uiBenefitVal) uiBenefitVal.innerHTML = `Both renting and buying will give around the same wealth.`;
     }
