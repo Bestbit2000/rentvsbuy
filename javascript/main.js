@@ -930,6 +930,13 @@ function togglePartnerPen() {
         pensionDetails.style.display = hasPension === 'Yes' ? 'block' : 'none';
     }
     validatePartnerStep();
+    // Focus first field if showing details
+    if (hasPension === 'Yes') {
+        setTimeout(() => {
+            const firstField = document.getElementById('partner-pension-balance');
+            if (firstField) firstField.focus();
+        }, 100);
+    }
 }
 
 function validatePartnerStep() {
@@ -938,17 +945,17 @@ function validatePartnerStep() {
 
     if (step === 0) {
         const age = document.getElementById('partner-age')?.value;
-        isValid = age && age.trim() !== '';
+        isValid = age && String(age).trim() !== '';
     } else if (step === 1) {
         const salary = document.getElementById('partner-salary')?.value;
-        isValid = salary && salary.trim() !== '';
+        isValid = salary && String(salary).trim() !== '';
     } else if (step === 2) {
         const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
         isValid = hasSL !== undefined && hasSL !== null && hasSL !== '';
         if (isValid && hasSL === 'Yes') {
             const plan = document.getElementById('partner-sl-plan')?.value;
             const balance = document.getElementById('partner-sl-balance')?.value;
-            isValid = plan && plan.trim() !== '' && balance && balance.trim() !== '';
+            isValid = (plan && String(plan).trim() !== '') && (balance && String(balance).trim() !== '');
         }
     } else if (step === 3) {
         const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
@@ -957,7 +964,9 @@ function validatePartnerStep() {
             const balance = document.getElementById('partner-pension-balance')?.value;
             const pee = document.getElementById('partner-pee')?.value;
             const per = document.getElementById('partner-per')?.value;
-            isValid = balance && balance.trim() !== '' && pee && pee.trim() !== '' && per && per.trim() !== '';
+            isValid = (balance && String(balance).trim() !== '') &&
+                     (pee && String(pee).trim() !== '') &&
+                     (per && String(per).trim() !== '');
         }
     }
 
@@ -1085,14 +1094,23 @@ function completePartnerOnboarding() {
         if (penYesRadio) penYesRadio.checked = true;
         const pensionBalance = document.getElementById('partner-pension-balance')?.value;
         const pensionContrib = document.getElementById('partner-pee')?.value;
+        const pensionEmp = document.getElementById('partner-per')?.value;
         document.getElementById('s_pp2').value = pensionBalance;
         document.getElementById('s_pc2').value = pensionContrib;
+        // Also set employer contribution if field exists
+        if (document.getElementById('s_pep2')) {
+            document.getElementById('s_pep2').value = pensionEmp;
+        }
     } else if (hasPension === 'No') {
         if (penNoRadio) penNoRadio.checked = true;
     }
 
     closePartnerOnboarding(false);
-    if (typeof updateDynamicUI === 'function') {
+
+    // Trigger full recalculation
+    if (typeof handleInputChanged === 'function') {
+        handleInputChanged();
+    } else if (typeof updateDynamicUI === 'function') {
         updateDynamicUI();
     }
 }
