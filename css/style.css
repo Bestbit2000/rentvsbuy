@@ -85,6 +85,8 @@ body .btn-primary.btn-make-base:disabled { background-color: #ccc !important; co
 .link-reset:hover { color: var(--ifoa-navy); }
 .disclaimer-link { color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500; font-size: 0.85rem; transition: color 0.2s; }
 .disclaimer-link:hover { color: var(--ifoa-navy) !important; }
+.close-btn { min-height: 44px; min-width: 44px; padding: 8px; display: flex; align-items: center; justify-content: center; background-color: transparent; border: none; cursor: pointer; transition: color 0.2s; color: currentColor; }
+.close-btn:hover { color: var(--ifoa-gold); opacity: 0.8; }
 .link-start-over { margin-top: 0; font-size: 0.85rem; color: #888; text-decoration: none; display: block; text-align: center; transition: color 0.2s; }
 .link-start-over:hover { color: var(--danger); text-decoration: underline; }
 
