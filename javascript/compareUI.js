@@ -274,7 +274,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 let m = globalParams.mortgages.rates_by_ltv;
                 for (let i=0; i<m.length; i++) {
                     let fromLTV = (m[i].ltv_from * 100).toFixed(0) + '%';
-                    let rate = (m[i].rate * 100).toFixed(2) + '%';
+                    let rate = (m[i].rate * 100).toFixed(1) + '%';
                     if (i < m.length - 1) {
                         let toLTV = (m[i+1].ltv_from * 100).toFixed(0) + '%';
                         html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>${fromLTV} to ${toLTV}:</span> <strong>${rate}</strong></li>`;

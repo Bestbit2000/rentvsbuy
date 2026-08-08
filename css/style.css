@@ -739,8 +739,10 @@ body.dark-mode .persona-card .bg-gray-50 { background: #2a2a2a !important; }
 body.dark-mode .persona-card .bg-gray-50 strong { color: #90caf9 !important; }
 body.dark-mode .persona-card .text-navy { color: #90caf9 !important; }
 
-/* Purchase age overlay text in dark mode */
-body.dark-mode .text-\[10px\].font-bold.text-gray-700 { color: white !important; }
+/* Purchase age overlay in dark mode */
+body.dark-mode .bg-white\/90 { background-color: rgba(30, 30, 30, 0.95) !important; }
+body.dark-mode .bg-white\/90 .text-navy { color: #90caf9 !important; }
+body.dark-mode .text-\[10px\].font-bold.text-gray-700 { color: #d0d0d0 !important; }
 
 /* Gold/Yellow header text in dark mode */
 body.dark-mode .bg-gold h4 { color: #003a5d !important; }

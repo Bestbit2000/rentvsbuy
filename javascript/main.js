@@ -95,7 +95,7 @@ const timingUnaffordableTemplate = (descText) => `
             </svg>
         </div>
         <div class="timing-text-content">
-            <h3 class="timing-title">A house may not be affordable</h3>
+            <h3 class="timing-title">The property may not be affordable</h3>
             <p class="timing-description">${descText}</p>
         </div>
     </div>
@@ -1411,7 +1411,7 @@ function runCalculation() {
         }
         if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); timingContainer.style.display = 'flex'; }
     } else {
-        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit and income, this home looks unlikely to be affordable before retirement. Try increasing your deposit or income, or lowering the target house price.`); timingContainer.style.display = 'flex'; }
+        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit and income, this home looks unlikely to be affordable before retirement.`); timingContainer.style.display = 'flex'; }
     }
 
     let maxW = Math.max(buyEndVal, rentEndVal, 1);

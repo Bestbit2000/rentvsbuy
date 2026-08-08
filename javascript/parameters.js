@@ -1,15 +1,15 @@
 // parameters.js
 const globalParams = {
   "general": {
-    "current_tax_year_beginning": 2025,
+    "current_tax_year_beginning": 2026,
     "minimum_age": 20,
     "max_term": 81
   },
   "state_pension_age_table": [
     { "current_age_under": 18, "state_pension_age": 68, "minimum_pension_age": 58 },
-    { "current_age_under": 48, "state_pension_age": 68, "minimum_pension_age": 58 },
-    { "current_age_under": 65, "state_pension_age": 67, "minimum_pension_age": 57 },
-    { "current_age_under": 72, "state_pension_age": 66, "minimum_pension_age": 55 }
+    { "current_age_under": 49, "state_pension_age": 68, "minimum_pension_age": 58 },
+    { "current_age_under": 69, "state_pension_age": 67, "minimum_pension_age": 57 },
+    { "current_age_under": 73, "state_pension_age": 66, "minimum_pension_age": 55 }
   ],
   "career_increases": [
     { "from_age": 18, "increase_above_inflation": 0.019 },
@@ -63,11 +63,11 @@ const globalParams = {
   "mortgages": {
     "max_end_age": 75,
     "rates_by_ltv": [
-      { "ltv_from": 0.00, "rate": 0.0366 },
-      { "ltv_from": 0.50, "rate": 0.0366 },
-      { "ltv_from": 0.75, "rate": 0.0390 },
-      { "ltv_from": 0.90, "rate": 0.0436 },
-      { "ltv_from": 0.95, "rate": 0.0461 }
+      { "ltv_from": 0.00, "rate": 0.044 },
+      { "ltv_from": 0.50, "rate": 0.044 },
+      { "ltv_from": 0.75, "rate": 0.046 },
+      { "ltv_from": 0.90, "rate": 0.046 },
+      { "ltv_from": 0.95, "rate": 0.052 }
     ]
   },
   "student_loans": {
