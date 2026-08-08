@@ -1080,6 +1080,82 @@
     </div>
 
     <!-- How it works Modal -->
+    <!-- Partner Onboarding Modal -->
+    <div id="partner-onboarding-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Tell us about your partner</h2>
+                <button class="close-modal" onclick="closePartnerOnboarding(true)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 25px;">To give you accurate results, we need a few details about your partner. You can update these later if things change.</p>
+
+                <div class="input-row-single">
+                    <label>Partner's current age</label>
+                    <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 28" min="16" max="120"></div>
+                </div>
+
+                <div class="input-row-single">
+                    <label>Partner's annual gross salary</label>
+                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 35,000" class="comma-format"></div>
+                </div>
+
+                <div class="input-row-single">
+                    <label>Does your partner have a student loan?</label>
+                    <div class="toggle-container" style="width: 100%;">
+                        <input type="radio" name="partner-has-sl" id="partner-has-sl-no" value="No" checked onchange="updatePartnerSLVisibility()">
+                        <label for="partner-has-sl-no" style="padding: 10px 15px;">No</label>
+                        <input type="radio" name="partner-has-sl" id="partner-has-sl-yes" value="Yes" onchange="updatePartnerSLVisibility()">
+                        <label for="partner-has-sl-yes" style="padding: 10px 15px;">Yes</label>
+                    </div>
+                </div>
+
+                <div id="partner-sl-details" style="display: none;">
+                    <div class="input-row-single">
+                        <label>Student loan plan</label>
+                        <select id="partner-sl-plan">
+                            <option value="">Select plan...</option>
+                            <option value="Plan1">Plan 1</option>
+                            <option value="Plan2">Plan 2</option>
+                            <option value="Plan4">Plan 4 (Scottish)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-row-single">
+                        <label>Outstanding balance</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 15,000" class="comma-format"></div>
+                    </div>
+                </div>
+
+                <div class="input-row-single">
+                    <label>Does your partner have a pension?</label>
+                    <div class="toggle-container" style="width: 100%;">
+                        <input type="radio" name="partner-has-pension" id="partner-has-pension-no" value="No" checked onchange="updatePartnerPensionVisibility()">
+                        <label for="partner-has-pension-no" style="padding: 10px 15px;">No</label>
+                        <input type="radio" name="partner-has-pension" id="partner-has-pension-yes" value="Yes" onchange="updatePartnerPensionVisibility()">
+                        <label for="partner-has-pension-yes" style="padding: 10px 15px;">Yes</label>
+                    </div>
+                </div>
+
+                <div id="partner-pension-details" style="display: none;">
+                    <div class="input-row-single">
+                        <label>Pension pot value today</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 5,000" class="comma-format"></div>
+                    </div>
+
+                    <div class="input-row-single">
+                        <label>Annual contribution</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-contrib" placeholder="e.g. 2,500" class="comma-format"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px 30px; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn-outline" onclick="closePartnerOnboarding(true)" style="padding: 12px 24px;">Cancel</button>
+                <button class="btn-primary" onclick="completePartnerOnboarding()" style="padding: 12px 24px;">Continue</button>
+            </div>
+        </div>
+    </div>
+
     <div id="how-it-works-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 800px; max-height: 90vh; display: flex; flex-direction: column;">
             <div class="modal-header">

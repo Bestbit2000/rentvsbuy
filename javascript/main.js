@@ -699,7 +699,6 @@ function validateStepBeforeAdvance() {
 
 
 function setMode(mode) {
-    currentMode = mode;
     const modeSingle = document.getElementById('w-mode-single');
     const modeCouple = document.getElementById('w-mode-couple');
     if(modeSingle) { modeSingle.classList.remove('active'); modeSingle.setAttribute('aria-pressed', 'false'); }
@@ -707,6 +706,12 @@ function setMode(mode) {
 
     let sideSingle = document.getElementById('side_single');
     let sideCouple = document.getElementById('side_couple');
+
+    // Check if switching from single to couple mode outside of wizard
+    const isOutsideWizard = !document.getElementById('wizard-overlay')?.classList.contains('active');
+    const wasSingleMode = currentMode === 'single' && mode === 'couple' && isOutsideWizard;
+
+    currentMode = mode;
 
     if (mode === 'single') {
         if(modeSingle) { modeSingle.classList.add('active'); modeSingle.setAttribute('aria-pressed', 'true'); }
@@ -734,6 +739,12 @@ function setMode(mode) {
             switchPerson('you');
         }
         stepSequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        // If switching from single to couple outside wizard, show partner onboarding
+        if (isOutsideWizard) {
+            setTimeout(() => showPartnerOnboarding(), 100);
+            return; // Don't proceed with normal mode switch yet
+        }
     }
 
     // Trigger recalculation if engine is available (non-wizard mode)
@@ -743,6 +754,97 @@ function setMode(mode) {
 
     updateWizardProgress();
     validateStep(); // Ensures next button unlocks properly once selected
+}
+
+function showPartnerOnboarding() {
+    const modal = document.getElementById('partner-onboarding-modal');
+    if (modal) {
+        modal.classList.add('active');
+        // Focus on first input
+        const firstInput = modal.querySelector('input[type="number"], input[type="text"]');
+        if (firstInput) firstInput.focus();
+    }
+}
+
+function closePartnerOnboarding(revertToSingle = true) {
+    const modal = document.getElementById('partner-onboarding-modal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+
+    if (revertToSingle) {
+        // Revert to single mode if closed without completing
+        const sideSingle = document.getElementById('side_single');
+        if (sideSingle) sideSingle.checked = true;
+        currentMode = 'single';
+        const modeSingle = document.getElementById('w-mode-single');
+        const modeCouple = document.getElementById('w-mode-couple');
+        if(modeSingle) { modeSingle.classList.add('active'); modeSingle.setAttribute('aria-pressed', 'true'); }
+        if(modeCouple) { modeCouple.classList.remove('active'); modeCouple.setAttribute('aria-pressed', 'false'); }
+        document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
+        if (typeof updateDynamicUI === 'function') {
+            updateDynamicUI();
+        }
+    }
+}
+
+function updatePartnerSLVisibility() {
+    const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
+    const slDetails = document.getElementById('partner-sl-details');
+    if (slDetails) {
+        slDetails.style.display = hasSL === 'Yes' ? 'block' : 'none';
+    }
+}
+
+function updatePartnerPensionVisibility() {
+    const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
+    const pensionDetails = document.getElementById('partner-pension-details');
+    if (pensionDetails) {
+        pensionDetails.style.display = hasPension === 'Yes' ? 'block' : 'none';
+    }
+}
+
+function completePartnerOnboarding() {
+    // Validate partner fields
+    const age2 = document.getElementById('partner-age')?.value;
+    const sal2 = document.getElementById('partner-salary')?.value;
+
+    if (!age2 || !sal2) {
+        alert('Please fill in your partner\'s age and salary to continue.');
+        return;
+    }
+
+    // Copy values to main form
+    document.getElementById('s_age2').value = age2;
+    document.getElementById('s_sal2').value = sal2;
+
+    // Student loan info
+    const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
+    if (hasSL === 'Yes') {
+        const slPlan = document.getElementById('partner-sl-plan')?.value;
+        const slBalance = document.getElementById('partner-sl-balance')?.value;
+        if (slPlan && slBalance) {
+            document.getElementById('s_slp2').value = slPlan;
+            document.getElementById('s_sl2').value = slBalance;
+        }
+    }
+
+    // Pension info
+    const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
+    if (hasPension === 'Yes') {
+        const pensionBalance = document.getElementById('partner-pension-balance')?.value;
+        const pensionContrib = document.getElementById('partner-pension-contrib')?.value;
+        if (pensionBalance && pensionContrib) {
+            document.getElementById('s_pp2').value = pensionBalance;
+            document.getElementById('s_pc2').value = pensionContrib;
+        }
+    }
+
+    closePartnerOnboarding(false);
+    if (typeof updateDynamicUI === 'function') {
+        updateDynamicUI();
+    }
 }
 
 function focusFirstWizardField(stepNum) {
