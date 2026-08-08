@@ -1,0 +1,143 @@
+/*
+   No-JavaScript Stylesheet
+   Applies when JavaScript is disabled to ensure proper layout
+   and prevent elements from filling the entire page width
+*/
+
+/* Constrain all images to reasonable sizes */
+img {
+    max-width: 100%;
+    height: auto !important;
+    display: block;
+}
+
+/* Fix SVG icons from filling entire width */
+svg {
+    max-width: 100%;
+    height: auto !important;
+}
+
+/* Constrain hero sections and sections in general */
+section {
+    max-width: 100%;
+}
+
+/* Ensure containers don't exceed content width */
+.max-w-7xl {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Fix modal and overlay widths */
+.modal-overlay,
+.wizard-overlay {
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: auto;
+}
+
+/* Constrain main content areas */
+main {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Fix header to not overflow */
+header {
+    overflow-x: hidden;
+}
+
+/* Ensure text doesn't get too wide */
+p, h1, h2, h3, h4, h5, h6 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Fix button overflow */
+button, a, input {
+    max-width: 100%;
+    word-break: break-word;
+}
+
+/* Constrain flex containers */
+.flex {
+    flex-wrap: wrap;
+}
+
+/* Ensure divs don't overflow */
+div {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Reduce hero icon size when no JS */
+.hero-icon-wrapper {
+    width: 60px !important;
+    height: 60px !important;
+}
+
+.timing-icon-wrapper {
+    width: 50px !important;
+    height: 50px !important;
+}
+
+/* Profile images - constrain to reasonable size */
+.rounded-full {
+    max-width: 200px !important;
+    max-height: 200px !important;
+}
+
+/* Ensure cards don't overflow */
+.card, .modal-card, [class*="card"] {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Fix any absolutely positioned elements */
+.absolute {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Ensure accessibility overlays don't break layout */
+#a11y-overlay,
+#wizard-overlay,
+.modal-overlay {
+    width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+/* Prevent horizontal scrolling */
+html {
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* Fix table layouts */
+table {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Ensure form inputs fit properly */
+input,
+select,
+textarea {
+    max-width: 100%;
+}
+
+/* Constrain grid layouts */
+.grid {
+    max-width: 100%;
+}
+
+/* Fix gap and padding to prevent overflow */
+* {
+    box-sizing: border-box;
+}
