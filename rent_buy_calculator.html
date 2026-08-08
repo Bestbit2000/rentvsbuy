@@ -1212,6 +1212,10 @@
                     el.style.backgroundColor = '';
                 });
             }
+            // Redraw chart with updated colors
+            if (window.runCalculation) {
+                runCalculation();
+            }
         };
 
         window.saveA11ySetting = function(key, value) {
