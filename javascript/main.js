@@ -836,7 +836,9 @@ function wizardStepNextClick() {
 }
 
 function openWizard(origin = 'external') {
+    console.log('openWizard called with origin:', origin);
     wizardOrigin = origin; // Track where wizard was opened from ('external' or 'internal')
+    console.log('wizardOrigin set to:', wizardOrigin);
     currentWizIndex = 0;
     currentMode = 'single'; // Default to "Just me" on launch
 
@@ -971,6 +973,8 @@ function restoreCalculatorState() {
 }
 
 function startOver() {
+    console.log('startOver() called');
+
     // Save current calculator state before opening wizard
     saveCalculatorState();
 
@@ -988,7 +992,9 @@ function startOver() {
     window.history.replaceState(null, '', cleanUrl);
 
     // Open wizard with 'internal' origin to restore state on close
+    console.log('calling openWizard with internal');
     openWizard('internal');
+    console.log('after openWizard, wizardOrigin is:', wizardOrigin);
 }
 
 function saveWizardAndClose() {
