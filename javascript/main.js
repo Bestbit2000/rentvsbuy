@@ -1095,7 +1095,7 @@ function completePartnerOnboarding() {
         const pensionBalance = document.getElementById('partner-pension-balance')?.value;
         const pensionContrib = document.getElementById('partner-pee')?.value;
         const pensionEmp = document.getElementById('partner-per')?.value;
-        if (pensionBalance) document.getElementById('s_pp2').value = pensionBalance;
+        if (pensionBalance) document.getElementById('s_pval2').value = pensionBalance;
         if (pensionContrib) document.getElementById('s_pee2').value = pensionContrib;
         if (pensionEmp) document.getElementById('s_per2').value = pensionEmp;
     } else if (hasPension === 'No') {
