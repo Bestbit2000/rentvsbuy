@@ -444,19 +444,20 @@ const tableObserver = new MutationObserver(() => {
         }
     }
     
-    if(lifeEventIdx > -1) {
-        for(let i=0; i<table.rows.length; i++) {
-            const row = table.rows[i];
-            if(i === 0) {
-                 row.deleteCell(lifeEventIdx);
-            } else {
-                 const cell = row.cells[lifeEventIdx];
-                 if(cell) {
-                     row.deleteCell(lifeEventIdx);
-                 }
-            }
-        }
-    }
+    // Event column is now part of the table design and should NOT be deleted
+    // if(lifeEventIdx > -1) {
+    //     for(let i=0; i<table.rows.length; i++) {
+    //         const row = table.rows[i];
+    //         if(i === 0) {
+    //              row.deleteCell(lifeEventIdx);
+    //         } else {
+    //              const cell = row.cells[lifeEventIdx];
+    //              if(cell) {
+    //                  row.deleteCell(lifeEventIdx);
+    //              }
+    //         }
+    //     }
+    // }
 });
 
 window.addEventListener('DOMContentLoaded', () => {
