@@ -835,11 +835,11 @@ function wizardStepNextClick() {
 
 function openWizard() {
     currentWizIndex = 0;
-    currentMode = null; // Unselected state on launch
+    currentMode = 'single'; // Default to "Just me" on launch
 
     const modeSingle = document.getElementById('w-mode-single');
     const modeCouple = document.getElementById('w-mode-couple');
-    if(modeSingle) modeSingle.classList.remove('active');
+    if(modeSingle) modeSingle.classList.add('active');
     if(modeCouple) modeCouple.classList.remove('active');
 
     // Clear all error messages from all wizard steps on initial load
