@@ -1082,76 +1082,93 @@
     <!-- How it works Modal -->
     <!-- Partner Onboarding Modal -->
     <div id="partner-onboarding-modal" class="modal-overlay">
-        <div class="modal-card">
+        <div class="modal-card large" style="width: 750px;">
             <div class="modal-header">
                 <h2>Tell us about your partner</h2>
                 <button class="close-modal" onclick="closePartnerOnboarding(true)">&times;</button>
             </div>
-            <div class="modal-body">
-                <p style="color: #666; margin-bottom: 25px;">To give you accurate results, we need a few details about your partner. You can update these later if things change.</p>
-
-                <div class="input-row-single">
-                    <label>Partner's current age</label>
-                    <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 28" min="16" max="120"></div>
-                </div>
-
-                <div class="input-row-single">
-                    <label>Partner's annual gross salary</label>
-                    <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 35,000" class="comma-format"></div>
-                </div>
-
-                <div class="input-row-single">
-                    <label>Does your partner have a student loan?</label>
-                    <div class="toggle-container" style="width: 100%;">
-                        <input type="radio" name="partner-has-sl" id="partner-has-sl-no" value="No" checked onchange="updatePartnerSLVisibility()">
-                        <label for="partner-has-sl-no" style="padding: 10px 15px;">No</label>
-                        <input type="radio" name="partner-has-sl" id="partner-has-sl-yes" value="Yes" onchange="updatePartnerSLVisibility()">
-                        <label for="partner-has-sl-yes" style="padding: 10px 15px;">Yes</label>
-                    </div>
-                </div>
-
-                <div id="partner-sl-details" style="display: none;">
+            <div class="wizard-progress" id="partner-wizard-progress-container" style="padding: 15px 30px 0 30px;"></div>
+            <div class="modal-body" id="partner-wiz-scroll">
+                <!-- Step 0: Partner's Age -->
+                <div class="wizard-step active" id="partner-step-0">
+                    <h3 class="wizard-title">Partner's age</h3>
                     <div class="input-row-single">
-                        <label>Student loan plan</label>
-                        <select id="partner-sl-plan">
-                            <option value="">Select plan...</option>
-                            <option value="Plan1">Plan 1</option>
-                            <option value="Plan2">Plan 2</option>
-                            <option value="Plan4">Plan 4 (Scottish)</option>
-                        </select>
-                    </div>
-
-                    <div class="input-row-single">
-                        <label>Outstanding balance</label>
-                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 15,000" class="comma-format"></div>
+                        <label>Partner's current age</label>
+                        <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 31" class="clamp-age"></div>
                     </div>
                 </div>
 
-                <div class="input-row-single">
-                    <label>Does your partner have a pension?</label>
-                    <div class="toggle-container" style="width: 100%;">
-                        <input type="radio" name="partner-has-pension" id="partner-has-pension-no" value="No" checked onchange="updatePartnerPensionVisibility()">
-                        <label for="partner-has-pension-no" style="padding: 10px 15px;">No</label>
-                        <input type="radio" name="partner-has-pension" id="partner-has-pension-yes" value="Yes" onchange="updatePartnerPensionVisibility()">
-                        <label for="partner-has-pension-yes" style="padding: 10px 15px;">Yes</label>
+                <!-- Step 1: Partner's Salary -->
+                <div class="wizard-step" id="partner-step-1">
+                    <h3 class="wizard-title">Partner's income</h3>
+                    <div class="input-row-single">
+                        <label>Annual salary before tax</label>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 42,000" class="comma-format clamp-1m"><span class="suffix">p.a.</span></div>
                     </div>
                 </div>
 
-                <div id="partner-pension-details" style="display: none;">
+                <!-- Step 2: Partner's Student Loan -->
+                <div class="wizard-step" id="partner-step-2">
+                    <h3 class="wizard-title">Partner's student loan</h3>
                     <div class="input-row-single">
-                        <label>Pension pot value today</label>
-                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 5,000" class="comma-format"></div>
+                        <label>Does your partner have a student loan?</label>
+                        <div class="toggle-container">
+                            <input type="radio" name="partner-has-sl" id="partner-has-sl-y" value="Yes" onchange="togglePartnerSL(); validatePartnerStep();">
+                            <label for="partner-has-sl-y">Yes</label>
+                            <input type="radio" name="partner-has-sl" id="partner-has-sl-n" value="No" onchange="togglePartnerSL(); validatePartnerStep();">
+                            <label for="partner-has-sl-n">No</label>
+                        </div>
                     </div>
+                    <div id="partner-sl-details" style="display: none;">
+                        <div class="input-row-single">
+                            <label>Remaining loan debt</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 20,000" class="comma-format clamp-1m"></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Loan plan</label>
+                            <div class="input-wrapper">
+                                <select id="partner-sl-plan" onchange="validatePartnerStep()">
+                                    <option value="" disabled selected>Select plan</option>
+                                    <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Step 3: Partner's Pension -->
+                <div class="wizard-step" id="partner-step-3">
+                    <h3 class="wizard-title">Partner's pension</h3>
                     <div class="input-row-single">
-                        <label>Annual contribution</label>
-                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-contrib" placeholder="e.g. 2,500" class="comma-format"></div>
+                        <label>Does your partner have an existing pension?</label>
+                        <div class="toggle-container">
+                            <input type="radio" name="partner-has-pension" id="partner-has-pension-y" value="Yes" onchange="togglePartnerPen(); validatePartnerStep();">
+                            <label for="partner-has-pension-y">Yes</label>
+                            <input type="radio" name="partner-has-pension" id="partner-has-pension-n" value="No" onchange="togglePartnerPen(); validatePartnerStep();">
+                            <label for="partner-has-pension-n">No</label>
+                        </div>
+                    </div>
+                    <div id="partner-pension-details" style="display: none;">
+                        <div class="input-row-single">
+                            <label>Current pension pot value</label>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Your contribution</label>
+                            <div class="input-wrapper"><input type="number" id="partner-pee" placeholder="e.g. 5" class="clamp-100"><span class="suffix">%</span></div>
+                        </div>
+                        <div class="input-row-single">
+                            <label>Employer contribution</label>
+                            <div class="input-wrapper"><input type="number" id="partner-per" placeholder="e.g. 3" class="clamp-100"><span class="suffix">%</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 20px 30px; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: flex-end;">
-                <button class="btn-outline" onclick="closePartnerOnboarding(true)" style="padding: 12px 24px;">Cancel</button>
-                <button class="btn-primary" onclick="completePartnerOnboarding()" style="padding: 12px 24px;">Continue</button>
+            <div class="modal-footer" style="padding: 20px 30px; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: space-between;">
+                <button class="btn-outline" id="partner-back-btn" onclick="partnerPrevStep()" style="padding: 12px 24px; display: none;">Back</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" id="partner-next-btn" onclick="partnerNextStep()" style="padding: 12px 24px;">Next</button>
+                </div>
             </div>
         </div>
     </div>

@@ -756,13 +756,16 @@ function setMode(mode) {
     validateStep(); // Ensures next button unlocks properly once selected
 }
 
+let partnerWizIndex = 0;
+const partnerWizSteps = [0, 1, 2, 3];
+
 function showPartnerOnboarding() {
+    partnerWizIndex = 0;
     const modal = document.getElementById('partner-onboarding-modal');
     if (modal) {
         modal.classList.add('active');
-        // Focus on first input
-        const firstInput = modal.querySelector('input[type="number"], input[type="text"]');
-        if (firstInput) firstInput.focus();
+        renderPartnerWizardProgress();
+        showPartnerStep(0);
     }
 }
 
@@ -771,6 +774,8 @@ function closePartnerOnboarding(revertToSingle = true) {
     if (modal) {
         modal.classList.remove('active');
     }
+    // Reset form when closing
+    resetPartnerOnboardingForm();
 
     if (revertToSingle) {
         // Revert to single mode if closed without completing
@@ -789,33 +794,205 @@ function closePartnerOnboarding(revertToSingle = true) {
     }
 }
 
-function updatePartnerSLVisibility() {
+function resetPartnerOnboardingForm() {
+    document.getElementById('partner-age').value = '';
+    document.getElementById('partner-salary').value = '';
+    document.querySelectorAll('input[name="partner-has-sl"]').forEach(el => el.checked = false);
+    document.querySelectorAll('input[name="partner-has-pension"]').forEach(el => el.checked = false);
+    document.getElementById('partner-sl-plan').value = '';
+    document.getElementById('partner-sl-balance').value = '';
+    document.getElementById('partner-pension-balance').value = '';
+    document.getElementById('partner-pee').value = '';
+    document.getElementById('partner-per').value = '';
+    document.getElementById('partner-sl-details').style.display = 'none';
+    document.getElementById('partner-pension-details').style.display = 'none';
+}
+
+function renderPartnerWizardProgress() {
+    const container = document.getElementById('partner-wizard-progress-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    partnerWizSteps.forEach((stepNum, idx) => {
+        const circle = document.createElement('div');
+        circle.className = 'progress-circle';
+        if (idx <= partnerWizIndex) circle.classList.add('completed');
+        if (idx === partnerWizIndex) circle.classList.add('active');
+        circle.textContent = idx + 1;
+        container.appendChild(circle);
+    });
+}
+
+function showPartnerStep(stepNum) {
+    // Hide all steps
+    document.querySelectorAll('#partner-onboarding-modal .wizard-step').forEach(el => {
+        el.classList.remove('active');
+    });
+    // Show current step
+    const currentStep = document.getElementById(`partner-step-${stepNum}`);
+    if (currentStep) currentStep.classList.add('active');
+
+    // Update buttons
+    const backBtn = document.getElementById('partner-back-btn');
+    const nextBtn = document.getElementById('partner-next-btn');
+    if (backBtn) backBtn.style.display = stepNum > 0 ? 'block' : 'none';
+    if (nextBtn) nextBtn.textContent = stepNum === 3 ? 'Finish' : 'Next';
+
+    // Focus first input
+    focusFirstPartnerField(stepNum);
+}
+
+function focusFirstPartnerField(stepNum) {
+    const stepEl = document.getElementById(`partner-step-${stepNum}`);
+    if (!stepEl) return;
+    const candidates = stepEl.querySelectorAll('input, select');
+    for (const el of candidates) {
+        if (el.disabled || el.type === 'hidden') continue;
+        if (el.offsetParent === null) continue;
+        el.focus();
+        break;
+    }
+}
+
+function togglePartnerSL() {
     const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
     const slDetails = document.getElementById('partner-sl-details');
     if (slDetails) {
         slDetails.style.display = hasSL === 'Yes' ? 'block' : 'none';
     }
+    validatePartnerStep();
 }
 
-function updatePartnerPensionVisibility() {
+function togglePartnerPen() {
     const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
     const pensionDetails = document.getElementById('partner-pension-details');
     if (pensionDetails) {
         pensionDetails.style.display = hasPension === 'Yes' ? 'block' : 'none';
     }
+    validatePartnerStep();
+}
+
+function validatePartnerStep() {
+    const step = partnerWizSteps[partnerWizIndex];
+    let isValid = true;
+
+    if (step === 0) {
+        const age = document.getElementById('partner-age')?.value;
+        isValid = age && age.trim() !== '';
+    } else if (step === 1) {
+        const salary = document.getElementById('partner-salary')?.value;
+        isValid = salary && salary.trim() !== '';
+    } else if (step === 2) {
+        const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
+        if (hasSL === 'Yes') {
+            const plan = document.getElementById('partner-sl-plan')?.value;
+            const balance = document.getElementById('partner-sl-balance')?.value;
+            isValid = plan && plan.trim() !== '' && balance && balance.trim() !== '';
+        } else if (hasSL === 'No') {
+            isValid = true;
+        }
+    } else if (step === 3) {
+        const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
+        if (hasPension === 'Yes') {
+            const balance = document.getElementById('partner-pension-balance')?.value;
+            const pee = document.getElementById('partner-pee')?.value;
+            const per = document.getElementById('partner-per')?.value;
+            isValid = balance && balance.trim() !== '' && pee && pee.trim() !== '' && per && per.trim() !== '';
+        } else if (hasPension === 'No') {
+            isValid = true;
+        }
+    }
+
+    const nextBtn = document.getElementById('partner-next-btn');
+    if (nextBtn) nextBtn.disabled = !isValid;
+}
+
+function partnerNextStep() {
+    if (!validateCurrentPartnerStep()) return;
+
+    if (partnerWizIndex === 3) {
+        completePartnerOnboarding();
+    } else {
+        partnerWizIndex++;
+        renderPartnerWizardProgress();
+        showPartnerStep(partnerWizIndex);
+    }
+}
+
+function partnerPrevStep() {
+    if (partnerWizIndex > 0) {
+        partnerWizIndex--;
+        renderPartnerWizardProgress();
+        showPartnerStep(partnerWizIndex);
+    }
+}
+
+function validateCurrentPartnerStep() {
+    const step = partnerWizSteps[partnerWizIndex];
+
+    if (step === 0) {
+        const age = document.getElementById('partner-age')?.value;
+        if (!age || age.trim() === '') {
+            alert('Please enter your partner\'s age');
+            return false;
+        }
+    } else if (step === 1) {
+        const salary = document.getElementById('partner-salary')?.value;
+        if (!salary || salary.trim() === '') {
+            alert('Please enter your partner\'s salary');
+            return false;
+        }
+    } else if (step === 2) {
+        const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
+        if (!hasSL) {
+            alert('Please select Yes or No for student loan');
+            return false;
+        }
+        if (hasSL === 'Yes') {
+            const plan = document.getElementById('partner-sl-plan')?.value;
+            const balance = document.getElementById('partner-sl-balance')?.value;
+            if (!plan || plan.trim() === '') {
+                alert('Please select a loan plan');
+                return false;
+            }
+            if (!balance || balance.trim() === '') {
+                alert('Please enter the loan balance');
+                return false;
+            }
+        }
+    } else if (step === 3) {
+        const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
+        if (!hasPension) {
+            alert('Please select Yes or No for pension');
+            return false;
+        }
+        if (hasPension === 'Yes') {
+            const balance = document.getElementById('partner-pension-balance')?.value;
+            const pee = document.getElementById('partner-pee')?.value;
+            const per = document.getElementById('partner-per')?.value;
+            if (!balance || balance.trim() === '') {
+                alert('Please enter the pension pot value');
+                return false;
+            }
+            if (!pee || pee.trim() === '') {
+                alert('Please enter your contribution percentage');
+                return false;
+            }
+            if (!per || per.trim() === '') {
+                alert('Please enter employer contribution percentage');
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 function completePartnerOnboarding() {
-    // Validate partner fields
+    // Copy values to main form
     const age2 = document.getElementById('partner-age')?.value;
     const sal2 = document.getElementById('partner-salary')?.value;
 
-    if (!age2 || !sal2) {
-        alert('Please fill in your partner\'s age and salary to continue.');
-        return;
-    }
-
-    // Copy values to main form
     document.getElementById('s_age2').value = age2;
     document.getElementById('s_sal2').value = sal2;
 
@@ -824,21 +1001,18 @@ function completePartnerOnboarding() {
     if (hasSL === 'Yes') {
         const slPlan = document.getElementById('partner-sl-plan')?.value;
         const slBalance = document.getElementById('partner-sl-balance')?.value;
-        if (slPlan && slBalance) {
-            document.getElementById('s_slp2').value = slPlan;
-            document.getElementById('s_sl2').value = slBalance;
-        }
+        document.getElementById('s_slp2').value = slPlan;
+        document.getElementById('s_sl2').value = slBalance;
     }
 
     // Pension info
     const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
     if (hasPension === 'Yes') {
         const pensionBalance = document.getElementById('partner-pension-balance')?.value;
-        const pensionContrib = document.getElementById('partner-pension-contrib')?.value;
-        if (pensionBalance && pensionContrib) {
-            document.getElementById('s_pp2').value = pensionBalance;
-            document.getElementById('s_pc2').value = pensionContrib;
-        }
+        const pensionContrib = document.getElementById('partner-pee')?.value;
+        const pensionEmp = document.getElementById('partner-per')?.value;
+        document.getElementById('s_pp2').value = pensionBalance;
+        document.getElementById('s_pc2').value = pensionContrib;
     }
 
     closePartnerOnboarding(false);
