@@ -736,15 +736,6 @@ function setMode(mode) {
             switchPerson('you');
         }
         stepSequence = [0, 1, 2, 3, 4, 6, 8, 9, 10];
-
-        // Clear partner data when switching to single mode
-        document.getElementById('s_age2').value = '';
-        document.getElementById('s_sal2').value = '';
-        document.getElementById('s_sl2').value = '';
-        document.getElementById('s_slp2').value = '';
-        document.getElementById('s_pval2').value = '';
-        document.getElementById('s_pee2').value = '';
-        document.getElementById('s_per2').value = '';
     } else if (mode === 'couple') {
         if(modeCouple) { modeCouple.classList.add('active'); modeCouple.setAttribute('aria-pressed', 'true'); }
         if(sideCouple) sideCouple.checked = true;
