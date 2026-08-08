@@ -1164,11 +1164,9 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 20px 30px; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: space-between;">
-                <button class="btn-outline" id="partner-back-btn" onclick="partnerPrevStep()" style="padding: 12px 24px; display: none;">Back</button>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-primary" id="partner-next-btn" onclick="partnerNextStep()" style="padding: 12px 24px;">Next</button>
-                </div>
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <button class="btn-secondary" id="partner-back-btn" onclick="partnerPrevStep()">Back</button>
+                <button class="btn-primary" id="partner-next-btn" onclick="partnerNextStep()" disabled style="opacity: 0.5; cursor: not-allowed;">Next</button>
             </div>
         </div>
     </div>

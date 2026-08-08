@@ -765,6 +765,7 @@ function showPartnerOnboarding() {
     if (modal) {
         modal.classList.add('active');
         renderPartnerWizardProgress();
+        attachPartnerValidationListeners();
         showPartnerStep(0);
     }
 }
@@ -814,12 +815,9 @@ function renderPartnerWizardProgress() {
     container.innerHTML = '';
 
     partnerWizSteps.forEach((stepNum, idx) => {
-        const circle = document.createElement('div');
-        circle.className = 'progress-circle';
-        if (idx <= partnerWizIndex) circle.classList.add('completed');
-        if (idx === partnerWizIndex) circle.classList.add('active');
-        circle.textContent = idx + 1;
-        container.appendChild(circle);
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot' + (idx === partnerWizIndex ? ' active' : '');
+        container.appendChild(dot);
     });
 }
 
@@ -835,8 +833,11 @@ function showPartnerStep(stepNum) {
     // Update buttons
     const backBtn = document.getElementById('partner-back-btn');
     const nextBtn = document.getElementById('partner-next-btn');
-    if (backBtn) backBtn.style.display = stepNum > 0 ? 'block' : 'none';
+    if (backBtn) backBtn.style.visibility = stepNum > 0 ? 'visible' : 'hidden';
     if (nextBtn) nextBtn.textContent = stepNum === 3 ? 'Finish' : 'Next';
+
+    // Reset button state and validate
+    validatePartnerStep();
 
     // Focus first input
     focusFirstPartnerField(stepNum);
@@ -851,6 +852,65 @@ function focusFirstPartnerField(stepNum) {
         if (el.offsetParent === null) continue;
         el.focus();
         break;
+    }
+}
+
+function attachPartnerValidationListeners() {
+    // Attach listeners to partner age field
+    const ageField = document.getElementById('partner-age');
+    if (ageField) {
+        ageField.addEventListener('input', validatePartnerStep);
+        ageField.addEventListener('change', validatePartnerStep);
+    }
+
+    // Attach listeners to partner salary field
+    const salaryField = document.getElementById('partner-salary');
+    if (salaryField) {
+        salaryField.addEventListener('input', validatePartnerStep);
+        salaryField.addEventListener('change', validatePartnerStep);
+    }
+
+    // Attach listeners to student loan radio buttons
+    const slRadios = document.querySelectorAll('input[name="partner-has-sl"]');
+    slRadios.forEach(radio => {
+        radio.addEventListener('change', validatePartnerStep);
+    });
+
+    // Attach listeners to student loan details
+    const slBalance = document.getElementById('partner-sl-balance');
+    if (slBalance) {
+        slBalance.addEventListener('input', validatePartnerStep);
+        slBalance.addEventListener('change', validatePartnerStep);
+    }
+
+    const slPlan = document.getElementById('partner-sl-plan');
+    if (slPlan) {
+        slPlan.addEventListener('change', validatePartnerStep);
+    }
+
+    // Attach listeners to pension radio buttons
+    const penRadios = document.querySelectorAll('input[name="partner-has-pension"]');
+    penRadios.forEach(radio => {
+        radio.addEventListener('change', validatePartnerStep);
+    });
+
+    // Attach listeners to pension details
+    const penBalance = document.getElementById('partner-pension-balance');
+    if (penBalance) {
+        penBalance.addEventListener('input', validatePartnerStep);
+        penBalance.addEventListener('change', validatePartnerStep);
+    }
+
+    const penContrib = document.getElementById('partner-pee');
+    if (penContrib) {
+        penContrib.addEventListener('input', validatePartnerStep);
+        penContrib.addEventListener('change', validatePartnerStep);
+    }
+
+    const penEmp = document.getElementById('partner-per');
+    if (penEmp) {
+        penEmp.addEventListener('input', validatePartnerStep);
+        penEmp.addEventListener('change', validatePartnerStep);
     }
 }
 
@@ -874,7 +934,7 @@ function togglePartnerPen() {
 
 function validatePartnerStep() {
     const step = partnerWizSteps[partnerWizIndex];
-    let isValid = true;
+    let isValid = false;
 
     if (step === 0) {
         const age = document.getElementById('partner-age')?.value;
@@ -884,27 +944,34 @@ function validatePartnerStep() {
         isValid = salary && salary.trim() !== '';
     } else if (step === 2) {
         const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
-        if (hasSL === 'Yes') {
+        isValid = hasSL !== undefined && hasSL !== null && hasSL !== '';
+        if (isValid && hasSL === 'Yes') {
             const plan = document.getElementById('partner-sl-plan')?.value;
             const balance = document.getElementById('partner-sl-balance')?.value;
             isValid = plan && plan.trim() !== '' && balance && balance.trim() !== '';
-        } else if (hasSL === 'No') {
-            isValid = true;
         }
     } else if (step === 3) {
         const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
-        if (hasPension === 'Yes') {
+        isValid = hasPension !== undefined && hasPension !== null && hasPension !== '';
+        if (isValid && hasPension === 'Yes') {
             const balance = document.getElementById('partner-pension-balance')?.value;
             const pee = document.getElementById('partner-pee')?.value;
             const per = document.getElementById('partner-per')?.value;
             isValid = balance && balance.trim() !== '' && pee && pee.trim() !== '' && per && per.trim() !== '';
-        } else if (hasPension === 'No') {
-            isValid = true;
         }
     }
 
     const nextBtn = document.getElementById('partner-next-btn');
-    if (nextBtn) nextBtn.disabled = !isValid;
+    if (nextBtn) {
+        nextBtn.disabled = !isValid;
+        if (isValid) {
+            nextBtn.style.opacity = '1';
+            nextBtn.style.cursor = 'pointer';
+        } else {
+            nextBtn.style.opacity = '0.5';
+            nextBtn.style.cursor = 'not-allowed';
+        }
+    }
 }
 
 function partnerNextStep() {
@@ -998,21 +1065,30 @@ function completePartnerOnboarding() {
 
     // Student loan info
     const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
+    const slYesRadio = document.getElementById('s_has_sl2_y');
+    const slNoRadio = document.getElementById('s_has_sl2_n');
     if (hasSL === 'Yes') {
+        if (slYesRadio) slYesRadio.checked = true;
         const slPlan = document.getElementById('partner-sl-plan')?.value;
         const slBalance = document.getElementById('partner-sl-balance')?.value;
         document.getElementById('s_slp2').value = slPlan;
         document.getElementById('s_sl2').value = slBalance;
+    } else if (hasSL === 'No') {
+        if (slNoRadio) slNoRadio.checked = true;
     }
 
     // Pension info
     const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
+    const penYesRadio = document.getElementById('s_has_pen2_y');
+    const penNoRadio = document.getElementById('s_has_pen2_n');
     if (hasPension === 'Yes') {
+        if (penYesRadio) penYesRadio.checked = true;
         const pensionBalance = document.getElementById('partner-pension-balance')?.value;
         const pensionContrib = document.getElementById('partner-pee')?.value;
-        const pensionEmp = document.getElementById('partner-per')?.value;
         document.getElementById('s_pp2').value = pensionBalance;
         document.getElementById('s_pc2').value = pensionContrib;
+    } else if (hasPension === 'No') {
+        if (penNoRadio) penNoRadio.checked = true;
     }
 
     closePartnerOnboarding(false);
