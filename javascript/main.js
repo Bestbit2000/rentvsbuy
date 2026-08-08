@@ -836,9 +836,7 @@ function wizardStepNextClick() {
 }
 
 function openWizard(origin = 'external') {
-    console.log('openWizard called with origin:', origin);
     wizardOrigin = origin; // Track where wizard was opened from ('external' or 'internal')
-    console.log('wizardOrigin set to:', wizardOrigin);
     currentWizIndex = 0;
     currentMode = 'single'; // Default to "Just me" on launch
 
@@ -923,20 +921,15 @@ function closeWizard() {
     if(wizardOverlay) wizardOverlay.classList.remove('active');
 
     // Handle different close scenarios
-    console.log('closeWizard called, wizardOrigin:', wizardOrigin);
-
     if (wizardOrigin === 'internal') {
         // Wizard opened from "Start over" - stay on page and restore saved state
-        console.log('Internal close - restoring calculator state');
         restoreCalculatorState();
         forceCalculation();
     } else if (wizardOrigin === 'external') {
         // Wizard opened from external page - navigate back
-        console.log('External close - navigating back');
         window.history.back();
     } else {
         // Default behavior - just close the wizard and show calculator
-        console.log('Default close');
         forceCalculation();
     }
 
@@ -973,8 +966,6 @@ function restoreCalculatorState() {
 }
 
 function startOver() {
-    console.log('startOver() called');
-
     // Save current calculator state before opening wizard
     saveCalculatorState();
 
@@ -992,13 +983,11 @@ function startOver() {
         const cleanUrl = window.location.pathname;
         window.history.replaceState(null, '', cleanUrl);
     } catch (e) {
-        console.log('Note: history.replaceState not available in this context:', e.message);
+        // Silently fail if history API not available
     }
 
     // Open wizard with 'internal' origin to restore state on close
-    console.log('calling openWizard with internal');
     openWizard('internal');
-    console.log('after openWizard, wizardOrigin is:', wizardOrigin);
 }
 
 function saveWizardAndClose() {
