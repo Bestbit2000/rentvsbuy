@@ -120,9 +120,9 @@
                     <h2 id="sidebar-title">Current scenario</h2>
                     <label for="side_mode" style="display: block; margin-bottom: 8px; font-weight: 500;">Buying for</label>
                     <div class="toggle-container" style="width: 100%;">
-                        <input type="radio" name="side_mode" id="side_single" value="single" onchange="setMode('single')">
+                        <input type="radio" name="side_mode" id="side_single" value="single" class="compare-track" data-label="Buying for" onchange="setMode('single')">
                         <label for="side_single" style="padding: 10px 15px;">Just me</label>
-                        <input type="radio" name="side_mode" id="side_couple" value="couple" onchange="setMode('couple')">
+                        <input type="radio" name="side_mode" id="side_couple" value="couple" class="compare-track" data-label="Buying for" onchange="setMode('couple')">
                         <label for="side_couple" style="padding: 10px 15px;">Me and a partner</label>
                     </div>
                 </div>
@@ -340,11 +340,11 @@
                                 </div>
                                 <div class="input-row-single">
                                     <label>Your partner's contribution</label>
-                                    <div class="input-wrapper"><input type="number" id="s_pee2" placeholder="e.g. 5" class="clamp-100 has-suffix compare-track" data-label="Your contribution (Partner)"><span class="suffix">%</span></div>
+                                    <div class="input-wrapper"><input type="number" id="s_pee2" placeholder="e.g. 5" class="clamp-100 has-suffix compare-track" data-label="Your partner's contribution (Partner)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Employer contribution</label>
-                                    <div class="input-wrapper"><input type="number" id="s_per2" placeholder="e.g. 3" class="clamp-100 has-suffix compare-track" data-label="Employer contribution (Partner)"><span class="suffix">%</span></div>
+                                    <label>Partner's employer contribution</label>
+                                    <div class="input-wrapper"><input type="number" id="s_per2" placeholder="e.g. 3" class="clamp-100 has-suffix compare-track" data-label="Partner's employer contribution (Partner)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
                                     <label>State pension</label>
@@ -1094,7 +1094,7 @@
                     <h3 class="wizard-title">Partner's age</h3>
                     <div class="input-row-single">
                         <label>Partner's current age</label>
-                        <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 31" class="clamp-age"></div>
+                        <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 31" class="clamp-age" title="Enter your partner's current age in years." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
                     </div>
                 </div>
 
@@ -1103,7 +1103,7 @@
                     <h3 class="wizard-title">Partner's income</h3>
                     <div class="input-row-single">
                         <label>Annual salary before tax</label>
-                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 42,000" class="comma-format clamp-1m"><span class="suffix">p.a.</span></div>
+                        <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 42,000" class="comma-format clamp-1m" title="Your partner's current annual gross salary, before tax and deductions." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">p.a.</span></div>
                     </div>
                 </div>
 
@@ -1122,12 +1122,12 @@
                     <div id="partner-sl-details" style="display: none;">
                         <div class="input-row-single">
                             <label>Remaining loan debt</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 20,000" class="comma-format clamp-1m"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 20,000" class="comma-format clamp-1m" title="The total remaining balance of your partner's student loan debt." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
                         </div>
                         <div class="input-row-single">
                             <label>Loan plan</label>
                             <div class="input-wrapper">
-                                <select id="partner-sl-plan" onchange="validatePartnerStep()">
+                                <select id="partner-sl-plan" onchange="validatePartnerStep()" title="The specific student loan plan your partner is on. This determines your repayment threshold and interest rate.">
                                     <option value="" disabled selected>Select plan</option>
                                     <option value="1">Plan 1</option><option value="2">Plan 2</option><option value="4">Plan 4</option><option value="5">Plan 5</option><option value="PG">Post Graduate</option>
                                 </select>
@@ -1151,15 +1151,15 @@
                     <div id="partner-pension-details" style="display: none;">
                         <div class="input-row-single">
                             <label>Current pension pot value</label>
-                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
+                            <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 25,000" class="comma-format clamp-10m" title="The current total value of your partner's pension pot(s)." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Your contribution</label>
-                            <div class="input-wrapper"><input type="number" id="partner-pee" placeholder="e.g. 5" class="clamp-100"><span class="suffix">%</span></div>
+                            <label>Your partner's contribution</label>
+                            <div class="input-wrapper"><input type="number" id="partner-pee" placeholder="e.g. 5" class="clamp-100" title="The percentage of your partner's salary that they contribute." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Employer contribution</label>
-                            <div class="input-wrapper"><input type="number" id="partner-per" placeholder="e.g. 3" class="clamp-100"><span class="suffix">%</span></div>
+                            <label>Partner's employer contribution</label>
+                            <div class="input-wrapper"><input type="number" id="partner-per" placeholder="e.g. 3" class="clamp-100" title="The percentage of your partner's salary that their employer contributes." onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
                         </div>
                     </div>
                 </div>
