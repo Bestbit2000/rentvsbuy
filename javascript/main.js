@@ -75,6 +75,9 @@ let iconPaths = {
     retirement: "M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z M11 11H13V22H11V11Z"
 };
 
+// Cache for retirement icon canvas - created once and reused
+let retirementIconCache = {};
+
 const timingTemplate = (titleText, descText) => `
     <div class="timing-hero-card">
         <div class="timing-icon-wrapper">
@@ -1609,12 +1612,36 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
         }
     };
 
+    // Pre-generate retirement icon canvas for stable rendering
+    const retirementColor = isDarkMode ? '#90caf9' : '#003a5d';
+    const retirementCacheKey = retirementColor;
+    if (!retirementIconCache[retirementCacheKey]) {
+        const offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.width = 24;
+        offscreenCanvas.height = 24;
+        const offCtx = offscreenCanvas.getContext('2d');
+
+        const svgString = `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <g transform="rotate(15 12 22)">
+                <path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" fill="${retirementColor}"/>
+                <path d="M11 11H13V22H11V11Z" fill="${retirementColor}"/>
+            </g>
+        </svg>`;
+
+        const img = new Image();
+        img.onload = function() {
+            offCtx.drawImage(img, 0, 0);
+            retirementIconCache[retirementCacheKey] = offscreenCanvas;
+        };
+        img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
+    }
+
     const eventMarkersPlugin = {
         id: 'eventMarkers',
         afterDatasetsDraw(chart) {
-            if (!chart.chartArea) return; 
+            if (!chart.chartArea) return;
             const { ctx, data, chartArea: { top, bottom }, scales: { x } } = chart;
-            
+
             const drawMarker = (age, iconPath, color, isRetirement = false) => {
                 if (age === null || age === undefined || age === "") return;
                 const idx = data.labels.indexOf(Number(age));
@@ -1632,31 +1659,18 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 // Draw SVG icon
                 ctx.restore();
                 ctx.save();
+                ctx.translate(xPos - 12, top - 8);
 
-                if (isRetirement) {
-                    // For retirement icon, use SVG with transform for proper rendering
-                    const svgString = `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <g transform="rotate(15 12 22)">
-                            <path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" fill="${color}"/>
-                            <path d="M11 11H13V22H11V11Z" fill="${color}"/>
-                        </g>
-                    </svg>`;
-
-                    const img = new Image();
-                    img.onload = function() {
-                        ctx.translate(xPos - 12, top - 8);
-                        ctx.drawImage(img, 0, 0, 24, 24);
-                        ctx.restore();
-                    };
-                    img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
-                } else {
+                if (isRetirement && retirementIconCache[retirementCacheKey]) {
+                    // Use cached retirement icon canvas
+                    ctx.drawImage(retirementIconCache[retirementCacheKey], 0, 0, 24, 24);
+                } else if (!isRetirement) {
                     // Property icon uses simple path rendering
-                    ctx.translate(xPos - 12, top - 8);
                     ctx.fillStyle = color;
                     const path = new Path2D(iconPath);
                     ctx.fill(path);
-                    ctx.restore();
                 }
+                ctx.restore();
             };
 
             drawMarker(purchaseAge, iconPaths.property, isDarkMode ? '#90caf9' : '#003a5d', false);
