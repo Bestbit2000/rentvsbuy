@@ -420,7 +420,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 
 .projections-controls-row {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding-bottom: 8px;
     margin-bottom: 8px;
