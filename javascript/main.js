@@ -1616,9 +1616,9 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                 ctx.restore();
             };
 
-            drawMarker(purchaseAge, '🏠', '#003a5d');
-            drawMarker(retirementAge, '⛱️', '#003a5d');
-            drawMarker(planEndAge, '📋', '#003a5d');
+            drawMarker(purchaseAge, '🏠', isDarkMode ? '#90caf9' : '#003a5d');
+            drawMarker(retirementAge, '⛱️', isDarkMode ? '#90caf9' : '#003a5d');
+            drawMarker(planEndAge, '📋', isDarkMode ? '#90caf9' : '#003a5d');
         }
     };
 
@@ -1707,7 +1707,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; color: ' + (isDarkMode ? '#e0e0e0' : '#333') + ';">';
 
                             if (isRenting) {
-                                tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/><circle cx="20" cy="6" r="5" fill="' + lineColor + '"/></svg>';
+                                tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/><circle cx="20" cy="6" r="5" fill="' + lineColor + '"/><circle cx="20" cy="6" r="5" fill="none" stroke="white" stroke-width="1.5"/></svg>';
                             } else {
                                 tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/></svg>';
                             }

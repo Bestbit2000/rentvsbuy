@@ -434,6 +434,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .legend-box { display: flex; align-items: center; gap: 8px; color: #000; }
 .line { display: inline-block; width: 30px; height: 3px; }
 .line-buy { background: var(--ifoa-blue); }
+body.dark-mode .line-buy { background: #90caf9; }
 .line-rent, .line-base-rent { background: var(--ifoa-gold); position: relative; }
 /* Circle marker so the renting line reads as strongly as the buying line */
 .line-rent::after, .line-base-rent::after {
@@ -549,6 +550,7 @@ body.dark-mode :focus-visible {
 }
 
 body.dark-mode .sidebar, body.dark-mode .main-content, body.dark-mode .modal-card, body.dark-mode .insight-card, body.dark-mode .settings-card, body.dark-mode details, body.dark-mode summary, body.dark-mode .input-wrapper, body.dark-mode .param-box { background: #1e1e1e !important; border-color: #333 !important; color: #e0e0e0 !important; }
+body.dark-mode .insight-card { border: 1px solid #333 !important; }
 
 /* Dark Mode Compare Changes List */
 body.dark-mode .change-list-item-inner { border-bottom-color: #333 !important; }
