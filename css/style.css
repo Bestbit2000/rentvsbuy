@@ -83,6 +83,8 @@ body .btn-primary.btn-make-base:disabled { background-color: #ccc !important; co
 
 .link-reset { display: block; text-align: center; color: var(--ifoa-blue); text-decoration: underline; font-size: 0.95rem; cursor: pointer; font-weight: bold; padding: 4px 0; transition: opacity 0.2s; }
 .link-reset:hover { color: var(--ifoa-navy); }
+.disclaimer-link { color: var(--ifoa-blue); text-decoration: underline; cursor: pointer; font-weight: 500; font-size: 0.85rem; transition: color 0.2s; }
+.disclaimer-link:hover { color: var(--ifoa-navy); }
 .link-start-over { margin-top: 0; font-size: 0.85rem; color: #888; text-decoration: none; display: block; text-align: center; transition: color 0.2s; }
 .link-start-over:hover { color: var(--danger); text-decoration: underline; }
 
@@ -289,8 +291,8 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .insight-card { background: white; padding: 25px; border-radius: var(--card-radius); box-shadow: var(--card-shadow); display: flex; flex-direction: column; }
 .insight-card h3 { margin: 0 0 20px 0; color: var(--ifoa-blue); font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 10px; }
 
-.bar-row { margin-bottom: 15px; }
-.bar-label { display: flex; justify-content: space-between; font-weight: bold; color: #555; margin-bottom: 5px; font-size: 0.95rem; }
+.bar-row { margin-bottom: 15px; width: 100%; }
+.bar-label { display: flex; justify-content: space-between; font-weight: bold; color: #555; margin-bottom: 5px; font-size: 0.95rem; width: 100%; }
 .bar-val { color: var(--ifoa-blue); font-size: 1.1rem; }
 .bar-track { width: 100%; background: #eee; height: 18px; border-radius: 9px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 9px; transition: width 0.8s ease; }
@@ -691,6 +693,7 @@ body.dark-mode .fees-color { background: #4a5560 !important; }
 /* Sticky Footer Force Dark Mode */
 body.dark-mode .compare-actions-footer { background: #1e1e1e !important; border-top-color: #333 !important; }
 body.dark-mode .link-reset { color: #90caf9 !important; }
+body.dark-mode .disclaimer-link { color: #90caf9 !important; }
 
 /* Dark mode contrast fix for descriptions */
 body.dark-mode .timing-description {

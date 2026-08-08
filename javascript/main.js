@@ -1416,13 +1416,13 @@ function runCalculation() {
         const currentYear = new Date().getFullYear();
         const purchaseYear = currentYear + purcTerm;
         const age1AtPurc = inputs.Case_Life_1_Current_age + purcTerm;
-        let titleText = `Buy when you are around age ${age1AtPurc}`;
-        let descText = `You may be able to afford this home in <strong>${purchaseYear}</strong>.`;
+        let titleText = `On track to buy around age ${age1AtPurc}`;
+        let descText = `This home could become affordable around <strong>${purchaseYear}</strong>.`;
 
         if (currentMode === 'couple') {
             const age2AtPurc = (getVal('s_age2') || getVal('s_age1')) + purcTerm;
-            titleText = `Buy when you are around age ${age1AtPurc}`;
-            descText = `You may be able to afford this home in <strong>${purchaseYear}</strong>, when your partner would be around <strong>${age2AtPurc}</strong>.`;
+            titleText = `On track to buy around age ${age1AtPurc}`;
+            descText = `This home could become affordable around <strong>${purchaseYear}</strong>, when your partner is around <strong>${age2AtPurc}</strong>.`;
         }
         if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); timingContainer.style.display = 'flex'; }
     } else {
