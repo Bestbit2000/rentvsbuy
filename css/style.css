@@ -557,7 +557,7 @@ body.calc-body .header-actions { display: flex; align-items: center; gap: 10px; 
 /* =========================================================================
    DARK MODE IMPLEMENTATION
    ========================================================================= */
-body.dark-mode { --bg: #121212; --ifoa-navy: #90caf9; --ifoa-gold: #c3a344; --ifoa-grey: #e0e0e0; --ifoa-light-blue: #1e293b; color: #e0e0e0; background-color: var(--bg); }
+body.dark-mode { --bg: #121212; --ifoa-navy: #90caf9; --ifoa-blue: #90caf9; --ifoa-gold: #c3a344; --ifoa-grey: #e0e0e0; --ifoa-light-blue: #1e293b; color: #e0e0e0; background-color: var(--bg); }
 
 /* Dark mode high-contrast focus rings */
 body.dark-mode :focus-visible {
@@ -603,6 +603,13 @@ body.dark-mode .toggle-container input[type="radio"]:focus-visible + label {
 body.dark-mode div[style*="background: #f9f9f9"] { background: #1e1e1e !important; border-color: #333 !important; }
 body.dark-mode div[style*="background: #f9f9f9"] p { color: #e0e0e0 !important; }
 body.dark-mode div[style*="background: #f9f9f9"] a { color: #90caf9 !important; }
+
+/* Dark mode table legend header */
+body.dark-mode .table-legend-header { background: #1e1e1e !important; border-bottom-color: #333 !important; }
+body.dark-mode .table-legend-header span { color: #90caf9 !important; }
+body.dark-mode #wealth-table th { background: #1e1e1e !important; border-bottom-color: #333 !important; }
+body.dark-mode .row-purchase { background-color: rgba(144, 202, 249, 0.1) !important; color: #90caf9 !important; }
+body.dark-mode .row-retire { background-color: rgba(195, 163, 68, 0.1) !important; color: #c3a344 !important; }
 
 /* Accessible button texts in dark mode */
 body.dark-mode .btn-primary { background: var(--ifoa-gold) !important; color: #121212 !important; }
