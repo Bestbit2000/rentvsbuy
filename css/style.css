@@ -367,7 +367,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .legend-color { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 .price-color { background: var(--ifoa-blue); }
 .sdlt-color { background: #6a94b3; }
-.fees-color { background: #c3ccd4; }
+.fees-color { background: var(--ifoa-gold); }
 .mort-color { background: var(--ifoa-blue); }
 .cash-color { background: var(--ifoa-gold); }
 .legend-value { font-weight: bold; color: var(--ifoa-blue); }
@@ -626,7 +626,8 @@ body.dark-mode div[style*="background: #f9f9f9"] a { color: #90caf9 !important; 
 /* Dark mode table legend header */
 body.dark-mode .table-legend-header { background: #1e1e1e !important; border-bottom-color: #333 !important; }
 body.dark-mode .table-legend-header span { color: #90caf9 !important; }
-body.dark-mode #wealth-table th { background: #1e1e1e !important; border-bottom-color: #333 !important; }
+body.dark-mode #wealth-table th { background: #1e1e1e !important; border-bottom-color: #555 !important; }
+body.dark-mode #wealth-table td { border-bottom-color: #444 !important; }
 body.dark-mode .row-purchase { background-color: rgba(144, 202, 249, 0.1) !important; color: #90caf9 !important; }
 body.dark-mode .row-retire { background-color: rgba(195, 163, 68, 0.1) !important; color: #c3a344 !important; }
 
