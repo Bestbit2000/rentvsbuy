@@ -143,7 +143,7 @@ details[open] summary::after { content: '▲'; }
     z-index: 1;
 }
 
-.toggle-container label { flex: 1; display: flex; justify-content: center; align-items: center; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.9em; border-radius: 18px; margin: 0; transition: all 0.3s ease; color: #4a4a4a; font-weight: bold; line-height: 1; white-space: nowrap; }
+.toggle-container label { flex: 1; display: flex; justify-content: center; align-items: center; text-align: center; padding: 10px 8px; cursor: pointer; font-size: 0.9em; border-radius: 18px; margin: 0; transition: all 0.3s ease; color: #4a4a4a; font-weight: bold; line-height: 1.4; word-wrap: break-word; }
 
 .toggle-container label:hover {
     background-color: rgba(0, 58, 93, 0.06);
@@ -355,7 +355,7 @@ body.dark-mode .input-wrapper.has-error, body.dark-mode .toggle-container.has-er
 .cost-bar, .funding-bar { display: flex; height: 18px; border-radius: 9px; overflow: hidden; width: 100%; background: #eee; }
 .cost-price { background: var(--ifoa-blue); transition: width 0.8s ease; }
 .cost-sdlt { background: #6a94b3; transition: width 0.8s ease; }
-.cost-fees { background: #c3ccd4; transition: width 0.8s ease; }
+.cost-fees { background: var(--ifoa-gold); transition: width 0.8s ease; }
 .fund-mortgage { background: var(--ifoa-blue); transition: width 0.8s ease; }
 .fund-cash { background: var(--ifoa-gold); transition: width 0.8s ease; }
 
@@ -690,7 +690,7 @@ body.dark-mode .legend-value { color: #90caf9 !important; }
 body.dark-mode .param-box li { color: #e0e0e0 !important; }
 
 body.dark-mode .timing-icon-wrapper, body.dark-mode .prop-panel-icon { background-color: #2a4a6a !important; color: #90caf9 !important; }
-body.dark-mode .prop-panel-funding .prop-panel-icon { background-color: #453a1e !important; color: #121212 !important; }
+body.dark-mode .prop-panel-funding .prop-panel-icon { background-color: #453a1e !important; color: #c3a344 !important; }
 
 body.dark-mode .row-purchase { background-color: rgba(144, 202, 249, 0.25) !important; color: #ffffff !important; }
 body.dark-mode .row-retire { background-color: rgba(255, 213, 79, 0.25) !important; color: #fffde7 !important; }

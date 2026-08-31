@@ -2185,7 +2185,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
         plugins: [eventMarkersPlugin, negativeZonePlugin]
     });
 
-    let tableHTML = `<thead><tr><th>Age</th><th class="event-col-desktop">Event</th><th>Buying wealth</th><th>Renting wealth</th></tr></thead><tbody>`;
+    let tableHTML = `<thead><tr><th>Age</th><th>Buying wealth</th><th>Renting wealth</th><th class="event-col-desktop">Event</th></tr></thead><tbody>`;
     for (let i = 0; i < labels.length; i++) {
         let age = labels[i];
         let isPurc = (age === Number(purchaseAge) && purchaseAge !== null);
@@ -2216,9 +2216,9 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
         tableHTML += `
         <tr class="${rowClass}">
             <td><div class="age-cell">${age}${mobileEventHTML}</div></td>
-            <td class="event-col-desktop" style="text-align: center;">${eventIconHTML ? `<div class="event-text">${eventIconHTML}<div>${eventText}</div></div>` : eventText}</td>
             <td>${formatMoney.format(roundTo3SigFigs(buyData[i]))}</td>
             <td>${formatMoney.format(roundTo3SigFigs(rentData[i]))}</td>
+            <td class="event-col-desktop" style="text-align: center;">${eventIconHTML ? `<div class="event-text">${eventIconHTML}<div>${eventText}</div></div>` : eventText}</td>
         </tr>`;
     }
     
