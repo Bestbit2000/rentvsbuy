@@ -717,7 +717,7 @@ body.dark-mode .close-modal:hover { background: #333; color: #ef9a9a; }
 body.dark-mode .cost-sdlt { background: #3d5a72 !important; }
 body.dark-mode .cost-fees { background: #4a5560 !important; }
 body.dark-mode .sdlt-color { background: #3d5a72 !important; }
-body.dark-mode .fees-color { background: #4a5560 !important; }
+body.dark-mode .fees-color { background: #c3a344 !important; }
 
 /* Legend icons styling */
 .legend-icon { fill: #003a5d; }
