@@ -131,8 +131,7 @@ window.updateCompareActionsState = function() {
         makeBaseBtn.disabled = !hasChanges;
     }
     if (discardBtn) {
-        discardBtn.style.opacity = hasChanges ? '1' : '0.5';
-        discardBtn.style.pointerEvents = hasChanges ? 'auto' : 'none';
+        discardBtn.classList.toggle('is-inactive', !hasChanges);
     }
 };
 
@@ -143,9 +142,9 @@ window.saveA11ySetting = function(key, value) {
 window.switchSettingsTab = function(tabNum, btn) {
     document.querySelectorAll('#settings-tabs .tab-btn, #settings-tabs label').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
-    document.getElementById('set-tab-1').style.display = tabNum === 1 ? 'block' : 'none';
-    document.getElementById('set-tab-2').style.display = tabNum === 2 ? 'block' : 'none';
-    document.getElementById('set-tab-3').style.display = tabNum === 3 ? 'block' : 'none';
+    document.getElementById('set-tab-1').classList.toggle('is-hidden', !(tabNum === 1));
+    document.getElementById('set-tab-2').classList.toggle('is-hidden', !(tabNum === 2));
+    document.getElementById('set-tab-3').classList.toggle('is-hidden', !(tabNum === 3));
 };
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -181,15 +180,15 @@ window.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('readonly-params-grid');
         if (grid) {
             const formatBands = (bands) => {
-                let html = '<ul style="margin-top:15px;">';
+                let html = '<ul class="param-list">';
                 for(let i=0; i<bands.length; i++) {
                     let fromStr = bands[i].from.toLocaleString();
                     let rateStr = (bands[i].rate * 100).toFixed(0) + '%';
                     if (i < bands.length - 1) {
                         let toStr = (bands[i+1].from - 1).toLocaleString();
-                        html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>£${fromStr} to £${toStr}:</span> <strong>${rateStr}</strong></li>`;
+                        html += `<li class="param-row"><span>£${fromStr} to £${toStr}:</span> <strong>${rateStr}</strong></li>`;
                     } else {
-                        html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; padding-bottom:6px;"><span>Over £${fromStr}:</span> <strong>${rateStr}</strong></li>`;
+                        html += `<li class="param-row param-row-last"><span>Over £${fromStr}:</span> <strong>${rateStr}</strong></li>`;
                     }
                 }
                 html += '</ul>';
@@ -201,7 +200,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (globalParams.stamp_duty && globalParams.stamp_duty.first_time_buyer) {
                 let html = `<div class="param-box"><h4>Stamp duty (first-time buyer)</h4>`;
                 html += formatBands(globalParams.stamp_duty.first_time_buyer.bands);
-                html += `<div style="margin-top: 12px; font-size: 0.8rem; color: var(--ifoa-blue); font-style: italic;">First-time buyer (FTB) relief limit: £${globalParams.stamp_duty.first_time_buyer.limit.toLocaleString()}</div></div>`;
+                html += `<div class="param-note">First-time buyer (FTB) relief limit: £${globalParams.stamp_duty.first_time_buyer.limit.toLocaleString()}</div></div>`;
                 grid.innerHTML += html;
             }
             if (globalParams.stamp_duty && globalParams.stamp_duty.second_time_buyer) {
@@ -211,10 +210,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 grid.innerHTML += html;
             }
             if (globalParams.pension_taxation) {
-                let html = `<div class="param-box"><h4>Pension rules</h4><ul style="margin-top:15px;">`;
-                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Tax free cash (TFC) max:</span> <strong>${globalParams.pension_taxation.tax_free_cash_percent * 100}%</strong></li>`;
-                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>TFC lifetime limit:</span> <strong>£${globalParams.pension_taxation.tfc_max_withdrawal.toLocaleString()}</strong></li>`;
-                html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; padding-bottom:6px;"><span>Basic rate rebate:</span> <strong>${globalParams.pension_taxation.tax_rebate_on_contributions * 100}%</strong></li>`;
+                let html = `<div class="param-box"><h4>Pension rules</h4><ul class="param-list">`;
+                html += `<li class="param-row"><span>Tax free cash (TFC) max:</span> <strong>${globalParams.pension_taxation.tax_free_cash_percent * 100}%</strong></li>`;
+                html += `<li class="param-row"><span>TFC lifetime limit:</span> <strong>£${globalParams.pension_taxation.tfc_max_withdrawal.toLocaleString()}</strong></li>`;
+                html += `<li class="param-row param-row-last"><span>Basic rate rebate:</span> <strong>${globalParams.pension_taxation.tax_rebate_on_contributions * 100}%</strong></li>`;
                 html += `</ul></div>`;
                 grid.innerHTML += html;
             }
@@ -223,15 +222,15 @@ window.addEventListener('DOMContentLoaded', () => {
         const grid2 = document.getElementById('readonly-params-grid-2');
         if (grid2) {
             if (globalParams.state_pension_age_table) {
-                let htmlSpa = `<div class="param-box"><h4>State pension age</h4><ul style="margin-top:15px;">`;
-                let htmlMin = `<div class="param-box"><h4>Minimum pension age</h4><ul style="margin-top:15px;">`;
+                let htmlSpa = `<div class="param-box"><h4>State pension age</h4><ul class="param-list">`;
+                let htmlMin = `<div class="param-box"><h4>Minimum pension age</h4><ul class="param-list">`;
                 
                 let prevAge = 0;
                 globalParams.state_pension_age_table.forEach((row, i) => {
                     let toAge = row.current_age_under - 1;
                     let ageRange = i === globalParams.state_pension_age_table.length - 1 ? `${prevAge}+` : `${prevAge} to ${toAge}`;
-                    htmlSpa += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Current age ${ageRange}:</span> <strong>${row.state_pension_age}</strong></li>`;
-                    htmlMin += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Current age ${ageRange}:</span> <strong>${row.minimum_pension_age}</strong></li>`;
+                    htmlSpa += `<li class="param-row"><span>Current age ${ageRange}:</span> <strong>${row.state_pension_age}</strong></li>`;
+                    htmlMin += `<li class="param-row"><span>Current age ${ageRange}:</span> <strong>${row.minimum_pension_age}</strong></li>`;
                     prevAge = row.current_age_under;
                 });
                 htmlSpa += `</ul></div>`;
@@ -239,45 +238,45 @@ window.addEventListener('DOMContentLoaded', () => {
                 grid2.innerHTML += htmlSpa + htmlMin;
             }
             if (globalParams.career_increases) {
-                let html = `<div class="param-box"><h4>Real career salary growth</h4><ul style="margin-top:15px;">`;
+                let html = `<div class="param-box"><h4>Real career salary growth</h4><ul class="param-list">`;
                 let c = globalParams.career_increases;
                 for (let i=0; i<c.length; i++) {
                     let fromAge = c[i].from_age;
                     let rate = (c[i].increase_above_inflation * 100).toFixed(1) + '%';
                     if (i < c.length - 1) {
                         let toAge = c[i+1].from_age - 1;
-                        html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Age ${fromAge} to ${toAge}:</span> <strong>${rate}</strong></li>`;
+                        html += `<li class="param-row"><span>Age ${fromAge} to ${toAge}:</span> <strong>${rate}</strong></li>`;
                     } else {
-                        html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; padding-bottom:6px;"><span>Age ${fromAge}+:</span> <strong>${rate}</strong></li>`;
+                        html += `<li class="param-row param-row-last"><span>Age ${fromAge}+:</span> <strong>${rate}</strong></li>`;
                     }
                 }
                 html += `</ul></div>`;
                 grid2.innerHTML += html;
             }
             if (globalParams.mortgages && globalParams.mortgages.rates_by_ltv) {
-                let html = `<div class="param-box"><h4>Mortgage rates by LTV</h4><ul style="margin-top:15px;">`;
+                let html = `<div class="param-box"><h4>Mortgage rates by LTV</h4><ul class="param-list">`;
                 let m = globalParams.mortgages.rates_by_ltv;
                 for (let i=0; i<m.length; i++) {
                     let fromLTV = (m[i].ltv_from * 100).toFixed(0) + '%';
                     let rate = (m[i].rate * 100).toFixed(1) + '%';
                     if (i < m.length - 1) {
                         let toLTV = (m[i+1].ltv_from * 100).toFixed(0) + '%';
-                        html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>${fromLTV} to ${toLTV}:</span> <strong>${rate}</strong></li>`;
+                        html += `<li class="param-row"><span>${fromLTV} to ${toLTV}:</span> <strong>${rate}</strong></li>`;
                     } else {
-                        html += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; padding-bottom:6px;"><span>Above ${fromLTV}:</span> <strong>${rate}</strong></li>`;
+                        html += `<li class="param-row param-row-last"><span>Above ${fromLTV}:</span> <strong>${rate}</strong></li>`;
                     }
                 }
                 html += `</ul></div>`;
                 grid2.innerHTML += html;
             }
             if (globalParams.student_loans) {
-                let htmlSlThresh = `<div class="param-box"><h4>Student loan thresholds</h4><ul style="margin-top:15px;">`;
-                let htmlSlRate = `<div class="param-box"><h4>Student loan repayment rates</h4><ul style="margin-top:15px;">`;
+                let htmlSlThresh = `<div class="param-box"><h4>Student loan thresholds</h4><ul class="param-list">`;
+                let htmlSlRate = `<div class="param-box"><h4>Student loan repayment rates</h4><ul class="param-list">`;
                 for (const [plan, data] of Object.entries(globalParams.student_loans)) {
                     let threshold = '£' + data.threshold.toLocaleString();
                     let rate = (data.rate * 100).toFixed(0) + '%';
-                    htmlSlThresh += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Plan ${plan}:</span> <strong>${threshold}</strong></li>`;
-                    htmlSlRate += `<li style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;"><span>Plan ${plan}:</span> <strong>${rate}</strong></li>`;
+                    htmlSlThresh += `<li class="param-row"><span>Plan ${plan}:</span> <strong>${threshold}</strong></li>`;
+                    htmlSlRate += `<li class="param-row"><span>Plan ${plan}:</span> <strong>${rate}</strong></li>`;
                 }
                 htmlSlThresh += `</ul></div>`;
                 htmlSlRate += `</ul></div>`;
@@ -346,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (this.checked) {
                 if (title) title.innerText = 'New scenario';
                 resultsPane.classList.add('compare-mode-active');
-                if(projControls) projControls.style.display = 'flex';
+                if(projControls) projControls.classList.remove('is-hidden');
                 
                 const sections = ['hero', 'timing', 'wealth', 'prop-cost', 'prop-funding'];
                 sections.forEach(sec => {
@@ -365,15 +364,15 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if (title) title.innerText = 'Current scenario';
                 resultsPane.classList.remove('compare-mode-active');
-                if(projControls) projControls.style.display = 'none';
+                if(projControls) projControls.classList.add('is-hidden');
                 window.syncProjViewSelect('revised');
             }
             
             const tabChanges = document.getElementById('tab-changes');
             const mobTabChanges = document.getElementById('mob-opt-changes');
             if (tabChanges) {
-                tabChanges.style.display = this.checked ? 'block' : 'none';
-                if(mobTabChanges) mobTabChanges.style.display = this.checked ? 'block' : 'none';
+                tabChanges.classList.toggle('is-hidden', !this.checked);
+                if(mobTabChanges) mobTabChanges.classList.toggle('is-hidden', !this.checked);
                 
                 if (!this.checked && tabChanges.classList.contains('active')) {
                     const overviewBtn = document.querySelector('.tab-btn[onclick*="overview"]');
@@ -386,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = document.getElementById('sidebar-title');
             if (title) title.innerText = 'New scenario';
             resultsPane.classList.add('compare-mode-active');
-            if(projControls) projControls.style.display = 'flex';
+            if(projControls) projControls.classList.remove('is-hidden');
         }
     }
 });
@@ -401,7 +400,7 @@ window.syncProjViewSelect = function(val) {
 
 window.toggleProjView = function(viewType) {
     const mainWrapper = document.getElementById('proj-main-wrapper');
-    if (mainWrapper) mainWrapper.style.display = 'flex';
+    if (mainWrapper) mainWrapper.classList.remove('is-hidden');
 
     if (typeof window.renderProjectionsView === 'function') {
         window.renderProjectionsView(viewType);
@@ -429,8 +428,8 @@ const tableObserver = new MutationObserver(() => {
     
     for(let i=1; i<table.rows.length; i++) {
         const row = table.rows[i];
-        const propertyIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="display: inline; margin-left: 6px; vertical-align: middle;" title="Purchase"><path d="${iconPaths.property}" /></svg>`;
-        const retirementIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="display: inline; margin-left: 6px; vertical-align: middle;" title="Retirement"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>`;
+        const propertyIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="event-icon" title="Purchase"><path d="${iconPaths.property}" /></svg>`;
+        const retirementIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="event-icon" title="Retirement"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>`;
 
         if (row.classList.contains('row-purchase') || (row.style && row.style.backgroundColor)) {
             if (!row.cells[0].innerHTML.includes('svg')) {
@@ -533,8 +532,8 @@ const changesObserver = new MutationObserver((mutations) => {
         
         if (list && summaryBlock && noChangesMsg) {
             const hasChanges = list.children.length > 0;
-            summaryBlock.style.display = hasChanges ? 'block' : 'none';
-            noChangesMsg.style.display = hasChanges ? 'none' : 'block';
+            summaryBlock.classList.toggle('is-hidden', !hasChanges);
+            noChangesMsg.classList.toggle('is-hidden', hasChanges);
         }
 
         window.updateCompareActionsState();
@@ -576,9 +575,8 @@ function collapseChangeRow(li, onDone) {
     }
 
     const startHeight = li.getBoundingClientRect().height;
-    li.style.height = startHeight + 'px';
-    li.style.overflow = 'hidden';
-    li.style.boxSizing = 'border-box';
+    li.style.setProperty('--row-h', startHeight + 'px');
+    li.classList.add('row-collapsing-start');
     void li.offsetHeight; 
 
     li.classList.add('row-collapsing');
@@ -598,13 +596,7 @@ function collapseChangeRow(li, onDone) {
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            li.style.height = '0px';
-            li.style.marginTop = '0px';
-            li.style.marginBottom = '0px';
-            li.style.paddingTop = '0px';
-            li.style.paddingBottom = '0px';
-            li.style.borderWidth = '0px';
-            li.style.opacity = '0';
+            li.classList.add('row-collapsed');
         });
     });
 }
@@ -616,8 +608,8 @@ window.handleUndoClick = function(btnElement, label, oldValRaw, newValRaw) {
     collapseChangeRow(li, () => {
         const list = document.getElementById('compare-changes-list');
         if (list && list.children.length === 0) {
-            document.getElementById('compare-summary-block').style.display = 'none';
-            document.getElementById('no-changes-msg').style.display = 'block';
+            document.getElementById('compare-summary-block').classList.add('is-hidden');
+            document.getElementById('no-changes-msg').classList.remove('is-hidden');
         }
         window.updateCompareActionsState();
     });
