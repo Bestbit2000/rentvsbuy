@@ -239,6 +239,11 @@ document.querySelectorAll('.calc-ret-trigger').forEach(input => {
 
 // Bar widths are data-driven, so they reach the stylesheet as a custom property.
 // Negative or non-finite values are ignored, leaving the bar at its previous width.
+// True when motion should be skipped: the in-app toggle or the system setting.
+function prefersReducedMotion() {
+    return document.body.classList.contains('reduce-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function setBarWidth(el, pct) {
     if (el && Number.isFinite(pct) && pct >= 0) el.style.setProperty('--bar-w', pct + '%');
 }
@@ -297,9 +302,10 @@ function toggleWizPen(personNum) {
 }
 
 function switchTab(btnElement, tabId) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); btn.setAttribute('aria-selected', 'false'); });
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     btnElement.classList.add('active');
+    btnElement.setAttribute('aria-selected', 'true');
     const viewSection = document.getElementById('view-' + tabId);
     if(viewSection) viewSection.classList.add('active');
 }
@@ -1526,16 +1532,25 @@ function setFieldValidity(inputEl, isValid, message) {
     if (!errEl) {
         errEl = document.createElement('div');
         errEl.className = 'field-error-text';
+        errEl.id = 'err_' + (inputEl.id || inputEl.name);
         wrapper.insertAdjacentElement('afterend', errEl);
     }
+    // a11y: tie the message to the field (or the radio group) so it is announced with it
+    const describedEl = inputEl.type === 'radio' ? wrapper : inputEl;
+    const describedBy = (describedEl.getAttribute('aria-describedby') || '').split(' ').filter(id => id && id !== errEl.id);
     if (isValid) {
         wrapper.classList.remove('has-error');
         errEl.classList.remove('visible');
+        describedEl.removeAttribute('aria-invalid');
     } else {
         wrapper.classList.add('has-error');
         errEl.textContent = message || 'This field is required.';
         errEl.classList.add('visible');
+        describedEl.setAttribute('aria-invalid', 'true');
+        describedBy.push(errEl.id);
     }
+    if (describedBy.length) describedEl.setAttribute('aria-describedby', describedBy.join(' '));
+    else describedEl.removeAttribute('aria-describedby');
 }
 
 function validateRequiredFields() {

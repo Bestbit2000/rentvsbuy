@@ -29,7 +29,7 @@
                     <img class="h-12 w-auto mr-3" src="images/PFP_logo_icon_dark.png" alt="PFP Logo">
                     <div class="hidden sm:flex flex-col">
                         <span class="font-bold text-sm leading-tight tracking-wider uppercase">PERSONAL FINANCIAL PLANNING WORKING GROUP</span>
-                        <span class="text-xs text-gray-300">from the Institute and Faculty of Actuaries</span>
+                        <span class="text-sm text-gray-300">from the Institute and Faculty of Actuaries</span>
                     </div>
                     <!-- Mobile abbreviated title -->
                     <div class="flex sm:hidden flex-col text-left">
@@ -50,8 +50,8 @@
 
                 <!-- Mobile Menu -->
                 <div class="md:hidden flex items-center space-x-4">
-                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:opacity-80 focus:outline-none p-2 flex items-center justify-center bg-transparent border-none cursor-pointer tap-target js-only" aria-label="Accessibility">
-                        <span class="text-xs font-medium">A</span>
+                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:opacity-80 p-2 flex items-center justify-center bg-transparent border-none cursor-pointer tap-target js-only" aria-label="Accessibility">
+                        <span class="text-sm font-medium">A</span>
                     </button>
                     <a href="index.html" class="close-btn close-btn-light" aria-label="Close">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -92,7 +92,7 @@
                     </div>
                     <div>
                         <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-2">Becky, 24</h1>
-                        <h2 class="text-2xl text-gold font-medium mb-6">The "Independence Protector"</h2>
+                        <h2 class="text-2xl text-navy font-medium mb-6 inline-block border-b-4 border-gold pb-1">The "Independence Protector"</h2>
                         
                         <blockquote class="text-xl text-gray-700 italic border-l-4 border-gold pl-6 py-2">
                             "I love having my own space and freedom, but spending half my income on rent just to avoid housemates is starting to feel like a trap. I want my own home, but the math isn't adding up."
@@ -119,7 +119,7 @@
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card-warning">
                         <p class="text-sm text-gray-700 font-bold uppercase tracking-wider mb-1">Outgoings</p>
                         <p class="text-2xl font-bold text-navy">£1,150 <span class="text-sm font-normal text-gray-700"> per month rent</span></p>
-                        <p class="text-md text-orange-500 mt-2">£1,250 <span class="text-sm text-gray-700"> per month lifestyle</span></p>
+                        <p class="text-md text-orange-700 mt-2">£1,250 <span class="text-sm text-gray-700"> per month lifestyle</span></p>
                     </div>
 
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card">
@@ -142,7 +142,7 @@
                              <div class="absolute inset-0 bg-gradient-to-t from-red-900/80 to-transparent flex flex-col justify-end p-6">
                                  <div class="bg-white/90 backdrop-blur-sm inline-block rounded-lg px-4 py-2 w-max shadow-md border border-red-200">
                                      <span class="block text-3xl font-extrabold text-red-600 leading-none">46</span>
-                                     <span class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mt-1">Purchase Age</span>
+                                     <span class="block text-sm font-bold text-gray-700 uppercase tracking-wider mt-1">Purchase Age</span>
                                  </div>
                              </div>
                         </div>
@@ -195,14 +195,14 @@
                                     <div class="bg-gray-50 rounded p-4 mb-4">
                                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
                                             <span class="text-sm font-medium">New Purchase Age:</span>
-                                            <span class="text-2xl font-bold text-green-600">30</span>
+                                            <span class="text-2xl font-bold text-green-700">30</span>
                                         </div>
                                         <div class="flex justify-between items-center">
                                             <span class="text-sm font-medium">Time Saved:</span>
                                             <span class="text-lg font-bold text-navy">16 Years</span>
                                         </div>
                                     </div>
-                                    <p class="text-xs text-gray-700 mt-2">By sharing for just a few years, she can afford her own property in exactly 6 years, completely avoiding the retirement wealth trap.</p>
+                                    <p class="text-sm text-gray-700 mt-2">By sharing for just a few years, she can afford her own property in exactly 6 years, completely avoiding the retirement wealth trap.</p>
                                 </div>
                             </div>
                         </div>
@@ -229,7 +229,7 @@
                                     <div class="bg-gray-50 rounded p-4 mb-4">
                                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
                                             <span class="text-sm font-medium">New Purchase Age:</span>
-                                            <span class="text-2xl font-bold text-green-600">28</span>
+                                            <span class="text-2xl font-bold text-green-700">28</span>
                                         </div>
                                         <div class="flex justify-between items-center">
                                             <span class="text-sm font-medium">Time to buy:</span>
@@ -240,7 +240,7 @@
                                     <p class="text-sm text-gray-700 italic bg-blue-50 p-3 rounded">
                                         "Aggressive saving can outpace the financial drag of high rent, but it requires significant lifestyle discipline."
                                     </p>
-                                    <p class="text-xs text-gray-700 mt-3">By aggressively cutting back on nights out, clothes, and trips, she buys at 28—shaving 18 years off her base outcome.</p>
+                                    <p class="text-sm text-gray-700 mt-3">By aggressively cutting back on nights out, clothes, and trips, she buys at 28—shaving 18 years off her base outcome.</p>
                                 </div>
                             </div>
                         </div>
@@ -311,10 +311,10 @@
 
     <!-- Accessibility Component -->
     <div class="modal-overlay" id="a11y-overlay">
-        <div class="modal-card">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="a11y-overlay-title">
             <div class="modal-header">
-                <h2>♿ Accessibility options</h2>
-                <button class="close-modal" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
+                <h2 id="a11y-overlay-title">♿ Accessibility options</h2>
+                <button class="close-modal" aria-label="Close" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="a11y-row">
@@ -340,7 +340,7 @@
                 </div>
                 <div class="input-row-single a11y-size-row">
                     <label>Text size</label>
-                    <div class="toggle-container">
+                    <div class="toggle-container" role="radiogroup" aria-label="Text size">
                         <input type="radio" name="a11y_size" id="a11y_size_normal" checked onchange="document.documentElement.classList.remove('text-large', 'text-xlarge'); window.saveA11ySetting('size', 'normal');">
                         <label for="a11y_size_normal">Normal</label>
                         <input type="radio" name="a11y_size" id="a11y_size_large" onchange="document.documentElement.classList.remove('text-xlarge'); document.documentElement.classList.add('text-large'); window.saveA11ySetting('size', 'large');">
@@ -415,5 +415,6 @@
             window.loadA11ySettings();
         }
     </script>
+    <script src="javascript/a11y.js"></script>
 </body>
 </html>

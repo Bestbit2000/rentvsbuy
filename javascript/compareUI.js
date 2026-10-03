@@ -31,7 +31,7 @@ window.showToast = function(message) {
     toast.innerHTML = `<span class="toast-message">${message}</span>`;
     container.appendChild(toast);
     
-    const reduceMotion = document.body.classList.contains('reduce-motion');
+    const reduceMotion = prefersReducedMotion();
     
     const dismiss = () => {
         if (reduceMotion) { 
@@ -164,6 +164,13 @@ window.addEventListener('DOMContentLoaded', () => {
                     const row = input.closest('.input-row-single');
                     if (row && !row.querySelector('.helper-text')) {
                         row.insertAdjacentHTML('beforeend', `<div class="helper-text">${text}</div>`);
+                    }
+                    // a11y: announce the helper text with the field (or with the radio group)
+                    const helper = row && row.querySelector('.helper-text');
+                    if (helper) {
+                        if (!helper.id) helper.id = 'help_' + inputId;
+                        const target = input.type === 'radio' ? input.closest('[role="radiogroup"]') : input;
+                        if (target && !target.hasAttribute('aria-describedby')) target.setAttribute('aria-describedby', helper.id);
                     }
                 }
             });
@@ -567,7 +574,7 @@ function applyChangeValue(label, rawValue) {
 function collapseChangeRow(li, onDone) {
     if (!li) { if (onDone) onDone(); return; }
 
-    const reduceMotion = document.body.classList.contains('reduce-motion');
+    const reduceMotion = prefersReducedMotion();
     if (reduceMotion) {
         li.remove();
         if (onDone) onDone();
@@ -626,7 +633,7 @@ function showUndoToast(message, onUndo) {
     toast.innerHTML = `<span class="toast-message">${message}</span><button type="button" class="toast-undo-btn">Undo</button>`;
     container.appendChild(toast);
 
-    const reduceMotion = document.body.classList.contains('reduce-motion');
+    const reduceMotion = prefersReducedMotion();
 
     const dismiss = () => {
         clearTimeout(autoDismissTimer);
@@ -636,7 +643,15 @@ function showUndoToast(message, onUndo) {
         setTimeout(() => toast.remove(), 250);
     };
 
-    const autoDismissTimer = setTimeout(dismiss, 6000);
+    let autoDismissTimer = setTimeout(dismiss, 6000);
+
+    // a11y: hold the toast open while it is hovered or focused, so Undo stays reachable
+    const pause = () => clearTimeout(autoDismissTimer);
+    const resume = () => { clearTimeout(autoDismissTimer); autoDismissTimer = setTimeout(dismiss, 6000); };
+    toast.addEventListener('mouseenter', pause);
+    toast.addEventListener('mouseleave', resume);
+    toast.addEventListener('focusin', pause);
+    toast.addEventListener('focusout', resume);
 
     toast.querySelector('.toast-undo-btn').addEventListener('click', () => {
         if (onUndo) onUndo();
