@@ -1398,7 +1398,13 @@ function saveWizardAndClose() {
     }
 }
 
-function openSettings() { 
+// tabNum: 1 = Your estimates (default), 2 = Tax rules, 3 = Other rules
+function openSettings(tabNum = 1) { 
+    const tabRadio = document.getElementById('settings_tab_' + tabNum);
+    if (tabRadio) {
+        tabRadio.checked = true;
+        window.switchSettingsTab(tabNum, tabRadio.nextElementSibling);
+    }
     const settingsInputs = document.querySelectorAll('#settings-overlay input');
     settingsInputs.forEach(input => {
         savedSettings[input.id] = (input.type === 'checkbox' || input.type === 'radio') ? input.checked : input.value;

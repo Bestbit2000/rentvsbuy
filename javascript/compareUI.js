@@ -132,6 +132,8 @@ window.updateCompareActionsState = function() {
     }
     if (discardBtn) {
         discardBtn.classList.toggle('is-inactive', !hasChanges);
+        // a11y: it does nothing until there are changes, so say so to assistive technology
+        discardBtn.setAttribute('aria-disabled', String(!hasChanges));
     }
 };
 
