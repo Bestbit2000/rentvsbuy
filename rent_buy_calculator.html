@@ -1247,27 +1247,8 @@
 
     <!-- Accessibility Settings Functions -->
     <script>
-        window.applyDarkModeColors = function(isDarkMode) {
-            if (isDarkMode) {
-                document.querySelectorAll('.bg-white:not(.bg-navy), section.bg-white:not(.bg-navy)').forEach(el => {
-                    el.style.backgroundColor = '#1e1e1e';
-                });
-                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
-                    el.style.backgroundColor = '#2a2a2a';
-                });
-            } else {
-                document.querySelectorAll('.bg-white, section.bg-white').forEach(el => {
-                    el.style.backgroundColor = '';
-                });
-                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
-                    el.style.backgroundColor = '';
-                });
-            }
-            // Redraw chart with updated colors
-            if (window.runCalculation) {
-                runCalculation();
-            }
-        };
+        // The calculator has no script-coloured sections; dark-mode colours come from the stylesheet
+        window.applyDarkModeColors = function() {};
 
         window.saveA11ySetting = function(key, value) {
             localStorage.setItem('a11y_' + key, value);
