@@ -6,9 +6,8 @@
     <title>Buy or Rent? - Institute and Faculty of Actuaries</title>
         <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tailwind.css">
     <noscript>
         <link rel="stylesheet" href="css/noscript.css">
     </noscript>
@@ -47,7 +46,7 @@
                 </nav>
 
                 <!-- Desktop Accessibility Button -->
-                <button class="hidden md:block text-white hover:opacity-80 px-3 py-2 font-medium nav-link" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
+                <button class="hidden md:block text-white hover:opacity-80 px-3 py-2 font-medium nav-link js-only" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
 
                 <!-- Mobile menu button -->
 				<div class="md:hidden flex items-center">
@@ -65,7 +64,7 @@
                 <a href="index.html#calculator-preview" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Discover</a>
                 <a href="index.html#scenarios" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Scenarios</a>
                 <a href="index.html#report-summary" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Report</a>
-                <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800">Accessibility</button>
+                <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gold hover:bg-gray-800 js-only">Accessibility</button>
             </div>
         </div>
         <div class="header-stripe w-full"></div>
@@ -195,9 +194,9 @@
                             <a href="rent_buy_calculator.html" class="btn-primary px-6 py-3 text-center font-bold flex-1">
                                 Start with my details
                             </a>
-                            <button class="btn-outline px-6 py-3 text-center font-bold flex-1" onclick="window.location.href='rent_buy_calculator.html?skipWizard=true'">
+                            <a href="rent_buy_calculator.html?skipWizard=true" class="btn-outline px-6 py-3 text-center font-bold flex-1">
                                 Try a sample input
-                            </button>
+                            </a>
                         </div>
                     </div>
                     

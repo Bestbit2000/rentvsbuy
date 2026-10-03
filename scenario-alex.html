@@ -6,9 +6,8 @@
     <title>James's Story - Institute and Faculty of Actuaries</title>
         <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tailwind.css">
     <noscript>
         <link rel="stylesheet" href="css/noscript.css">
     </noscript>
@@ -41,7 +40,7 @@
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-8 items-center">
                     <a href="index.html" class="text-white hover:text-gold transition px-3 py-2 font-medium nav-link">Home</a>
-                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:text-gold transition px-3 py-2 font-medium bg-transparent border-none cursor-pointer nav-link">Accessibility</button>
+                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:text-gold transition px-3 py-2 font-medium bg-transparent border-none cursor-pointer nav-link js-only">Accessibility</button>
                     <a href="index.html" class="close-btn close-btn-light close-btn-gap" aria-label="Close">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -51,7 +50,7 @@
 
                 <!-- Mobile Menu -->
                 <div class="md:hidden flex items-center space-x-4">
-                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:opacity-80 focus:outline-none p-2 flex items-center justify-center bg-transparent border-none cursor-pointer tap-target" aria-label="Accessibility">
+                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:opacity-80 focus:outline-none p-2 flex items-center justify-center bg-transparent border-none cursor-pointer tap-target js-only" aria-label="Accessibility">
                         <span class="text-xs font-medium">A</span>
                     </button>
                     <a href="index.html" class="close-btn close-btn-light" aria-label="Close">
