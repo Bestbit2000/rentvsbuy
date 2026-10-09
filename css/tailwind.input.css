@@ -1,0 +1,10 @@
+/*
+   Source for css/tailwind.css (the home page and the two scenario pages).
+   tailwind.css is generated, so do not edit it by hand. After adding or
+   removing Tailwind classes in those pages, rebuild it from the project root:
+
+   npx tailwindcss@3.4.17 -i css/tailwind.input.css -o css/tailwind.css --content "index.html,scenario-alex.html,scenario_becky.html" --minify
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

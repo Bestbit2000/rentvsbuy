@@ -63,15 +63,15 @@ const heroTemplates = {
         </div>
     `,
     tie: () => `
-        <div class="result-hero-card theme-buy">
-            <div class="hero-icon-wrapper" style="background-color: #e0e6ed; color: #555;">
+        <div class="result-hero-card theme-buy theme-tie">
+            <div class="hero-icon-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="36" height="36">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="8" y1="12" x2="16" y2="12"></line>
                 </svg>
             </div>
             <div class="hero-text-content">
-                <h2 class="hero-title" style="color: #333;">This is likely to be a close call</h2>
+                <h2 class="hero-title">This is likely to be a close call</h2>
                 <p class="hero-description">Over your chosen timeframe, buying and renting are likely to give similar financial outcomes. Your decision may depend on lifestyle preferences rather than strictly wealth accumulation.</p>
             </div>
         </div>
@@ -237,6 +237,17 @@ document.querySelectorAll('.calc-ret-trigger').forEach(input => {
     input.addEventListener('input', updateDynamicUI);
 });
 
+// Bar widths are data-driven, so they reach the stylesheet as a custom property.
+// Negative or non-finite values are ignored, leaving the bar at its previous width.
+// True when motion should be skipped: the in-app toggle or the system setting.
+function prefersReducedMotion() {
+    return document.body.classList.contains('reduce-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function setBarWidth(el, pct) {
+    if (el && Number.isFinite(pct) && pct >= 0) el.style.setProperty('--bar-w', pct + '%');
+}
+
 function toggleSL() {
     const sl1 = document.querySelector('input[name="s_has_sl1"]:checked')?.value === 'Yes';
     const sl2 = document.querySelector('input[name="s_has_sl2"]:checked')?.value === 'Yes';
@@ -244,8 +255,8 @@ function toggleSL() {
     const s_f1 = document.getElementById('s_sl_fields1');
     const s_f2 = document.getElementById('s_sl_fields2');
     
-    if(s_f1) s_f1.style.display = sl1 ? 'block' : 'none';
-    if(s_f2) s_f2.style.display = sl2 ? 'block' : 'none';
+    if(s_f1) s_f1.classList.toggle('is-hidden', !sl1);
+    if(s_f2) s_f2.classList.toggle('is-hidden', !sl2);
 }
 
 function handleModeCardKey(e, mode) {
@@ -270,7 +281,7 @@ document.addEventListener('keydown', function(e) {
 function toggleWizSL(personNum) {
     let has = document.querySelector(`input[name="w_has_sl${personNum}"]:checked`)?.value === 'Yes';
     let f = document.getElementById(`w_sl_fields${personNum}`);
-    if (f) f.style.display = has ? 'block' : 'none';
+    if (f) f.classList.toggle('is-hidden', !has);
 }
 
 function togglePen() {
@@ -280,20 +291,21 @@ function togglePen() {
     const s_f1 = document.getElementById('s_pen_fields1');
     const s_f2 = document.getElementById('s_pen_fields2');
     
-    if(s_f1) s_f1.style.display = p1 ? 'block' : 'none';
-    if(s_f2) s_f2.style.display = p2 ? 'block' : 'none';
+    if(s_f1) s_f1.classList.toggle('is-hidden', !p1);
+    if(s_f2) s_f2.classList.toggle('is-hidden', !p2);
 }
 
 function toggleWizPen(personNum) {
     let has = document.querySelector(`input[name="w_has_pen${personNum}"]:checked`)?.value === 'Yes';
     let f = document.getElementById(`w_pen_fields${personNum}`);
-    if (f) f.style.display = has ? 'block' : 'none';
+    if (f) f.classList.toggle('is-hidden', !has);
 }
 
 function switchTab(btnElement, tabId) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); btn.setAttribute('aria-selected', 'false'); });
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     btnElement.classList.add('active');
+    btnElement.setAttribute('aria-selected', 'true');
     const viewSection = document.getElementById('view-' + tabId);
     if(viewSection) viewSection.classList.add('active');
 }
@@ -302,11 +314,11 @@ function toggleDataView(viewType) {
     const graphContainer = document.getElementById('graph-container');
     const tableContainer = document.getElementById('table-container');
     if (viewType === 'graph') {
-        if(graphContainer) graphContainer.style.display = 'flex';
-        if(tableContainer) tableContainer.style.display = 'none';
+        if(graphContainer) graphContainer.classList.remove('is-hidden');
+        if(tableContainer) tableContainer.classList.add('is-hidden');
     } else {
-        if(graphContainer) graphContainer.style.display = 'none';
-        if(tableContainer) tableContainer.style.display = 'flex';
+        if(graphContainer) graphContainer.classList.add('is-hidden');
+        if(tableContainer) tableContainer.classList.remove('is-hidden');
     }
 }
 
@@ -334,26 +346,26 @@ function toggleCompareMode() {
         } catch(e) { console.error("Engine failed on baseline snapshot", e); }
 
         const footer = document.getElementById('compare-actions-footer');
-        if(footer) footer.style.display = 'block';
+        if(footer) footer.classList.remove('is-hidden');
         const summaryBlock = document.getElementById('compare-summary-block');
-        if(summaryBlock) summaryBlock.style.display = 'block';
+        if(summaryBlock) summaryBlock.classList.remove('is-hidden');
 
         // Show the "Your changes" tab when compare mode is on
         const changesTab = document.getElementById('tab-changes');
-        if(changesTab) changesTab.style.display = 'block';
+        if(changesTab) changesTab.classList.remove('is-hidden');
     } else {
         discardWhatIf();
         const footer = document.getElementById('compare-actions-footer');
-        if(footer) footer.style.display = 'none';
+        if(footer) footer.classList.add('is-hidden');
         const summaryBlock = document.getElementById('compare-summary-block');
-        if(summaryBlock) summaryBlock.style.display = 'none';
+        if(summaryBlock) summaryBlock.classList.add('is-hidden');
         baselineInputs = {};
         baselineResults = null;
         updateResultsOverlay('normal');
 
         // Hide the "Your changes" tab when compare mode is off
         const changesTab = document.getElementById('tab-changes');
-        if(changesTab) changesTab.style.display = 'none';
+        if(changesTab) changesTab.classList.add('is-hidden');
 
         // Also switch away from the changes view if it's currently active
         const viewChanges = document.getElementById('view-changes');
@@ -522,7 +534,7 @@ function gatherEngineInputs(sourceDataObj = null) {
 function updateWizardProgress() {
     const progressContainer = document.getElementById('wizard-progress-container');
     if(!progressContainer) return;
-    progressContainer.style.display = currentWizIndex === 0 ? 'none' : 'flex';
+    progressContainer.classList.toggle('is-hidden', currentWizIndex === 0);
     progressContainer.innerHTML = '';
     if(currentWizIndex > 0) {
         for(let i = 1; i < stepSequence.length; i++) {
@@ -589,12 +601,8 @@ function validateStep() {
 
     if (isValid) {
         nextBtn.disabled = false;
-        nextBtn.style.opacity = '1';
-        nextBtn.style.cursor = 'pointer';
     } else {
         nextBtn.disabled = true;
-        nextBtn.style.opacity = '0.5';
-        nextBtn.style.cursor = 'not-allowed';
     }
 }
 
@@ -728,7 +736,7 @@ function setMode(mode) {
     if (mode === 'single') {
         if(modeSingle) { modeSingle.classList.add('active'); modeSingle.setAttribute('aria-pressed', 'true'); }
         if(sideSingle) sideSingle.checked = true;
-        document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.classList.add('is-hidden'));
         document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
         const step1Title = document.getElementById('step1-title');
         if(step1Title) step1Title.textContent = "Let's start with your age";
@@ -741,7 +749,7 @@ function setMode(mode) {
     } else if (mode === 'couple') {
         if(modeCouple) { modeCouple.classList.add('active'); modeCouple.setAttribute('aria-pressed', 'true'); }
         if(sideCouple) sideCouple.checked = true;
-        document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'flex');
+        document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.classList.remove('is-hidden'));
         document.querySelectorAll('.show-partner').forEach(el => el.classList.remove('is-hidden'));
         const step1Title = document.getElementById('step1-title');
         if(step1Title) step1Title.textContent = "Let's start with your ages";
@@ -805,7 +813,7 @@ function closePartnerOnboarding(revertToSingle = true) {
         const modeCouple = document.getElementById('w-mode-couple');
         if(modeSingle) { modeSingle.classList.add('active'); modeSingle.setAttribute('aria-pressed', 'true'); }
         if(modeCouple) { modeCouple.classList.remove('active'); modeCouple.setAttribute('aria-pressed', 'false'); }
-        document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.partner-toggle-wrapper').forEach(el => el.classList.add('is-hidden'));
         document.querySelectorAll('.show-partner').forEach(el => el.classList.add('is-hidden'));
         if (typeof handleInputChanged === 'function') {
             handleInputChanged();
@@ -825,8 +833,8 @@ function resetPartnerOnboardingForm() {
     document.getElementById('partner-pension-balance').value = '';
     document.getElementById('partner-pee').value = '';
     document.getElementById('partner-per').value = '';
-    document.getElementById('partner-sl-details').style.display = 'none';
-    document.getElementById('partner-pension-details').style.display = 'none';
+    document.getElementById('partner-sl-details').classList.add('is-hidden');
+    document.getElementById('partner-pension-details').classList.add('is-hidden');
 }
 
 function renderPartnerWizardProgress() {
@@ -853,7 +861,7 @@ function showPartnerStep(stepNum) {
     // Update buttons
     const backBtn = document.getElementById('partner-back-btn');
     const nextBtn = document.getElementById('partner-next-btn');
-    if (backBtn) backBtn.style.visibility = stepNum > 0 ? 'visible' : 'hidden';
+    if (backBtn) backBtn.classList.toggle('is-invisible', !(stepNum > 0));
     if (nextBtn) nextBtn.textContent = stepNum === 3 ? 'Finish' : 'Next';
 
     // Reset button state and validate
@@ -938,7 +946,7 @@ function togglePartnerSL() {
     const hasSL = document.querySelector('input[name="partner-has-sl"]:checked')?.value;
     const slDetails = document.getElementById('partner-sl-details');
     if (slDetails) {
-        slDetails.style.display = hasSL === 'Yes' ? 'block' : 'none';
+        slDetails.classList.toggle('is-hidden', !(hasSL === 'Yes'));
     }
     validatePartnerStep();
 }
@@ -947,7 +955,7 @@ function togglePartnerPen() {
     const hasPension = document.querySelector('input[name="partner-has-pension"]:checked')?.value;
     const pensionDetails = document.getElementById('partner-pension-details');
     if (pensionDetails) {
-        pensionDetails.style.display = hasPension === 'Yes' ? 'block' : 'none';
+        pensionDetails.classList.toggle('is-hidden', !(hasPension === 'Yes'));
     }
     validatePartnerStep();
     // Focus first field if showing details
@@ -986,11 +994,7 @@ function validatePartnerStep() {
     if (nextBtn) {
         nextBtn.disabled = !isValid;
         if (isValid) {
-            nextBtn.style.opacity = '1';
-            nextBtn.style.cursor = 'pointer';
         } else {
-            nextBtn.style.opacity = '0.5';
-            nextBtn.style.cursor = 'not-allowed';
         }
     }
 }
@@ -1227,7 +1231,7 @@ function openWizard(origin = 'external') {
     let step0 = document.getElementById('step-0');
     if(step0) step0.classList.add('active');
     let wizBack = document.getElementById('wiz-back');
-    if(wizBack) wizBack.style.visibility = 'hidden';
+    if(wizBack) wizBack.classList.add('is-invisible');
     let wizNext = document.getElementById('wiz-next');
     if(wizNext) wizNext.innerText = "Next";
 
@@ -1275,7 +1279,7 @@ function wizardStep(dir) {
     if (scrollEl) scrollEl.scrollTop = 0;
 
     let wizBack = document.getElementById('wiz-back');
-    if(wizBack) wizBack.style.visibility = currentWizIndex === 0 ? 'hidden' : 'visible';
+    if(wizBack) wizBack.classList.toggle('is-invisible', currentWizIndex === 0);
     let wizNext = document.getElementById('wiz-next');
     if(wizNext) wizNext.innerText = currentWizIndex === stepSequence.length - 1 ? "Finish" : "Next";
 
@@ -1394,7 +1398,13 @@ function saveWizardAndClose() {
     }
 }
 
-function openSettings() { 
+// tabNum: 1 = Your estimates (default), 2 = Tax rules, 3 = Other rules
+function openSettings(tabNum = 1) { 
+    const tabRadio = document.getElementById('settings_tab_' + tabNum);
+    if (tabRadio) {
+        tabRadio.checked = true;
+        window.switchSettingsTab(tabNum, tabRadio.nextElementSibling);
+    }
     const settingsInputs = document.querySelectorAll('#settings-overlay input');
     settingsInputs.forEach(input => {
         savedSettings[input.id] = (input.type === 'checkbox' || input.type === 'radio') ? input.checked : input.value;
@@ -1425,7 +1435,7 @@ function saveSettings() {
 window.addEventListener('load', function() {
     // Hide the "Your changes" tab initially (only show when compare mode is active)
     const changesTab = document.getElementById('tab-changes');
-    if(changesTab) changesTab.style.display = 'none';
+    if(changesTab) changesTab.classList.add('is-hidden');
 
     const sidebarInputs = document.querySelectorAll('.sidebar input, .sidebar select');
     sidebarInputs.forEach(input => {
@@ -1528,16 +1538,25 @@ function setFieldValidity(inputEl, isValid, message) {
     if (!errEl) {
         errEl = document.createElement('div');
         errEl.className = 'field-error-text';
+        errEl.id = 'err_' + (inputEl.id || inputEl.name);
         wrapper.insertAdjacentElement('afterend', errEl);
     }
+    // a11y: tie the message to the field (or the radio group) so it is announced with it
+    const describedEl = inputEl.type === 'radio' ? wrapper : inputEl;
+    const describedBy = (describedEl.getAttribute('aria-describedby') || '').split(' ').filter(id => id && id !== errEl.id);
     if (isValid) {
         wrapper.classList.remove('has-error');
         errEl.classList.remove('visible');
+        describedEl.removeAttribute('aria-invalid');
     } else {
         wrapper.classList.add('has-error');
         errEl.textContent = message || 'This field is required.';
         errEl.classList.add('visible');
+        describedEl.setAttribute('aria-invalid', 'true');
+        describedBy.push(errEl.id);
     }
+    if (describedBy.length) describedEl.setAttribute('aria-describedby', describedBy.join(' '));
+    else describedEl.removeAttribute('aria-describedby');
 }
 
 function validateRequiredFields() {
@@ -1658,10 +1677,10 @@ function updateProjectionsOverlay(state) {
 
     if (blockedMsg) {
         blockedMsg.textContent = INCOMPLETE_DATA_MESSAGE;
-        blockedMsg.style.display = isBlocked ? 'flex' : 'none';
+        blockedMsg.classList.toggle('is-hidden', !isBlocked);
     }
-    if (mainWrapper) mainWrapper.style.display = isBlocked ? 'none' : 'flex';
-    if (controlsRow) controlsRow.style.display = isBlocked ? 'none' : '';
+    if (mainWrapper) mainWrapper.classList.toggle('is-hidden', isBlocked);
+    if (controlsRow) controlsRow.classList.toggle('is-hidden', isBlocked);
 }
 
 function updateResultsOverlay(state) {
@@ -1711,8 +1730,8 @@ function setPropertyAffordability(isAffordable) {
         if (!container) return;
         const realPanel = container.querySelector('.prop-panel:not(.prop-panel-empty)');
         const emptyPanel = container.querySelector('.prop-panel-empty');
-        if (realPanel) realPanel.style.display = isAffordable ? 'flex' : 'none';
-        if (emptyPanel) emptyPanel.style.display = isAffordable ? 'none' : 'flex';
+        if (realPanel) realPanel.classList.toggle('is-off', !isAffordable);
+        if (emptyPanel) emptyPanel.classList.toggle('is-off', isAffordable);
     });
 }
 
@@ -1721,8 +1740,8 @@ function setPropertyAffordability(isAffordable) {
 function setWealthAffordability(isAffordable) {
     const barsCard = document.getElementById('wealth-bars-card');
     const emptyCard = document.getElementById('wealth-empty-card');
-    if (barsCard) barsCard.style.display = isAffordable ? 'flex' : 'none';
-    if (emptyCard) emptyCard.style.display = isAffordable ? 'none' : 'flex';
+    if (barsCard) barsCard.classList.toggle('is-off', !isAffordable);
+    if (emptyCard) emptyCard.classList.toggle('is-off', isAffordable);
 }
 
 function runCalculation() {
@@ -1796,25 +1815,25 @@ function runCalculation() {
             titleText = `On track to buy around age ${age1AtPurc}`;
             descText = `This home could become affordable around <strong>${purchaseYear}</strong>, when your partner is around <strong>${age2AtPurc}</strong>.`;
         }
-        if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); timingContainer.style.display = 'flex'; }
+        if(timingContainer) { timingContainer.innerHTML = timingTemplate(titleText, descText); }
     } else {
-        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit and income, this home looks unlikely to be affordable before retirement.`); timingContainer.style.display = 'flex'; }
+        if(timingContainer) { timingContainer.innerHTML = timingUnaffordableTemplate(`Based on your current deposit and income, this home looks unlikely to be affordable before retirement.`); }
     }
 
     let maxW = Math.max(buyEndVal, rentEndVal, 1);
     const uiBuyWealth = document.getElementById('ui-buy-wealth');
     if(uiBuyWealth) uiBuyWealth.innerText = formatSigFigDown(buyEndVal);
     const uiBuyBar = document.getElementById('ui-buy-bar');
-    if(uiBuyBar) uiBuyBar.style.width = `${(buyEndVal / maxW) * 100}%`;
+    setBarWidth(uiBuyBar, (buyEndVal / maxW) * 100);
     const uiRentWealth = document.getElementById('ui-rent-wealth');
     if(uiRentWealth) uiRentWealth.innerText = formatSigFigDown(rentEndVal);
     const uiRentBar = document.getElementById('ui-rent-bar');
-    if(uiRentBar) uiRentBar.style.width = `${(rentEndVal / maxW) * 100}%`;
+    setBarWidth(uiRentBar, (rentEndVal / maxW) * 100);
 
     let benBox = document.getElementById('ui-benefit-box');
     if(benBox) benBox.classList.remove('negative', 'neutral');
     let baseDelta = document.getElementById('ui-compare-delta');
-    if(baseDelta) baseDelta.style.display = 'none';
+    if(baseDelta) baseDelta.classList.add('is-hidden');
 
     const uiBenefitVal = document.getElementById('ui-benefit-val');
     const absThreshold = 100;
@@ -1864,19 +1883,19 @@ function runCalculation() {
         let feesPct = totalCostR > 0 ? (feesR / totalCostR) * 100 : 0;
         
         let costPriceBar = document.querySelector('#active-prop-cost .cost-price') || document.getElementById('ui-cost-price-bar');
-        if(costPriceBar) costPriceBar.style.width = `${pricePct}%`;
+        setBarWidth(costPriceBar, pricePct);
         let costSdltBar = document.querySelector('#active-prop-cost .cost-sdlt') || document.getElementById('ui-cost-sdlt-bar');
-        if(costSdltBar) costSdltBar.style.width = `${sdltPct}%`;
+        setBarWidth(costSdltBar, sdltPct);
         let costFeesBar = document.querySelector('#active-prop-cost .cost-fees') || document.getElementById('ui-cost-fees-bar');
-        if(costFeesBar) costFeesBar.style.width = `${feesPct}%`;
+        setBarWidth(costFeesBar, feesPct);
 
         let mortPct = totalCostR > 0 ? (mortgageR / totalCostR) * 100 : 0;
         let cashPct = totalCostR > 0 ? (cashNeededR / totalCostR) * 100 : 0;
         
         let fundMortBar = document.querySelector('#active-prop-funding .fund-mortgage') || document.getElementById('ui-fund-mort-bar');
-        if(fundMortBar) fundMortBar.style.width = `${mortPct}%`;
+        setBarWidth(fundMortBar, mortPct);
         let fundCashBar = document.querySelector('#active-prop-funding .fund-cash') || document.getElementById('ui-fund-cash-bar');
-        if(fundCashBar) fundCashBar.style.width = `${cashPct}%`;
+        setBarWidth(fundCashBar, cashPct);
     }
 
     const cLabels = results.labels.slice(0, maxIdx);
@@ -2073,23 +2092,15 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                         })();
 
                         if (context.tooltip.opacity === 0) {
-                            tooltipEl.style.display = 'none';
+                            tooltipEl.classList.add('is-hidden');
                             return;
                         }
 
-                        let tooltipHTML = '<div style="' +
-                            'background-color: ' + (isDarkMode ? '#1a1a1a' : '#fff') + '; ' +
-                            'border: 1px solid ' + (isDarkMode ? '#444' : '#ddd') + '; ' +
-                            'border-radius: 8px; ' +
-                            'padding: 12px 16px; ' +
-                            'font-family: inherit; ' +
-                            'font-size: 13px; ' +
-                            'box-shadow: 0 2px 8px ' + (isDarkMode ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.1)') + '; ' +
-                            '">';
+                        let tooltipHTML = '<div class="chart-tip">';
 
                         if (context.tooltip.title && context.tooltip.title.length > 0) {
                             const hoveredAge = Number(context.tooltip.title[0]);
-                            tooltipHTML += '<div style="font-weight: bold; margin-bottom: 8px; color: ' + (isDarkMode ? '#fff' : '#000') + ';">Age ' +
+                            tooltipHTML += '<div class="chart-tip-title">Age ' +
                                 context.tooltip.title[0] + '</div>';
 
                             // Show event if hovering over purchase or retirement age
@@ -2097,16 +2108,16 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             const isRetirement = hoveredAge === Number(retirementAge);
 
                             if (isPurchase && isRetirement) {
-                                tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: ' + (isDarkMode ? 'rgba(144, 202, 249, 0.1)' : 'rgba(0, 58, 93, 0.05)') + '; border-radius: 4px; color: ' + (isDarkMode ? '#90caf9' : '#003a5d') + ';">';
-                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (isDarkMode ? '#90caf9' : '#003a5d') + '" style="flex-shrink: 0;"><path d="' + iconPaths.property + '"/></svg>';
+                                tooltipHTML += '<div class="chart-tip-event">';
+                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="chart-tip-icon"><path d="' + iconPaths.property + '"/></svg>';
                                 tooltipHTML += '<strong>Purchase & Retirement</strong></div>';
                             } else if (isPurchase) {
-                                tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: ' + (isDarkMode ? 'rgba(144, 202, 249, 0.1)' : 'rgba(0, 58, 93, 0.05)') + '; border-radius: 4px; color: ' + (isDarkMode ? '#90caf9' : '#003a5d') + ';">';
-                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (isDarkMode ? '#90caf9' : '#003a5d') + '" style="flex-shrink: 0;"><path d="' + iconPaths.property + '"/></svg>';
+                                tooltipHTML += '<div class="chart-tip-event">';
+                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="chart-tip-icon"><path d="' + iconPaths.property + '"/></svg>';
                                 tooltipHTML += '<strong>Property Purchase</strong></div>';
                             } else if (isRetirement) {
-                                tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: ' + (isDarkMode ? 'rgba(255, 213, 79, 0.1)' : 'rgba(191, 161, 93, 0.1)') + '; border-radius: 4px; color: ' + (isDarkMode ? '#ffd54f' : '#8a733e') + ';">';
-                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (isDarkMode ? '#ffd54f' : '#8a733e') + '" style="flex-shrink: 0;"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>';
+                                tooltipHTML += '<div class="chart-tip-event chart-tip-event-retire">';
+                                tooltipHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="chart-tip-icon"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>';
                                 tooltipHTML += '<strong>Retirement</strong></div>';
                             }
                         }
@@ -2120,12 +2131,12 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             const roundedValue = roundTo3SigFigs(valueOnly);
                             const formattedValue = formatMoney.format(roundedValue);
 
-                            tooltipHTML += '<div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; color: ' + (isDarkMode ? '#e0e0e0' : '#333') + ';">';
+                            tooltipHTML += '<div class="chart-tip-row">';
 
                             if (isRenting) {
-                                tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/><circle cx="20" cy="6" r="5" fill="' + lineColor + '"/><circle cx="20" cy="6" r="5" fill="none" stroke="white" stroke-width="1.5"/></svg>';
+                                tooltipHTML += '<svg width="40" height="12" class="chart-tip-line"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/><circle cx="20" cy="6" r="5" fill="' + lineColor + '"/><circle cx="20" cy="6" r="5" fill="none" stroke="white" stroke-width="1.5"/></svg>';
                             } else {
-                                tooltipHTML += '<svg width="40" height="12" style="vertical-align: middle;"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/></svg>';
+                                tooltipHTML += '<svg width="40" height="12" class="chart-tip-line"><line x1="0" y1="6" x2="40" y2="6" stroke="' + lineColor + '" stroke-width="3"/></svg>';
                             }
 
                             tooltipHTML += '<div>' + (isRenting ? 'Total Wealth (Renting)' : 'Total Wealth (Buying)') + ': <strong>' + formattedValue + '</strong></div></div>';
@@ -2134,10 +2145,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                         tooltipHTML += '</div>';
 
                         tooltipEl.innerHTML = tooltipHTML;
-                        tooltipEl.style.display = 'block';
-                        tooltipEl.style.position = 'fixed';
-                        tooltipEl.style.pointerEvents = 'none';
-                        tooltipEl.style.zIndex = '1000';
+                        tooltipEl.classList.remove('is-hidden');
 
                         const canvasRect = ctx.canvas.getBoundingClientRect();
                         const tooltipWidth = tooltipEl.offsetWidth;
@@ -2156,8 +2164,8 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
                             y = canvasRect.top + context.tooltip.caretY + 8;
                         }
 
-                        tooltipEl.style.left = x + 'px';
-                        tooltipEl.style.top = y + 'px';
+                        tooltipEl.style.setProperty('--tip-x', x + 'px');
+                        tooltipEl.style.setProperty('--tip-y', y + 'px');
                     }
                 }
             },
@@ -2218,7 +2226,7 @@ function drawChartAndTable(labels, buyData, rentData, purchaseAge, retirementAge
             <td><div class="age-cell">${age}${mobileEventHTML}</div></td>
             <td>${formatMoney.format(roundTo3SigFigs(buyData[i]))}</td>
             <td>${formatMoney.format(roundTo3SigFigs(rentData[i]))}</td>
-            <td class="event-col-desktop" style="text-align: center;">${eventIconHTML ? `<div class="event-text">${eventIconHTML}<div>${eventText}</div></div>` : eventText}</td>
+            <td class="event-col-desktop">${eventIconHTML ? `<div class="event-text">${eventIconHTML}<div>${eventText}</div></div>` : eventText}</td>
         </tr>`;
     }
     

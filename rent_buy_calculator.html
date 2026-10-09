@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rent vs buy calculator</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="icon" type="image/png" href="images/favicon.png">
     <script src="javascript/helpText.js"></script>
     
-    <link rel="stylesheet" href="css/style.css?v=2">
+    <link rel="stylesheet" href="css/style.css?v=5">
     <noscript>
         <link rel="stylesheet" href="css/noscript.css">
     </noscript>
@@ -30,6 +30,7 @@
 <body class="calc-body">
     
     <header class="mobile-header">
+        <h1 class="sr-only">Rent vs buy calculator</h1>
         <a href="#" class="logo-link" onclick="event.preventDefault(); document.getElementById('close-calc-modal').classList.add('active');">
             <img src="images/PFP_logo_icon_dark.png" alt="PFP Logo">
             <div class="logo-text">
@@ -45,14 +46,14 @@
             <button class="settings-btn" onclick="openSettings()">Rates and rules</button>
             <button class="settings-btn" onclick="document.getElementById('how-it-works-modal').classList.add('active')">How it works</button>
             <button class="settings-btn" onclick="document.getElementById('a11y-overlay').classList.add('active')">Accessibility</button>
-            <button class="close-btn close-calc-btn" onclick="document.getElementById('close-calc-modal').classList.add('active');" aria-label="Close calculator" style="color: white;">
+            <button class="close-btn close-calc-btn" onclick="document.getElementById('close-calc-modal').classList.add('active');" aria-label="Close calculator">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
         <div class="mobile-only">
-            <button id="calc-burger-btn" class="burger-btn" aria-label="Toggle menu" aria-expanded="false" style="min-height: 44px; min-width: 44px;" onclick="const menu = document.getElementById('calc-mobile-menu'); menu.classList.toggle('open'); this.setAttribute('aria-expanded', menu.classList.contains('open') ? 'true' : 'false');">
+            <button id="calc-burger-btn" class="burger-btn" aria-label="Menu" aria-expanded="false" aria-controls="calc-mobile-menu" onclick="const menu = document.getElementById('calc-mobile-menu'); menu.classList.toggle('open'); this.setAttribute('aria-expanded', menu.classList.contains('open') ? 'true' : 'false');">
                 <svg class="hamburger-icon" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
@@ -60,9 +61,9 @@
         </div>
     </header>
 
-    <div id="calc-mobile-menu" class="calc-mobile-menu-panel">
+    <div id="calc-mobile-menu" class="calc-mobile-menu-panel" role="region" aria-label="Menu">
         <div class="mobile-menu-item is-disabled" id="compare-toggle-mobile" title="Fill in all the required fields to compare a scenario">
-            <label for="compare-switch-mob" style="margin:0; cursor:pointer;">Compare scenarios</label>
+            <label for="compare-switch-mob">Compare scenarios</label>
             <div class="compare-toggle">
                 <input type="checkbox" id="compare-switch-mob" disabled onchange="document.getElementById('compare-switch').checked = this.checked; toggleCompareMode(); document.getElementById('compare-switch').dispatchEvent(new Event('change'));">
             </div>
@@ -84,28 +85,29 @@
     </div>
 
     <noscript>
-        <div class="wrapper" style="background: #f5f5f5; min-height: 100vh; display: flex; flex-direction: column;">
-            <div style="padding: 20px 30px; background: #003a5d; color: white; display: flex; justify-content: space-between; align-items: center;">
-                <h1 style="margin: 0; font-size: 1.2rem;">Rent vs buy calculator</h1>
-                <a href="index.html" style="color: white; text-decoration: none; font-weight: bold;">← Back</a>
+        <div class="wrapper noscript-wrapper">
+            <div class="noscript-bar">
+                <h1>Rent vs buy calculator</h1>
+                <a href="index.html">← Back</a>
             </div>
-            <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
-                <div style="max-width: 600px; text-align: center; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <h2 style="color: #003a5d; font-size: 1.5rem; margin-bottom: 20px;">Calculator not available</h2>
-                    <p style="color: #555; font-size: 1rem; line-height: 1.6; margin-bottom: 25px;">
+            <div class="noscript-center">
+                <div class="noscript-box">
+                    <h2>Calculator not available</h2>
+                    <p class="noscript-lead">
                         The interactive calculator requires JavaScript to be enabled in your browser. This allows us to run complex financial projections tailored to your circumstances.
                     </p>
-                    <div style="background: #f0f4f8; padding: 20px; border-left: 4px solid #003a5d; text-align: left; margin-bottom: 30px;">
-                        <p style="color: #333; margin: 0; font-size: 0.95rem;"><strong>Alternative ways to explore rent vs buy:</strong></p>
-                        <ul style="color: #555; margin: 12px 0 0 0; padding-left: 20px;">
-                            <li>Read our comprehensive report on renting vs buying</li>
-                            <li>View detailed case studies showing real scenarios</li>
+                    <div class="noscript-alt">
+                        <p><strong>Alternative ways to explore rent vs buy:</strong></p>
+                        <ul>
+                            <li><a href="index.html#report-summary">Read about our report on renting vs buying</a></li>
+                            <li><a href="scenario-alex.html">Read James's story</a>, a worked scenario</li>
+                            <li><a href="scenario_becky.html">Read Becky's story</a>, a worked scenario</li>
                             <li>Enable JavaScript to use the interactive calculator</li>
                         </ul>
                     </div>
-                    <p style="color: #777; font-size: 0.9rem; margin: 0;">
+                    <p class="noscript-foot">
                         If you'd like to enable JavaScript, most modern browsers allow this through Settings or Preferences.
-                        If you're having trouble, please contact our support team.
+                        Then reload this page to use the calculator.
                     </p>
                 </div>
             </div>
@@ -114,16 +116,16 @@
 
     <div class="wrapper">
         
-        <div class="sidebar" id="main-sidebar">
+        <div class="sidebar" id="main-sidebar" role="region" aria-label="Your details">
             <div class="sidebar-scroll-area">
                 <div class="sidebar-header">
                     <h2 id="sidebar-title">Current scenario</h2>
-                    <label for="side_mode" style="display: block; margin-bottom: 8px; font-weight: 500;">Buying for</label>
-                    <div class="toggle-container" style="width: 100%;">
+                    <label class="side-mode-label" id="lbl_side_mode">Buying for</label>
+                    <div class="toggle-container toggle-pad-md" role="radiogroup" aria-labelledby="lbl_side_mode">
                         <input type="radio" name="side_mode" id="side_single" value="single" class="compare-track" data-label="Buying for" onchange="setMode('single')">
-                        <label for="side_single" style="padding: 10px 15px;">Just me</label>
+                        <label for="side_single">Just me</label>
                         <input type="radio" name="side_mode" id="side_couple" value="couple" class="compare-track" data-label="Buying for" onchange="setMode('couple')">
-                        <label for="side_couple" style="padding: 10px 15px;">Me and a partner</label>
+                        <label for="side_couple">Me and a partner</label>
                     </div>
                 </div>
 
@@ -131,20 +133,20 @@
                     <summary>Buying costs</summary>
                     <div class="accordion-content">
                         <div class="input-row-single">
-                            <label>Current property price</label>
+                            <label for="s_hp">Current property price</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m compare-track" data-label="Current property price"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Purchase costs</label>
+                            <label for="s_fees">Purchase costs</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_fees" placeholder="e.g. 5,000" class="comma-format clamp-10m compare-track" data-label="Purchase costs"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Annual maintenance</label>
+                            <label for="s_maint">Annual maintenance</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_maint" placeholder="e.g. 5,500" class="comma-format clamp-10m has-suffix compare-track" data-label="Annual maintenance"><span class="suffix">p.a.</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label>First-time buyer?</label>
-                            <div class="toggle-container">
+                            <label id="lbl_s_ftb">First-time buyer?</label>
+                            <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_s_ftb">
                                 <input type="radio" name="s_ftb" id="s_ftb_y" value="Yes" class="compare-track" data-label="First-time buyer" onchange="handleInputChanged()">
                                 <label for="s_ftb_y">Yes</label>
                                 <input type="radio" name="s_ftb" id="s_ftb_n" value="No" class="compare-track" data-label="First-time buyer" onchange="handleInputChanged()">
@@ -158,7 +160,7 @@
                     <summary>Renting costs</summary>
                     <div class="accordion-content">
                         <div class="input-row-single">
-                            <label>Rent</label>
+                            <label for="s_rent">Rent</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_rent" placeholder="e.g. 820" class="comma-format clamp-1m has-suffix compare-track" data-label="Monthly rent"><span class="suffix">/ month</span></div>
                         </div>
                     </div>
@@ -168,11 +170,11 @@
                     <summary>Living expenses</summary>
                     <div class="accordion-content">
                         <div class="input-row-single">
-                            <label><span id="lbl_s_ex_pre">Living expenses pre-retirement</span></label>
+                            <label for="s_ex_pre"><span id="lbl_s_ex_pre">Living expenses pre-retirement</span></label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_ex_pre" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix compare-track" data-label="Pre-retirement expenses"><span class="suffix">/ month</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label><span id="lbl_s_ex_post">Living expenses post-retirement</span></label>
+                            <label for="s_ex_post"><span id="lbl_s_ex_post">Living expenses post-retirement</span></label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_ex_post" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix compare-track" data-label="Post-retirement expenses"><span class="suffix">/ month</span></div>
                         </div>
                     </div>
@@ -181,7 +183,7 @@
                 <details>
                     <summary>Personal details</summary>
                     <div class="accordion-content">
-                        <div class="tab-navigation partner-toggle-wrapper">
+                        <div class="tab-navigation partner-toggle-wrapper" role="radiogroup" aria-label="Whose income details to show">
                             <input type="radio" name="s_prof1_tab" id="s_prof1_you" onchange="switchPerson('you')">
                             <label for="s_prof1_you">You</label>
                             <input type="radio" name="s_prof1_tab" id="s_prof1_part" onchange="switchPerson('partner')">
@@ -189,51 +191,51 @@
                         </div>
 
                         <div class="input-row-single show-you">
-                            <label>Current age</label>
+                            <label for="s_age1">Current age</label>
                             <div class="input-wrapper"><input type="number" id="s_age1" placeholder="e.g. 29" class="clamp-age calc-ret-trigger compare-track" data-label="Current age (You)"></div>
                         </div>
                         <div class="input-row-single show-partner is-hidden">
-                            <label>Current age</label>
+                            <label for="s_age2">Current age</label>
                             <div class="input-wrapper"><input type="number" id="s_age2" placeholder="e.g. 31" class="clamp-age calc-ret-trigger compare-track" data-label="Current age (Partner)"></div>
                         </div>
                         
                         <div class="input-row-single show-you">
-                            <label>Retirement age</label>
+                            <label for="s_ret1">Retirement age</label>
                             <div class="input-wrapper"><input type="number" id="s_ret1" placeholder="e.g. 68" class="clamp-ret-age calc-ret-trigger compare-track" data-label="Retirement age (You)"></div>
                         </div>
                         <div class="input-row-single show-partner is-hidden">
-                            <label>Retirement age (calculated)</label>
+                            <label for="s_ret2">Retirement age (calculated)</label>
                             <div class="input-wrapper wrapper-readonly"><input type="text" id="s_ret2" placeholder="" class="readonly-calc" readonly tabindex="-1" title="Calculated automatically"></div>
                         </div>
 
                         <div class="input-row-single show-you">
-                            <label>Salary before tax</label>
+                            <label for="s_sal1">Salary before tax</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sal1" placeholder="e.g. 42,000" class="comma-format clamp-1m has-suffix compare-track" data-label="Salary (You)"><span class="suffix">p.a.</span></div>
                         </div>
                         <div class="input-row-single show-partner is-hidden">
-                            <label>Salary before tax</label>
+                            <label for="s_sal2">Salary before tax</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sal2" placeholder="e.g. 42,000" class="comma-format clamp-1m has-suffix compare-track" data-label="Salary (Partner)"><span class="suffix">p.a.</span></div>
                         </div>
 
-                        <div class="sub-group-title" style="margin-top: 20px;">Student loan</div>
+                        <div class="sub-group-title sub-group-spaced">Student loan</div>
                         
                         <div class="show-you">
                             <div class="input-row-single">
-                                <label>Student loan to repay?</label>
-                                <div class="toggle-container">
+                                <label id="lbl_s_has_sl1">Student loan to repay?</label>
+                                <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_s_has_sl1">
                                     <input type="radio" name="s_has_sl1" id="s_has_sl1_y" value="Yes" class="compare-track" data-label="Has student loan (You)" onchange="toggleSL()">
                                     <label for="s_has_sl1_y">Yes</label>
                                     <input type="radio" name="s_has_sl1" id="s_has_sl1_n" value="No" class="compare-track" data-label="Has student loan (You)" onchange="toggleSL()">
                                     <label for="s_has_sl1_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_sl_fields1" style="display: none;">
+                            <div class="is-hidden" id="s_sl_fields1">
                                 <div class="input-row-single">
-                                    <label>Loan debt</label>
+                                    <label for="s_sl1">Loan debt</label>
                                     <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sl1" placeholder="e.g. 20,000" class="comma-format clamp-1m compare-track" data-label="Loan debt (You)"></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Loan plan</label>
+                                    <label for="s_slp1">Loan plan</label>
                                     <div class="input-wrapper">
                                         <select id="s_slp1" class="compare-track" data-label="Loan plan (You)">
                                             <option value="" disabled selected>Select plan</option>
@@ -246,21 +248,21 @@
 
                         <div class="show-partner is-hidden">
                             <div class="input-row-single">
-                                <label>Student loan to repay?</label>
-                                <div class="toggle-container">
+                                <label id="lbl_s_has_sl2">Student loan to repay?</label>
+                                <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_s_has_sl2">
                                     <input type="radio" name="s_has_sl2" id="s_has_sl2_y" value="Yes" class="compare-track" data-label="Has student loan (Partner)" onchange="toggleSL()">
                                     <label for="s_has_sl2_y">Yes</label>
                                     <input type="radio" name="s_has_sl2" id="s_has_sl2_n" value="No" class="compare-track" data-label="Has student loan (Partner)" onchange="toggleSL()">
                                     <label for="s_has_sl2_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_sl_fields2" style="display: none;">
+                            <div class="is-hidden" id="s_sl_fields2">
                                 <div class="input-row-single">
-                                    <label>Loan debt</label>
+                                    <label for="s_sl2">Loan debt</label>
                                     <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sl2" placeholder="e.g. 20,000" class="comma-format clamp-1m compare-track" data-label="Loan debt (Partner)"></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Loan plan</label>
+                                    <label for="s_slp2">Loan plan</label>
                                     <div class="input-wrapper">
                                         <select id="s_slp2" class="compare-track" data-label="Loan plan (Partner)">
                                             <option value="" disabled selected>Select plan</option>
@@ -276,7 +278,7 @@
                 <details>
                     <summary>Pensions</summary>
                     <div class="accordion-content">
-                        <div class="tab-navigation partner-toggle-wrapper">
+                        <div class="tab-navigation partner-toggle-wrapper" role="radiogroup" aria-label="Whose pension details to show">
                             <input type="radio" name="s_prof2_tab" id="s_prof2_you" onchange="switchPerson('you')">
                             <label for="s_prof2_you">You</label>
                             <input type="radio" name="s_prof2_tab" id="s_prof2_part" onchange="switchPerson('partner')">
@@ -285,34 +287,34 @@
                         
                         <div class="show-you">
                             <div class="input-row-single">
-                                <label>Do you have a pension?</label>
-                                <div class="toggle-container">
+                                <label id="lbl_s_has_pen1">Do you have a pension?</label>
+                                <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_s_has_pen1">
                                     <input type="radio" name="s_has_pen1" id="s_has_pen1_y" value="Yes" class="compare-track" data-label="Has pension (You)" onchange="togglePen()">
                                     <label for="s_has_pen1_y">Yes</label>
                                     <input type="radio" name="s_has_pen1" id="s_has_pen1_n" value="No" class="compare-track" data-label="Has pension (You)" onchange="togglePen()">
                                     <label for="s_has_pen1_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_pen_fields1" style="display: none;">
+                            <div class="is-hidden" id="s_pen_fields1">
                                 <div class="input-row-single">
-                                    <label>Current value</label>
+                                    <label for="s_pval1">Current value</label>
                                     <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_pval1" placeholder="e.g. 25,000" class="comma-format clamp-10m compare-track" data-label="Pension value (You)"></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Your contribution</label>
+                                    <label for="s_pee1">Your contribution</label>
                                     <div class="input-wrapper"><input type="number" id="s_pee1" placeholder="e.g. 5" class="clamp-100 has-suffix compare-track" data-label="Your contribution (You)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Employer contribution</label>
+                                    <label for="s_per1">Employer contribution</label>
                                     <div class="input-wrapper"><input type="number" id="s_per1" placeholder="e.g. 3" class="clamp-100 has-suffix compare-track" data-label="Employer contribution (You)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>State pension</label>
+                                    <label for="s_sp1">State pension</label>
                                     <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sp1" placeholder="e.g. 12,000" class="comma-format clamp-1m has-suffix compare-track" data-label="State pension (You)"><span class="suffix">p.a.</span></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Spend tax free cash at retirement?</label>
-                                    <div class="input-wrapper" style="width: 100%;">
+                                    <label for="s_tfc1">Spend tax free cash at retirement?</label>
+                                    <div class="input-wrapper">
                                         <select id="s_tfc1" class="compare-track" data-label="Spend tax free cash (You)">
                                             <option value="" disabled>Select option</option>
                                             <option value="Yes">Yes, for a one-off expense</option>
@@ -325,34 +327,34 @@
 
                         <div class="show-partner is-hidden">
                             <div class="input-row-single">
-                                <label>Do they have a pension?</label>
-                                <div class="toggle-container">
+                                <label id="lbl_s_has_pen2">Do they have a pension?</label>
+                                <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_s_has_pen2">
                                     <input type="radio" name="s_has_pen2" id="s_has_pen2_y" value="Yes" class="compare-track" data-label="Has pension (Partner)" onchange="togglePen()">
                                     <label for="s_has_pen2_y">Yes</label>
                                     <input type="radio" name="s_has_pen2" id="s_has_pen2_n" value="No" class="compare-track" data-label="Has pension (Partner)" onchange="togglePen()">
                                     <label for="s_has_pen2_n">No</label>
                                 </div>
                             </div>
-                            <div id="s_pen_fields2" style="display: none;">
+                            <div class="is-hidden" id="s_pen_fields2">
                                 <div class="input-row-single">
-                                    <label>Current value</label>
+                                    <label for="s_pval2">Current value</label>
                                     <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_pval2" placeholder="e.g. 25,000" class="comma-format clamp-10m compare-track" data-label="Pension value (Partner)"></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Your partner's contribution</label>
+                                    <label for="s_pee2">Your partner's contribution</label>
                                     <div class="input-wrapper"><input type="number" id="s_pee2" placeholder="e.g. 5" class="clamp-100 has-suffix compare-track" data-label="Your partner's contribution (Partner)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Partner's employer contribution</label>
+                                    <label for="s_per2">Partner's employer contribution</label>
                                     <div class="input-wrapper"><input type="number" id="s_per2" placeholder="e.g. 3" class="clamp-100 has-suffix compare-track" data-label="Partner's employer contribution (Partner)"><span class="suffix">%</span></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>State pension</label>
+                                    <label for="s_sp2">State pension</label>
                                     <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_sp2" placeholder="e.g. 12,000" class="comma-format clamp-1m has-suffix compare-track" data-label="State pension (Partner)"><span class="suffix">p.a.</span></div>
                                 </div>
                                 <div class="input-row-single">
-                                    <label>Spend tax free cash at retirement?</label>
-                                    <div class="input-wrapper" style="width: 100%;">
+                                    <label for="s_tfc2">Spend tax free cash at retirement?</label>
+                                    <div class="input-wrapper">
                                         <select id="s_tfc2" class="compare-track" data-label="Spend tax free cash (Partner)">
                                             <option value="" disabled>Select option</option>
                                             <option value="Yes">Yes, for a one-off expense</option>
@@ -369,26 +371,26 @@
                     <summary>Household finances</summary>
                     <div class="accordion-content">
                         <div class="input-row-single">
-                            <label>Household cash savings</label>
+                            <label for="s_cash">Household cash savings</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="s_cash" placeholder="e.g. 5,000" class="comma-format clamp-1m compare-track" data-label="Household cash savings"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Proportion of spare income to invest into pensions</label>
+                            <label for="s_save_pen">Proportion of spare income to invest into pensions</label>
                             <div class="input-wrapper"><input type="number" id="s_save_pen" placeholder="e.g. 0" class="clamp-100 has-suffix compare-track" data-label="Spare income to pension"><span class="suffix">%</span></div>
                         </div>
                     </div>
                 </details>
             </div>
 
-            <div id="compare-actions-footer" class="compare-actions-footer" style="display: none;">
+            <div id="compare-actions-footer" class="compare-actions-footer is-hidden">
                 <button id="make-base-btn" class="btn-primary btn-make-base" onclick="window.handleSaveBaseScenario()" disabled>Save changes as original scenario</button>
                 <a href="#" id="discard-whatif-btn" class="disclaimer-link" onclick="event.preventDefault(); discardWhatIf();">Reset to original scenario</a>
             </div>
         </div>
         
-        <div class="main-content" id="results-pane">
+        <div class="main-content" id="results-pane" role="main">
             <div class="mobile-tabs-container">
-                <select id="mobile-tab-select" class="custom-select" onchange="const btn = document.querySelector('.tab-btn[onclick*=\'' + this.value + '\']'); if(btn) btn.click();">
+                <select id="mobile-tab-select" class="custom-select" aria-label="Results section" onchange="const btn = document.querySelector('.tab-btn[onclick*=\'' + this.value + '\']'); if(btn) btn.click();">
                     <option value="overview">Overview</option>
                     <option value="property">Property details</option>
                     <option value="projections">Projections</option>
@@ -396,15 +398,15 @@
                 </select>
             </div>
 
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab(this, 'overview')">Overview</button>
-                <button class="tab-btn" onclick="switchTab(this, 'property')">Property details</button>
-                <button class="tab-btn" onclick="switchTab(this, 'projections')">Projections</button>
-                <button class="tab-btn" id="tab-changes" onclick="switchTab(this, 'changes')">Your changes</button>
+            <div class="tabs" role="tablist" aria-label="Results">
+                <button class="tab-btn active" id="tab-overview" role="tab" aria-selected="true" aria-controls="view-overview" onclick="switchTab(this, 'overview')">Overview</button>
+                <button class="tab-btn" id="tab-property" role="tab" aria-selected="false" aria-controls="view-property" onclick="switchTab(this, 'property')">Property details</button>
+                <button class="tab-btn" id="tab-projections" role="tab" aria-selected="false" aria-controls="view-projections" onclick="switchTab(this, 'projections')">Projections</button>
+                <button class="tab-btn" id="tab-changes" role="tab" aria-selected="false" aria-controls="view-changes" onclick="switchTab(this, 'changes')">Your changes</button>
             </div>
 
-            <div id="view-overview" class="view-section active">
-                <h3 class="section-heading" style="margin-top: 0;">The likely outcome</h3>
+            <div id="view-overview" class="view-section active" role="tabpanel" aria-labelledby="tab-overview">
+                <h3 class="section-heading section-heading-first">The likely outcome</h3>
                 <div class="compare-grid">
                     <div class="compare-col baseline-col">
                         <div class="col-title">Original scenario</div>
@@ -420,7 +422,7 @@
                     </div>
                 </div>
 
-                <h3 class="section-heading" style="margin-top: 40px;">When could you buy?</h3>
+                <h3 class="section-heading section-heading-spaced">When could you buy?</h3>
                 <div class="compare-grid">
                     <div class="compare-col baseline-col">
                         <div class="col-title">Original scenario</div>
@@ -431,12 +433,12 @@
                     <div class="compare-col revised-col">
                         <div class="col-title">New scenario</div>
                         <div id="active-timing">
-                            <div id="timing-card-container"></div>
+                            <div id="timing-card-container" class="timing-slot"></div>
                         </div>
                     </div>
                 </div>
 
-                <h3 class="section-heading" style="margin-top: 40px;">Wealth difference</h3>
+                <h3 class="section-heading section-heading-spaced">Wealth difference</h3>
                 <div class="compare-grid">
                     <div class="compare-col baseline-col">
                         <div class="col-title">Original scenario</div>
@@ -447,7 +449,7 @@
                     <div class="compare-col revised-col">
                         <div class="col-title">New scenario</div>
                         <div id="active-wealth">
-                            <div class="insight-card wealth-empty-card" id="wealth-empty-card" style="display: none;">
+                            <div class="insight-card wealth-empty-card is-off" id="wealth-empty-card">
                                 <div class="wealth-empty-icon" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="30" height="30" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="16"></line><line x1="6" y1="20" x2="6" y2="16"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>
                                 </div>
@@ -457,26 +459,27 @@
                             <div class="insight-card" id="wealth-bars-card">
                                 <div class="bar-row">
                                     <div class="bar-label"><span>Buying</span> <span class="bar-val" id="ui-buy-wealth">£0</span></div>
-                                    <div class="bar-track"><div class="bar-fill buy-fill" id="ui-buy-bar" style="width: 0%;"></div></div>
+                                    <div class="bar-track"><div class="bar-fill buy-fill" id="ui-buy-bar"></div></div>
                                 </div>
                                 <div class="bar-row">
                                     <div class="bar-label"><span>Renting</span> <span class="bar-val" id="ui-rent-wealth">£0</span></div>
-                                    <div class="bar-track"><div class="bar-fill rent-fill" id="ui-rent-bar" style="width: 0%;"></div></div>
+                                    <div class="bar-track"><div class="bar-fill rent-fill" id="ui-rent-bar"></div></div>
                                 </div>
                                 <div class="benefit-statement" id="ui-benefit-box">
-                                    <p id="ui-benefit-val" style="margin: 16px 0 0 0; line-height: 1.5;">Select a scenario to compare wealth outcomes.</p>
-                                    <div id="ui-compare-delta" style="display: none; font-size: 0.9rem; margin-top: 4px; font-weight: normal;">vs Original scenario</div>
+                                    <p class="benefit-val" id="ui-benefit-val">Select a scenario to compare wealth outcomes.</p>
+                                    <div class="compare-delta is-hidden" id="ui-compare-delta">vs Original scenario</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
-                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
+                <div class="results-disclaimer">
+                    <p>Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
+                <p class="results-rates">A summary of all the rates and rules used in these calculations is in <button type="button" class="disclaimer-link link-button" onclick="openSettings(2)">Rates and rules</button>.</p>
                 </div>
             </div>
 
-			<div id="view-property" class="view-section">
+			<div id="view-property" class="view-section" role="tabpanel" aria-labelledby="tab-property">
 				<div class="insight-card prop-insight-card" id="prop-card">
 					<div id="prop-breakdown-content" class="prop-breakdown-wrapper">
 						<div class="prop-compare-section">
@@ -490,7 +493,7 @@
 								<div class="compare-col revised-col">
 									<div class="col-title">New scenario</div>
 									<div id="active-prop-cost">
-										<div class="prop-panel prop-panel-empty" style="display: none;">
+										<div class="prop-panel prop-panel-empty is-off">
 											<div class="prop-empty-icon" aria-hidden="true">
 												<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" opacity="0.4"></path><rect x="9" y="11" width="6" height="8" rx="1" ry="1"></rect><path d="M10 11V9a2 2 0 0 1 4 0v2"></path></svg>
 											</div>
@@ -505,9 +508,9 @@
 												How much it will cost
 											</div>
 											<div class="cost-bar">
-												<div class="cost-price" id="ui-cost-price-bar" style="width: 0%;"></div>
-												<div class="cost-sdlt" id="ui-cost-sdlt-bar" style="width: 0%;"></div>
-												<div class="cost-fees" id="ui-cost-fees-bar" style="width: 0%;"></div>
+												<div class="cost-price" id="ui-cost-price-bar"></div>
+												<div class="cost-sdlt" id="ui-cost-sdlt-bar"></div>
+												<div class="cost-fees" id="ui-cost-fees-bar"></div>
 											</div>
 											<div class="funding-legend">
 												<div class="legend-item-row">
@@ -545,7 +548,7 @@
 								<div class="compare-col revised-col">
 									<div class="col-title">New scenario</div>
 									<div id="active-prop-funding">
-										<div class="prop-panel prop-panel-empty" style="display: none;">
+										<div class="prop-panel prop-panel-empty is-off">
 											<div class="prop-empty-icon" aria-hidden="true">
 												<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28" aria-hidden="true"><path d="M17 9V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2" opacity="0.4"></path><path d="M13 12a4 4 0 0 0 0 8h6a1 1 0 0 0 1-1z" opacity="0.4"></path><line x1="3" y1="3" x2="21" y2="21"></line></svg>
 											</div>
@@ -560,8 +563,8 @@
 												Source of money
 											</div>
 											<div class="funding-bar">
-												<div class="fund-mortgage" id="ui-fund-mort-bar" style="width: 0%;"></div>
-												<div class="fund-cash" id="ui-fund-cash-bar" style="width: 0%;"></div>
+												<div class="fund-mortgage" id="ui-fund-mort-bar"></div>
+												<div class="fund-cash" id="ui-fund-cash-bar"></div>
 											</div>
 											<div class="funding-legend">
 												<div class="legend-item-row">
@@ -593,34 +596,35 @@
 						<p class="prop-empty-desc">Based on your current deposit and income, this home looks unlikely to be affordable before retirement.</p>
 					</div>
 				</div>
-                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
-                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
+                <div class="results-disclaimer">
+                    <p>Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
+                <p class="results-rates">A summary of all the rates and rules used in these calculations is in <button type="button" class="disclaimer-link link-button" onclick="openSettings(2)">Rates and rules</button>.</p>
                 </div>
             </div>
 
-            <div id="view-projections" class="view-section">
-                <div id="proj-blocked-msg" class="baseline-placeholder proj-blocked-msg" style="display: none;"></div>
+            <div id="view-projections" class="view-section" role="tabpanel" aria-labelledby="tab-projections">
+                <div id="proj-blocked-msg" class="baseline-placeholder proj-blocked-msg is-hidden"></div>
                 <div class="projections-controls-row" id="projections-controls-row">
-                    <div id="projections-compare-controls" style="display: none; align-items: center; gap: 15px;">
-                        <span class="desktop-only" style="font-weight: bold; color: var(--ifoa-blue);">Show scenario:</span>
-                        <select id="mobile-proj-compare-select" class="mobile-only custom-select" onchange="syncProjViewSelect(this.value)">
+                    <div class="proj-compare-controls is-hidden" id="projections-compare-controls">
+                        <span class="desktop-only proj-compare-label">Show scenario:</span>
+                        <select id="mobile-proj-compare-select" class="mobile-only custom-select" aria-label="Scenario shown" onchange="syncProjViewSelect(this.value)">
                             <option value="revised">New scenario</option>
                             <option value="current">Original scenario</option>
                         </select>
-                        <div class="toggle-container desktop-only" style="width: auto;">
+                        <div class="toggle-container desktop-only toggle-auto toggle-pad-md" role="radiogroup" aria-label="Scenario shown">
                             <input type="radio" name="proj_compare_view" id="pcv_revised" value="revised" checked onchange="syncProjViewSelect('revised')">
-                            <label for="pcv_revised" style="padding: 10px 15px;">New scenario</label>
+                            <label for="pcv_revised">New scenario</label>
                             <input type="radio" name="proj_compare_view" id="pcv_current" value="current" onchange="syncProjViewSelect('current')">
-                            <label for="pcv_current" style="padding: 10px 15px;">Original scenario</label>
+                            <label for="pcv_current">Original scenario</label>
                         </div>
                     </div>
-                    <div class="data-view-controls" style="display: flex; align-items: center; gap: 15px;">
-                        <span class="desktop-only" style="font-weight: bold; color: var(--ifoa-blue);">Show as:</span>
-                        <div class="toggle-container desktop-only" style="width: auto;">
+                    <div class="data-view-controls">
+                        <span class="desktop-only proj-compare-label">Show as:</span>
+                        <div class="toggle-container desktop-only toggle-auto toggle-pad-md" role="radiogroup" aria-label="Show projections as">
                             <input type="radio" name="chart_view" id="show_graph" value="graph" checked onchange="toggleDataView('graph')">
-                            <label for="show_graph" style="padding: 10px 15px;">Chart</label>
+                            <label for="show_graph">Chart</label>
                             <input type="radio" name="chart_view" id="show_table" value="table" onchange="toggleDataView('table')">
-                            <label for="show_table" style="padding: 10px 15px;">Table</label>
+                            <label for="show_table">Table</label>
                         </div>
                     </div>
                 </div>
@@ -631,93 +635,94 @@
                             <div class="legend-box"><span class="line line-buy"></span> <span id="leg-buy-text">Buying wealth</span></div>
                             <div class="legend-box"><span class="line line-rent"></span> <span id="leg-rent-text">Renting wealth</span></div>
                             <div class="legend-box">
-                                <span class="legend-icons" style="display: inline-flex; align-items: center; gap: 16px; font-weight: bold;">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" class="legend-icon" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;"><path d="M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z" /></svg>
+                                <span class="legend-icons">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" class="legend-icon" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z" /></svg>
                                     <span>Purchase</span>
-                                    <svg width="20" height="20" viewBox="0 0 24 24" class="legend-icon" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" class="legend-icon" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>
                                     <span>Retirement</span>
                                 </span>
                             </div>
                         </div>
                         <div class="canvas-wrapper">
-                            <canvas id="wealthChart"></canvas>
+                            <canvas id="wealthChart" role="img" aria-label="Line chart of projected wealth by age when buying compared with renting. The same figures are in the Table view."></canvas>
                         </div>
                     </div>
 
-                    <div class="table-container" id="table-container" style="display: none; flex-direction: column;">
-                        <div class="table-legend-header" style="padding: 12px 15px; background: #f8f9fa; border-bottom: 2px solid #ccc; text-align: center; font-weight: bold; flex-shrink: 0; color: var(--ifoa-blue);">
-                            <span style="display: inline-flex; align-items: center; gap: 16px; color: var(--ifoa-blue);">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;"><path d="M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z" /></svg>
+                    <div class="table-container is-hidden" id="table-container">
+                        <div class="table-legend-header">
+                            <span class="table-legend-icons">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z" /></svg>
                                 <span>Purchase</span>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(15 12 22)"><path d="M12 2.5C7.58 2.5 4 6.08 4 10.5C4 10.78 4.02 11.05 4.05 11.31C4.33 12.3 5.1 13 6 13C6.9 13 7.67 12.3 7.95 11.31C8.23 12.3 9 13 9.91 13C10.82 13 11.59 12.3 11.87 11.31C11.91 11.31 11.96 11.31 12 11.31C12.04 11.31 12.09 11.31 12.13 11.31C12.41 12.3 13.18 13 14.09 13C15 13 15.77 12.3 16.05 11.31C16.33 12.3 17.1 13 18 13C18.9 13 19.67 12.3 19.95 11.31C19.98 11.05 20 10.78 20 10.5C20 6.08 16.42 2.5 12 2.5Z" /><path d="M11 11H13V22H11V11Z" /></g></svg>
                                 <span>Retirement</span>
                             </span>
                         </div>
-                        <div style="flex-grow: 1; overflow-y: auto;">
+                        <div class="table-scroll" tabindex="0" role="region" aria-label="Projections table">
                             <table id="wealth-table"></table>
                         </div>
                     </div>
                 </div>
-                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
-                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
+                <div class="results-disclaimer">
+                    <p>Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
+                <p class="results-rates">A summary of all the rates and rules used in these calculations is in <button type="button" class="disclaimer-link link-button" onclick="openSettings(2)">Rates and rules</button>.</p>
                 </div>
             </div>
 
-            <div id="view-changes" class="view-section">
+            <div id="view-changes" class="view-section" role="tabpanel" aria-labelledby="tab-changes">
                 <div class="insights-grid">
                     <div class="insight-card" id="compare-summary-card">
-                        <div style="display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #e0e6ed; padding-bottom: 12px; margin-bottom: 20px;">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 28px; height: 28px; color: var(--ifoa-gold);" aria-hidden="true">
+                        <div class="changes-header">
+                            <svg class="h-6 w-6 changes-header-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
-                            <h3 style="margin: 0; color: var(--ifoa-blue); font-size: 1.3rem; border: none; padding: 0;">What you changed</h3>
+                            <h3>What you changed</h3>
                         </div>
-                        <div id="compare-summary-block" style="display: none;">
+                        <div class="is-hidden" id="compare-summary-block">
                             <ul id="compare-changes-list" class="changes-list"></ul>
                         </div>
-                        <div id="no-changes-msg" style="text-align:center; padding: 30px 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd; color: #777; font-style: italic;">
+                        <div class="no-changes-msg" id="no-changes-msg">
                             When you've made a change, they will show here.
                         </div>
                     </div>
                 </div>
-                <div style="background: #f9f9f9; border-top: 1px solid #e0e6ed; padding: 20px; text-align: center; font-size: 0.9rem; color: #555; margin-top: 30px;">
-                    <p style="margin: 0;">Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
+                <div class="results-disclaimer">
+                    <p>Remember that results are estimates only. Ask for advice before you make any decisions. <a href="#" onclick="document.getElementById('disclaimer-modal').classList.add('active'); return false;" class="disclaimer-link">Read important information about this calculator</a></p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="a11y-overlay">
-        <div class="modal-card">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="a11y-overlay-title">
             <div class="modal-header">
-                <h2>Accessibility options</h2>
-                <button class="close-modal" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
+                <h2 id="a11y-overlay-title">Accessibility options</h2>
+                <button class="close-modal" aria-label="Close" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
             </div>
             <div class="modal-body">
 				<div class="a11y-row">
 					<label class="a11y-row-label" for="a11y_dark_toggle">Dark mode</label>
-					<label class="a11y-switch" style="margin: 0;">
+					<label class="a11y-switch">
 						<input type="checkbox" id="a11y_dark_toggle" onchange="document.body.classList.toggle('dark-mode', this.checked); window.applyDarkModeColors(this.checked); window.saveA11ySetting('dark', this.checked ? 'on' : 'off');">
 						<span class="a11y-slider"></span>
 					</label>
 				</div>
 				<div class="a11y-row">
 					<label class="a11y-row-label" for="a11y_font_toggle">Dyslexia-friendly font</label>
-					<label class="a11y-switch" style="margin: 0;">
+					<label class="a11y-switch">
 						<input type="checkbox" id="a11y_font_toggle" onchange="document.body.classList.toggle('dyslexia-font', this.checked); window.saveA11ySetting('font', this.checked ? 'on' : 'off');">
 						<span class="a11y-slider"></span>
 					</label>
 				</div>
 				<div class="a11y-row last-toggle">
 					<label class="a11y-row-label" for="a11y_motion_toggle">Reduce motion</label>
-					<label class="a11y-switch" style="margin: 0;">
+					<label class="a11y-switch">
 						<input type="checkbox" id="a11y_motion_toggle" onchange="document.body.classList.toggle('reduce-motion', this.checked); window.saveA11ySetting('motion', this.checked ? 'on' : 'off');">
 						<span class="a11y-slider"></span>
 					</label>
 				</div>
-				<div class="input-row-single" style="margin-bottom: 20px;">
-					<label>Text size</label>
-					<div class="toggle-container">
+				<div class="input-row-single a11y-size-row">
+					<label id="lbl_a11y_size">Text size</label>
+					<div class="toggle-container" role="radiogroup" aria-labelledby="lbl_a11y_size">
 						<input type="radio" name="a11y_size" id="a11y_size_normal" checked onchange="document.documentElement.classList.remove('text-large', 'text-xlarge'); window.saveA11ySetting('size', 'normal');">
 						<label for="a11y_size_normal">Normal</label>
 						<input type="radio" name="a11y_size" id="a11y_size_large" onchange="document.documentElement.classList.remove('text-xlarge'); document.documentElement.classList.add('text-large'); window.saveA11ySetting('size', 'large');">
@@ -727,20 +732,20 @@
 					</div>
 				</div>
 			</div>
-			<div class="modal-footer" style="justify-content: flex-end;">
+			<div class="modal-footer modal-footer-end">
                 <button class="btn-primary" onclick="document.getElementById('a11y-overlay').classList.remove('active')">Done</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="settings-overlay">
-        <div class="modal-card large">
+        <div class="modal-card large" role="dialog" aria-modal="true" aria-labelledby="settings-overlay-title">
             <div class="modal-header">
-                <h2>Rates and rules</h2>
-                <button class="close-modal" onclick="cancelSettings()">&times;</button>
+                <h2 id="settings-overlay-title">Rates and rules</h2>
+                <button class="close-modal" aria-label="Close" onclick="cancelSettings()">&times;</button>
             </div>
             
-            <div class="tab-navigation" id="settings-tabs" style="margin: 20px 30px 0 30px; width: auto; flex-shrink: 0;">
+            <div class="tab-navigation" id="settings-tabs" role="radiogroup" aria-label="Rates and rules sections">
                 <input type="radio" name="settings_tab" id="settings_tab_1" checked onchange="window.switchSettingsTab(1, this.nextElementSibling)">
                 <label for="settings_tab_1" class="active">Your estimates</label>
                 <input type="radio" name="settings_tab" id="settings_tab_2" onchange="window.switchSettingsTab(2, this.nextElementSibling)">
@@ -749,72 +754,72 @@
                 <label for="settings_tab_3">Other rules</label>
             </div>
 
-            <div class="modal-body" style="padding-top: 20px; border-top: none;">
+            <div class="modal-body settings-body" tabindex="0">
                 <div id="set-tab-1">
                     <div class="settings-layout">
                         <div class="settings-col">
                             <div class="settings-card">
                                 <h3>Mortgage limits</h3>
-                                <div class="input-row-single"><label>Maximum salary multiplier</label><div class="input-wrapper" style="padding-right: 55px;"><input type="number" id="set_mult" step="0.1" value="4.5" class="compare-track" data-label="Max multiplier"><span class="suffix">times</span></div><div class="helper-text">The maximum multiple of your gross salary a lender will provide.</div></div>
-                                <div class="input-row-single"><label>Maximum loan to value available</label><div class="input-wrapper"><input type="number" id="set_ltv" value="95" class="clamp-100 has-suffix compare-track" data-label="Max LTV"><span class="suffix">%</span></div><div class="helper-text">The maximum percentage of the property price a lender will cover.</div></div>
-                                <div class="input-row-single"><label>Maximum term available</label><div class="input-wrapper"><input type="number" id="set_term" value="40" class="has-suffix compare-track" data-label="Max term"><span class="suffix">yrs</span></div><div class="helper-text">The maximum number of years the mortgage can run.</div></div>
+                                <div class="input-row-single"><label for="set_mult">Maximum salary multiplier</label><div class="input-wrapper input-wrapper-wide-suffix"><input type="number" id="set_mult" step="0.1" value="4.5" class="compare-track" data-label="Max multiplier"><span class="suffix">times</span></div><div class="helper-text">The maximum multiple of your gross salary a lender will provide.</div></div>
+                                <div class="input-row-single"><label for="set_ltv">Maximum loan to value available</label><div class="input-wrapper"><input type="number" id="set_ltv" value="95" class="clamp-100 has-suffix compare-track" data-label="Max LTV"><span class="suffix">%</span></div><div class="helper-text">The maximum percentage of the property price a lender will cover.</div></div>
+                                <div class="input-row-single"><label for="set_term">Maximum term available</label><div class="input-wrapper"><input type="number" id="set_term" value="40" class="has-suffix compare-track" data-label="Max term"><span class="suffix">yrs</span></div><div class="helper-text">The maximum number of years the mortgage can run.</div></div>
                             </div>
                             <div class="settings-card">
                                 <h3>Plan timeframe</h3>
-                                <div class="input-row-single"><label>Plan end age</label><div class="input-wrapper"><input type="number" id="set_end" value="100" class="clamp-age has-suffix compare-track" data-label="Plan end age"><span class="suffix">yrs</span></div><div class="helper-text">The age at which the projection stops computing wealth.</div></div>
+                                <div class="input-row-single"><label for="set_end">Plan end age</label><div class="input-wrapper"><input type="number" id="set_end" value="100" class="clamp-age has-suffix compare-track" data-label="Plan end age"><span class="suffix">yrs</span></div><div class="helper-text">The age at which the projection stops computing wealth.</div></div>
                             </div>
                         </div>
                         <div class="settings-col">
                             <div class="settings-card">
                                 <h3>Market returns (nominal)</h3>
-                                <div class="input-row-single"><label>Property price growth</label><div class="input-wrapper"><input type="number" id="set_hp_inc" step="0.1" value="3.2" class="has-suffix compare-track" data-label="Property price growth"><span class="suffix">%</span></div><div class="helper-text">Assumed annual nominal growth rate of property values.</div></div>
-                                <div class="input-row-single"><label>Rent increases</label><div class="input-wrapper"><input type="number" id="set_rent_inc" step="0.1" value="3.4" class="has-suffix compare-track" data-label="Rent increases"><span class="suffix">%</span></div><div class="helper-text">Assumed annual nominal growth rate of rent prices over time.</div></div>
-                                <div class="input-row-single"><label>Cash return</label><div class="input-wrapper"><input type="number" id="set_cash" step="0.1" value="2.0" class="has-suffix compare-track" data-label="Cash return"><span class="suffix">%</span></div><div class="helper-text">Expected nominal return on cash savings (before inflation).</div></div>
-                                <div class="input-row-single"><label>Pension return</label><div class="input-wrapper"><input type="number" id="set_pen" step="0.1" value="5.5" class="has-suffix compare-track" data-label="Pension return"><span class="suffix">%</span></div><div class="helper-text">Expected nominal return on pension investments (before inflation).</div></div>
-                                <div class="input-row-single"><label>Inflation</label><div class="input-wrapper"><input type="number" id="set_inf" step="0.1" value="2.5" class="has-suffix compare-track" data-label="Inflation"><span class="suffix">%</span></div><div class="helper-text">Assumed general inflation rate across the economy.</div></div>
+                                <div class="input-row-single"><label for="set_hp_inc">Property price growth</label><div class="input-wrapper"><input type="number" id="set_hp_inc" step="0.1" value="3.2" class="has-suffix compare-track" data-label="Property price growth"><span class="suffix">%</span></div><div class="helper-text">Assumed annual nominal growth rate of property values.</div></div>
+                                <div class="input-row-single"><label for="set_rent_inc">Rent increases</label><div class="input-wrapper"><input type="number" id="set_rent_inc" step="0.1" value="3.4" class="has-suffix compare-track" data-label="Rent increases"><span class="suffix">%</span></div><div class="helper-text">Assumed annual nominal growth rate of rent prices over time.</div></div>
+                                <div class="input-row-single"><label for="set_cash">Cash return</label><div class="input-wrapper"><input type="number" id="set_cash" step="0.1" value="2.0" class="has-suffix compare-track" data-label="Cash return"><span class="suffix">%</span></div><div class="helper-text">Expected nominal return on cash savings (before inflation).</div></div>
+                                <div class="input-row-single"><label for="set_pen">Pension return</label><div class="input-wrapper"><input type="number" id="set_pen" step="0.1" value="5.5" class="has-suffix compare-track" data-label="Pension return"><span class="suffix">%</span></div><div class="helper-text">Expected nominal return on pension investments (before inflation).</div></div>
+                                <div class="input-row-single"><label for="set_inf">Inflation</label><div class="input-wrapper"><input type="number" id="set_inf" step="0.1" value="2.5" class="has-suffix compare-track" data-label="Inflation"><span class="suffix">%</span></div><div class="helper-text">Assumed general inflation rate across the economy.</div></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="set-tab-2" style="display: none;">
-                    <div class="readonly-params-section" style="margin-top: 0; padding-top: 0; border-top: none;">
-                        <h3 style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-                            <span style="font-size: 1.1rem; color: var(--ifoa-blue);">Built-in assumptions</span>
+                <div class="is-hidden" id="set-tab-2">
+                    <div class="readonly-params-section">
+                        <h3 class="readonly-params-heading">
+                            <span class="readonly-params-title">Built-in assumptions</span>
                             <span class="tax-year-badge" id="tax-year-badge">Tax year 2025</span>
                         </h3>
-                        <p class="params-desc" style="margin-bottom: 25px;">The following assumptions are integrated into the calculation engine and cannot be edited here.</p>
+                        <p class="params-desc">The following assumptions are integrated into the calculation engine and cannot be edited here.</p>
                         <div class="params-grid" id="readonly-params-grid"></div>
                     </div>
                 </div>
 
-                <div id="set-tab-3" style="display: none;">
-                    <div class="readonly-params-section" style="margin-top: 0; padding-top: 0; border-top: none;">
-                        <h3 style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-                            <span style="font-size: 1.1rem; color: var(--ifoa-blue);">Other built-in rules</span>
+                <div class="is-hidden" id="set-tab-3">
+                    <div class="readonly-params-section">
+                        <h3 class="readonly-params-heading">
+                            <span class="readonly-params-title">Other built-in rules</span>
                             <span class="tax-year-badge" id="tax-year-badge-2">Tax year 2025</span>
                         </h3>
-                        <p class="params-desc" style="margin-bottom: 25px;">The following assumptions are integrated into the calculation engine and cannot be edited here.</p>
+                        <p class="params-desc">The following assumptions are integrated into the calculation engine and cannot be edited here.</p>
                         <div class="params-grid" id="readonly-params-grid-2"></div>
                     </div>
                 </div>
             </div>
             
-            <div class="modal-footer" style="justify-content: flex-end; gap: 10px;">
-                <button class="btn-secondary" style="margin-top: 0; width: auto;" onclick="cancelSettings()">Cancel</button>
-                <button class="btn-primary" style="margin-top: 0; width: auto;" onclick="saveSettings()">Save & recalculate</button>
+            <div class="modal-footer modal-footer-end modal-footer-gap">
+                <button class="btn-secondary" onclick="cancelSettings()">Cancel</button>
+                <button class="btn-primary" onclick="saveSettings()">Save & recalculate</button>
             </div>
         </div>
     </div>
 	
 	<!-- ONBOARDING WIZARD OVERLAY -->
     <div class="modal-overlay active" id="wizard-overlay">
-        <div class="modal-card large" style="width: 750px;">
+        <div class="modal-card large wizard-card" role="dialog" aria-modal="true" aria-labelledby="wizard-overlay-title">
             <div class="modal-header">
-                <h2>Welcome to the Rent vs Buy Calculator</h2>
-                <button class="close-modal" onclick="closeWizard()">&times;</button>
+                <h2 id="wizard-overlay-title">Welcome to the Rent vs Buy Calculator</h2>
+                <button class="close-modal" aria-label="Close" onclick="closeWizard()">&times;</button>
             </div>
-            <div class="wizard-progress" id="wizard-progress-container" style="padding: 15px 30px 0 30px;"></div>
+            <div class="wizard-progress" id="wizard-progress-container"></div>
             <div class="modal-body" id="wiz-scroll">
                 <!-- Step 0: Mode Selection -->
                 <div class="wizard-step active" id="step-0">
@@ -835,11 +840,11 @@
                 <div class="wizard-step" id="step-1">
                     <h3 class="wizard-title" id="step1-title">Let's start with your age</h3>
                     <div class="input-row-single">
-                        <label>Your current age</label>
+                        <label for="w_age1">Your current age</label>
                         <div class="input-wrapper"><input type="number" id="w_age1" placeholder="e.g. 29" class="clamp-age"></div>
                     </div>
                     <div class="input-row-single show-partner is-hidden">
-                        <label>Partner's current age</label>
+                        <label for="w_age2">Partner's current age</label>
                         <div class="input-wrapper"><input type="number" id="w_age2" placeholder="e.g. 31" class="clamp-age"></div>
                     </div>
                 </div>
@@ -848,10 +853,10 @@
                 <div class="wizard-step" id="step-2">
                     <h3 class="wizard-title">Retirement planning</h3>
                     <div class="input-row-single">
-                        <label>Your retirement age</label>
+                        <label for="w_ret1">Your retirement age</label>
                         <div class="input-wrapper"><input type="number" id="w_ret1" placeholder="e.g. 68" class="clamp-ret-age"></div>
                     </div>
-                    <div class="show-partner is-hidden" style="padding: 15px; background: #f0f4f8; border-left: 4px solid var(--ifoa-blue); margin-top: 20px; border-radius: 4px; font-size: 0.95rem; color: #555;">
+                    <div class="show-partner is-hidden partner-note">
                         <span>Your partner will be assumed to retire at the same time as you.</span>
                     </div>
                 </div>
@@ -860,11 +865,11 @@
                 <div class="wizard-step" id="step-3">
                     <h3 class="wizard-title">Income details</h3>
                     <div class="input-row-single">
-                        <label>Your salary before tax</label>
+                        <label for="w_sal1">Your salary before tax</label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sal1" placeholder="e.g. 42,000" class="comma-format clamp-1m"><span class="suffix">p.a.</span></div>
                     </div>
                     <div class="input-row-single show-partner is-hidden">
-                        <label>Partner's salary before tax</label>
+                        <label for="w_sal2">Partner's salary before tax</label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sal2" placeholder="e.g. 42,000" class="comma-format clamp-1m"><span class="suffix">p.a.</span></div>
                     </div>
                 </div>
@@ -873,21 +878,21 @@
                 <div class="wizard-step" id="step-4">
                     <h3 class="wizard-title">Your student loan</h3>
                     <div class="input-row-single">
-                        <label>Do you have a student loan to repay?</label>
-                        <div class="toggle-container">
+                        <label id="lbl_w_has_sl1">Do you have a student loan to repay?</label>
+                        <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_w_has_sl1">
                             <input type="radio" name="w_has_sl1" id="w_has_sl1_y" value="Yes" onchange="toggleWizSL(1)">
                             <label for="w_has_sl1_y">Yes</label>
                             <input type="radio" name="w_has_sl1" id="w_has_sl1_n" value="No" onchange="toggleWizSL(1)">
                             <label for="w_has_sl1_n">No</label>
                         </div>
                     </div>
-                    <div id="w_sl_fields1" style="display: none;">
+                    <div class="is-hidden" id="w_sl_fields1">
                         <div class="input-row-single">
-                            <label>Remaining loan debt</label>
+                            <label for="w_sl1">Remaining loan debt</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sl1" placeholder="e.g. 20,000" class="comma-format clamp-1m"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Loan plan</label>
+                            <label for="w_slp1">Loan plan</label>
                             <div class="input-wrapper">
                                 <select id="w_slp1" onchange="validateStep()">
                                     <option value="" disabled selected>Select plan</option>
@@ -902,21 +907,21 @@
                 <div class="wizard-step" id="step-5">
                     <h3 class="wizard-title">Partner's student loan</h3>
                     <div class="input-row-single">
-                        <label>Does your partner have a student loan?</label>
-                        <div class="toggle-container">
+                        <label id="lbl_w_has_sl2">Does your partner have a student loan?</label>
+                        <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_w_has_sl2">
                             <input type="radio" name="w_has_sl2" id="w_has_sl2_y" value="Yes" onchange="toggleWizSL(2)">
                             <label for="w_has_sl2_y">Yes</label>
                             <input type="radio" name="w_has_sl2" id="w_has_sl2_n" value="No" onchange="toggleWizSL(2)">
                             <label for="w_has_sl2_n">No</label>
                         </div>
                     </div>
-                    <div id="w_sl_fields2" style="display: none;">
+                    <div class="is-hidden" id="w_sl_fields2">
                         <div class="input-row-single">
-                            <label>Remaining loan debt</label>
+                            <label for="w_sl2">Remaining loan debt</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_sl2" placeholder="e.g. 20,000" class="comma-format clamp-1m"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Loan plan</label>
+                            <label for="w_slp2">Loan plan</label>
                             <div class="input-wrapper">
                                 <select id="w_slp2" onchange="validateStep()">
                                     <option value="" disabled selected>Select plan</option>
@@ -931,25 +936,25 @@
                 <div class="wizard-step" id="step-6">
                     <h3 class="wizard-title">Your pension</h3>
                     <div class="input-row-single">
-                        <label>Do you have an existing pension?</label>
-                        <div class="toggle-container">
+                        <label id="lbl_w_has_pen1">Do you have an existing pension?</label>
+                        <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_w_has_pen1">
                             <input type="radio" name="w_has_pen1" id="w_has_pen1_y" value="Yes" onchange="toggleWizPen(1)">
                             <label for="w_has_pen1_y">Yes</label>
                             <input type="radio" name="w_has_pen1" id="w_has_pen1_n" value="No" onchange="toggleWizPen(1)">
                             <label for="w_has_pen1_n">No</label>
                         </div>
                     </div>
-                    <div id="w_pen_fields1" style="display: none;">
+                    <div class="is-hidden" id="w_pen_fields1">
                         <div class="input-row-single">
-                            <label>Current pension pot value</label>
+                            <label for="w_pval1">Current pension pot value</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval1" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Your contribution</label>
+                            <label for="w_pee1">Your contribution</label>
                             <div class="input-wrapper"><input type="number" id="w_pee1" placeholder="e.g. 5" class="clamp-100"><span class="suffix">%</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Employer contribution</label>
+                            <label for="w_per1">Employer contribution</label>
                             <div class="input-wrapper"><input type="number" id="w_per1" placeholder="e.g. 3" class="clamp-100"><span class="suffix">%</span></div>
                         </div>
                     </div>
@@ -959,25 +964,25 @@
                 <div class="wizard-step" id="step-7">
                     <h3 class="wizard-title">Partner's pension</h3>
                     <div class="input-row-single">
-                        <label>Does your partner have an existing pension?</label>
-                        <div class="toggle-container">
+                        <label id="lbl_w_has_pen2">Does your partner have an existing pension?</label>
+                        <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_w_has_pen2">
                             <input type="radio" name="w_has_pen2" id="w_has_pen2_y" value="Yes" onchange="toggleWizPen(2)">
                             <label for="w_has_pen2_y">Yes</label>
                             <input type="radio" name="w_has_pen2" id="w_has_pen2_n" value="No" onchange="toggleWizPen(2)">
                             <label for="w_has_pen2_n">No</label>
                         </div>
                     </div>
-                    <div id="w_pen_fields2" style="display: none;">
+                    <div class="is-hidden" id="w_pen_fields2">
                         <div class="input-row-single">
-                            <label>Current pension pot value</label>
+                            <label for="w_pval2">Current pension pot value</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_pval2" placeholder="e.g. 25,000" class="comma-format clamp-10m"></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Your partner's contribution</label>
+                            <label for="w_pee2">Your partner's contribution</label>
                             <div class="input-wrapper"><input type="number" id="w_pee2" placeholder="e.g. 5" class="clamp-100"><span class="suffix">%</span></div>
                         </div>
                         <div class="input-row-single">
-                            <label>Partner's employer contribution</label>
+                            <label for="w_per2">Partner's employer contribution</label>
                             <div class="input-wrapper"><input type="number" id="w_per2" placeholder="e.g. 3" class="clamp-100"><span class="suffix">%</span></div>
                         </div>
                     </div>
@@ -987,19 +992,19 @@
                 <div class="wizard-step" id="step-8">
                     <h3 class="wizard-title">Savings & Living Costs</h3>
                     <div class="input-row-single">
-                        <label>Household cash savings</label>
+                        <label for="w_cash">Household cash savings</label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_cash" placeholder="e.g. 5,000" class="comma-format clamp-1m"></div>
                     </div>
                     <div class="input-row-single">
-                        <label>Monthly rent</label>
+                        <label for="w_rent">Monthly rent</label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_rent" placeholder="e.g. 820" class="comma-format clamp-1m"><span class="suffix">/ month</span></div>
                     </div>
                     <div class="input-row-single">
-                        <label><span id="lbl_w_ex_pre">Monthly living expenses pre-retirement</span></label>
+                        <label for="w_ex_pre"><span id="lbl_w_ex_pre">Monthly living expenses pre-retirement</span></label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_pre" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix"><span class="suffix">/ month</span></div>
                     </div>
                     <div class="input-row-single">
-                        <label><span id="lbl_w_ex_post">Monthly living expenses post-retirement</span></label>
+                        <label for="w_ex_post"><span id="lbl_w_ex_post">Monthly living expenses post-retirement</span></label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_ex_post" placeholder="e.g. 1,400" class="comma-format clamp-1m has-suffix"><span class="suffix">/ month</span></div>
                     </div>
                 </div>
@@ -1008,12 +1013,12 @@
                 <div class="wizard-step" id="step-9">
                     <h3 class="wizard-title">Target Property</h3>
                     <div class="input-row-single">
-                        <label>Target property price</label>
+                        <label for="w_hp">Target property price</label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="w_hp" placeholder="e.g. 550,000" class="comma-format clamp-10m"></div>
                     </div>
                     <div class="input-row-single">
-                        <label>Are you a first-time buyer?</label>
-                        <div class="toggle-container">
+                        <label id="lbl_w_ftb">Are you a first-time buyer?</label>
+                        <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_w_ftb">
                             <input type="radio" name="w_ftb" id="w_ftb_y" value="Yes">
                             <label for="w_ftb_y">Yes</label>
                             <input type="radio" name="w_ftb" id="w_ftb_n" value="No">
@@ -1024,17 +1029,17 @@
 
                 <div class="wizard-step" id="step-10">
                     <h3 class="wizard-title">Where to save any spare money</h3>
-                    <p style="font-size: 0.95rem; color: #555; margin-bottom: 20px;">If you have any spare cash after your living expenses are paid for, how much would you like to put into your pension versus spending on other things?</p>
+                    <p class="wizard-lead">If you have any spare cash after your living expenses are paid for, how much would you like to put into your pension versus spending on other things?</p>
                     <div class="input-row-single">
-                        <label>Spare income to invest in pension</label>
+                        <label for="w_spare_pension">Spare income to invest in pension</label>
                         <div class="input-wrapper"><input type="number" id="w_spare_pension" placeholder="e.g. 50" class="clamp-100 has-suffix" onchange="validateStep()"><span class="suffix">%</span></div>
-                        <div class="helper-text" style="font-size: 0.85rem; color: #666; margin-top: 10px;">This helps balance short-term spending with long-term retirement security. For example, 50% means half your spare cash builds retirement savings, half is available for lifestyle.</div>
+                        <div class="helper-text helper-text-note">This helps balance short-term spending with long-term retirement security. For example, 50% means half your spare cash builds retirement savings, half is available for lifestyle.</div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="modal-footer modal-footer-between">
                 <button class="btn-secondary" id="wiz-back">Back</button>
-                <button class="btn-primary" id="wiz-next" disabled style="opacity: 0.5; cursor: not-allowed;">Next</button>
+                <button class="btn-primary" id="wiz-next" disabled>Next</button>
             </div>
         </div>
     </div>
@@ -1043,39 +1048,39 @@
 
     <!-- Disclaimer Modal -->
     <div id="disclaimer-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content modal-content-md" role="dialog" aria-modal="true" aria-labelledby="disclaimer-modal-title">
             <div class="modal-header">
-                <h2 style="margin: 0;">Important information about this calculator</h2>
-                <button class="close-modal" onclick="document.getElementById('disclaimer-modal').classList.remove('active')">&times;</button>
+                <h2 id="disclaimer-modal-title">Important information about this calculator</h2>
+                <button class="close-modal" aria-label="Close" onclick="document.getElementById('disclaimer-modal').classList.remove('active')">&times;</button>
             </div>
-            <div class="modal-body" style="padding: 20px; line-height: 1.6; color: #333; font-size: 0.95rem;">
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li style="margin-bottom: 15px;"><strong>Estimates only:</strong> The numbers, timelines, and wealth comparisons you see here are just guesses based on the details you put in. They are meant to give you a rough idea, not a guaranteed result.</li>
-                    <li style="margin-bottom: 15px;"><strong>The future is unpredictable:</strong> House prices, interest rates, rent, and inflation go up and down. Because no one can predict the future, your actual financial outcome could be very different from what the tool shows.</li>
-                    <li style="margin-bottom: 15px;"><strong>Do not rely on this alone:</strong> Please do not make big life decisions—like buying a home, changing your mortgage, or altering your pension—based only on what this calculator tells you.</li>
-                    <li style="margin-bottom: 15px;"><strong>Talk to an expert:</strong> We always recommend speaking with a regulated independent financial adviser or a qualified mortgage broker who can look at your whole financial situation before you make a move.</li>
+            <div class="modal-body modal-body-text modal-body-text-dark">
+                <ul class="plain-list">
+                    <li><strong>Estimates only:</strong> The numbers, timelines, and wealth comparisons you see here are just guesses based on the details you put in. They are meant to give you a rough idea, not a guaranteed result.</li>
+                    <li><strong>The future is unpredictable:</strong> House prices, interest rates, rent, and inflation go up and down. Because no one can predict the future, your actual financial outcome could be very different from what the tool shows.</li>
+                    <li><strong>Do not rely on this alone:</strong> Please do not make big life decisions—like buying a home, changing your mortgage, or altering your pension—based only on what this calculator tells you.</li>
+                    <li><strong>Talk to an expert:</strong> We always recommend speaking with a regulated independent financial adviser or a qualified mortgage broker who can look at your whole financial situation before you make a move.</li>
                     <li><strong>You're helping us to improve this tool:</strong> We're recording anonymous statistics to help see what could make this site even better.</li>
                 </ul>
             </div>
             <div class="modal-footer">
-                <button class="btn-primary" onclick="document.getElementById('disclaimer-modal').classList.remove('active')" style="width: 100%;">Close</button>
+                <button class="btn-primary btn-block" onclick="document.getElementById('disclaimer-modal').classList.remove('active')">Close</button>
             </div>
         </div>
     </div>
 
     <!-- Close Calculator Confirmation Modal -->
     <div id="close-calc-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-content modal-content-sm" role="dialog" aria-modal="true" aria-labelledby="close-calc-modal-title">
             <div class="modal-header">
-                <h2 style="margin: 0;">Close calculator</h2>
-                <button class="close-modal" onclick="document.getElementById('close-calc-modal').classList.remove('active')">&times;</button>
+                <h2 id="close-calc-modal-title">Close calculator</h2>
+                <button class="close-modal" aria-label="Close" onclick="document.getElementById('close-calc-modal').classList.remove('active')">&times;</button>
             </div>
-            <div class="modal-body" style="padding: 20px; line-height: 1.6; font-size: 0.95rem;">
+            <div class="modal-body modal-body-text">
                 <p>You'll lose all the information you've entered if you close the calculator. Are you sure you want to continue?</p>
             </div>
-            <div class="modal-footer" style="display: flex; gap: 12px; padding: 20px;">
-                <button class="btn-primary" onclick="window.location.href='index.html'" style="flex: 1; background-color: var(--ifoa-gold);">Yes, close</button>
-                <button onclick="document.getElementById('close-calc-modal').classList.remove('active')" class="btn-secondary" style="flex: 1; margin-top: 0;">No, stay</button>
+            <div class="modal-footer modal-footer-split">
+                <button class="btn-primary btn-flex btn-gold" onclick="window.location.href='index.html'">Yes, close</button>
+                <button onclick="document.getElementById('close-calc-modal').classList.remove('active')" class="btn-secondary btn-flex">No, stay</button>
             </div>
         </div>
     </div>
@@ -1083,18 +1088,18 @@
     <!-- How it works Modal -->
     <!-- Partner Onboarding Modal -->
     <div id="partner-onboarding-modal" class="modal-overlay">
-        <div class="modal-card large" style="width: 750px;">
+        <div class="modal-card large wizard-card" role="dialog" aria-modal="true" aria-labelledby="partner-onboarding-modal-title">
             <div class="modal-header">
-                <h2>Tell us about your partner</h2>
-                <button class="close-modal" onclick="closePartnerOnboarding(true)">&times;</button>
+                <h2 id="partner-onboarding-modal-title">Tell us about your partner</h2>
+                <button class="close-modal" aria-label="Close" onclick="closePartnerOnboarding(true)">&times;</button>
             </div>
-            <div class="wizard-progress" id="partner-wizard-progress-container" style="padding: 15px 30px 0 30px;"></div>
+            <div class="wizard-progress" id="partner-wizard-progress-container"></div>
             <div class="modal-body" id="partner-wiz-scroll">
                 <!-- Step 0: Partner's Age -->
                 <div class="wizard-step active" id="partner-step-0">
                     <h3 class="wizard-title">Partner's age</h3>
                     <div class="input-row-single">
-                        <label>Partner's current age</label>
+                        <label for="partner-age">Partner's current age</label>
                         <div class="input-wrapper"><input type="number" id="partner-age" placeholder="e.g. 31" class="clamp-age" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
                         <div class="helper-text">Enter your partner's current age in years.</div>
                     </div>
@@ -1104,7 +1109,7 @@
                 <div class="wizard-step" id="partner-step-1">
                     <h3 class="wizard-title">Partner's income</h3>
                     <div class="input-row-single">
-                        <label>Annual salary before tax</label>
+                        <label for="partner-salary">Annual salary before tax</label>
                         <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-salary" placeholder="e.g. 42,000" class="comma-format clamp-1m" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">p.a.</span></div>
                         <div class="helper-text">Your partner's current annual gross salary, before tax and deductions.</div>
                     </div>
@@ -1114,22 +1119,22 @@
                 <div class="wizard-step" id="partner-step-2">
                     <h3 class="wizard-title">Partner's student loan</h3>
                     <div class="input-row-single">
-                        <label>Does your partner have a student loan?</label>
-                        <div class="toggle-container">
+                        <label id="lbl_partner-has-sl">Does your partner have a student loan?</label>
+                        <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_partner-has-sl">
                             <input type="radio" name="partner-has-sl" id="partner-has-sl-y" value="Yes" onchange="togglePartnerSL(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-sl-y">Yes</label>
                             <input type="radio" name="partner-has-sl" id="partner-has-sl-n" value="No" onchange="togglePartnerSL(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-sl-n">No</label>
                         </div>
                     </div>
-                    <div id="partner-sl-details" style="display: none;">
+                    <div class="is-hidden" id="partner-sl-details">
                         <div class="input-row-single">
-                            <label>Remaining loan debt</label>
+                            <label for="partner-sl-balance">Remaining loan debt</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-sl-balance" placeholder="e.g. 20,000" class="comma-format clamp-1m" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
                             <div class="helper-text">The total remaining balance of your partner's student loan debt.</div>
                         </div>
                         <div class="input-row-single">
-                            <label>Loan plan</label>
+                            <label for="partner-sl-plan">Loan plan</label>
                             <div class="input-wrapper">
                                 <select id="partner-sl-plan" onchange="validatePartnerStep()">
                                     <option value="" disabled selected>Select plan</option>
@@ -1145,54 +1150,54 @@
                 <div class="wizard-step" id="partner-step-3">
                     <h3 class="wizard-title">Partner's pension</h3>
                     <div class="input-row-single">
-                        <label>Does your partner have an existing pension?</label>
-                        <div class="toggle-container">
+                        <label id="lbl_partner-has-pension">Does your partner have an existing pension?</label>
+                        <div class="toggle-container" role="radiogroup" aria-labelledby="lbl_partner-has-pension">
                             <input type="radio" name="partner-has-pension" id="partner-has-pension-y" value="Yes" onchange="togglePartnerPen(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-pension-y">Yes</label>
                             <input type="radio" name="partner-has-pension" id="partner-has-pension-n" value="No" onchange="togglePartnerPen(); validatePartnerStep();" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();">
                             <label for="partner-has-pension-n">No</label>
                         </div>
                     </div>
-                    <div id="partner-pension-details" style="display: none;">
+                    <div class="is-hidden" id="partner-pension-details">
                         <div class="input-row-single">
-                            <label>Current pension pot value</label>
+                            <label for="partner-pension-balance">Current pension pot value</label>
                             <div class="input-wrapper"><span class="prefix">£</span><input type="text" id="partner-pension-balance" placeholder="e.g. 25,000" class="comma-format clamp-10m" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"></div>
                             <div class="helper-text">The current total value of your partner's pension pot(s).</div>
                         </div>
                         <div class="input-row-single">
-                            <label>Your partner's contribution</label>
+                            <label for="partner-pee">Your partner's contribution</label>
                             <div class="input-wrapper"><input type="number" id="partner-pee" placeholder="e.g. 5" class="clamp-100" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
                             <div class="helper-text">The percentage of your partner's salary that they contribute.</div>
                         </div>
                         <div class="input-row-single">
-                            <label>Partner's employer contribution</label>
+                            <label for="partner-per">Partner's employer contribution</label>
                             <div class="input-wrapper"><input type="number" id="partner-per" placeholder="e.g. 3" class="clamp-100" onkeydown="if(event.key==='Enter') document.getElementById('partner-next-btn').click();"><span class="suffix">%</span></div>
                             <div class="helper-text">The percentage of your partner's salary that their employer contributes.</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="modal-footer modal-footer-between">
                 <button class="btn-secondary" id="partner-back-btn" onclick="partnerPrevStep()">Back</button>
-                <button class="btn-primary" id="partner-next-btn" onclick="partnerNextStep()" disabled style="opacity: 0.5; cursor: not-allowed;">Next</button>
+                <button class="btn-primary" id="partner-next-btn" onclick="partnerNextStep()" disabled>Next</button>
             </div>
         </div>
     </div>
 
     <div id="how-it-works-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 800px; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-content modal-content-lg" role="dialog" aria-modal="true" aria-labelledby="how-it-works-modal-title">
             <div class="modal-header">
-                <h2 style="margin: 0;">How it works</h2>
-                <button class="close-modal" onclick="document.getElementById('how-it-works-modal').classList.remove('active')">&times;</button>
+                <h2 id="how-it-works-modal-title">How it works</h2>
+                <button class="close-modal" aria-label="Close" onclick="document.getElementById('how-it-works-modal').classList.remove('active')">&times;</button>
             </div>
-            <div class="modal-body" style="padding: 20px; overflow-y: auto; flex: 1;">
-                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+            <div class="modal-body modal-body-scroll" tabindex="0">
+                <div class="how-grid">
                     <!-- Card 1: The big picture -->
                     <div class="how-it-works-card">
                         <div class="how-it-works-icon">🎯</div>
                         <div>
-                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">The big picture</h3>
-                            <p style="margin: 0; color: #555; line-height: 1.5;">We use a trusted model built by members of the Personal Financial Planning Working Party at the Institute and Faculty of Actuaries to compare two different futures: renting forever versus renting for now until you can buy a home to live in for the rest of your life.</p>
+                            <h3>The big picture</h3>
+                            <p>We use a trusted model built by members of the Personal Financial Planning Working Party at the Institute and Faculty of Actuaries to compare two different futures: renting forever versus renting for now until you can buy a home to live in for the rest of your life.</p>
                         </div>
                     </div>
 
@@ -1200,8 +1205,8 @@
                     <div class="how-it-works-card">
                         <div class="how-it-works-icon">💰</div>
                         <div>
-                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Keeping things simple with money</h3>
-                            <p style="margin: 0; color: #555; line-height: 1.5;">Everything is shown in today's money. We automatically factor in future inflation so you don't have to guess what things will cost years down the line.</p>
+                            <h3>Keeping things simple with money</h3>
+                            <p>Everything is shown in today's money. We automatically factor in future inflation so you don't have to guess what things will cost years down the line.</p>
                         </div>
                     </div>
 
@@ -1209,8 +1214,8 @@
                     <div class="how-it-works-card">
                         <div class="how-it-works-icon">💼</div>
                         <div>
-                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Your take-home pay</h3>
-                            <p style="margin: 0; color: #555; line-height: 1.5;">We estimate how your salary might grow over your career based on average UK pay rises. From that, we automatically take off things like tax, National Insurance, student loan repayments, and pension contributions.</p>
+                            <h3>Your take-home pay</h3>
+                            <p>We estimate how your salary might grow over your career based on average UK pay rises. From that, we automatically take off things like tax, National Insurance, student loan repayments, and pension contributions.</p>
                         </div>
                     </div>
 
@@ -1220,8 +1225,8 @@
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="#003a5d" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L16 5.2V3H18V6.8L22 10H19V22H5V10H2L12 2 Z M10 14 V22 H14 V14 Z" /></svg>
                         </div>
                         <div>
-                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Saving for a home</h3>
-                            <p style="margin: 0; color: #555; line-height: 1.5;">Whatever money you have left over gets split between cash savings and your pension based on your choices. Every year, the model checks if your savings and earnings are enough to get a mortgage—while also accounting for purchase fees and stamp duty.</p>
+                            <h3>Saving for a home</h3>
+                            <p>Whatever money you have left over gets split between cash savings and your pension based on your choices. Every year, the model checks if your savings and earnings are enough to get a mortgage—while also accounting for purchase fees and stamp duty.</p>
                         </div>
                     </div>
 
@@ -1229,8 +1234,8 @@
                     <div class="how-it-works-card">
                         <div class="how-it-works-icon">🎓</div>
                         <div>
-                            <h3 style="margin: 0 0 8px 0; color: #003a5d;">Looking ahead to retirement</h3>
-                            <p style="margin: 0; color: #555; line-height: 1.5;">When you reach retirement age, the model assumes you take 25% of your pension tax-free. The rest of your pension helps pay for your living costs, and if you're still renting, your rent will continue to be paid out of your remaining funds.</p>
+                            <h3>Looking ahead to retirement</h3>
+                            <p>When you reach retirement age, the model assumes you take 25% of your pension tax-free. The rest of your pension helps pay for your living costs, and if you're still renting, your rent will continue to be paid out of your remaining funds.</p>
                         </div>
                     </div>
                 </div>
@@ -1241,107 +1246,15 @@
         </div>
     </div>
 
-    <style>
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-overlay:not(.active) {
-            display: none;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #e0e6ed;
-        }
-        .modal-body {
-            padding: 20px;
-        }
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid #e0e6ed;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-        .how-it-works-card {
-            display: flex;
-            gap: 16px;
-            padding: 16px;
-            background: #f0f1f3;
-            border-radius: 8px;
-            border-left: 4px solid var(--ifoa-gold, #ffc107);
-            transition: box-shadow 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        .how-it-works-card:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-        }
-        .how-it-works-icon {
-            font-size: 32px;
-            min-width: 40px;
-            text-align: center;
-            line-height: 1;
-        }
-        body.dark-mode .how-it-works-card {
-            background: #2a2a2a;
-            border-left-color: #ffc107;
-            box-shadow: none;
-        }
-        body.dark-mode .how-it-works-card:hover {
-            box-shadow: none;
-        }
-        body.dark-mode .how-it-works-card h3 {
-            color: #e0e0e0 !important;
-        }
-        body.dark-mode .how-it-works-card p {
-            color: #d0d0d0 !important;
-        }
-    </style>
 
-    <script src="javascript/main.js?v=21"></script>
+    <script src="javascript/main.js?v=24"></script>
     <script src="javascript/compareUI.js"></script>
+    <script src="javascript/a11y.js"></script>
 
     <!-- Accessibility Settings Functions -->
     <script>
-        window.applyDarkModeColors = function(isDarkMode) {
-            if (isDarkMode) {
-                document.querySelectorAll('.bg-white:not(.bg-navy), section.bg-white:not(.bg-navy)').forEach(el => {
-                    el.style.backgroundColor = '#1e1e1e';
-                });
-                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
-                    el.style.backgroundColor = '#2a2a2a';
-                });
-            } else {
-                document.querySelectorAll('.bg-white, section.bg-white').forEach(el => {
-                    el.style.backgroundColor = '';
-                });
-                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
-                    el.style.backgroundColor = '';
-                });
-            }
-            // Redraw chart with updated colors
-            if (window.runCalculation) {
-                runCalculation();
-            }
-        };
+        // The calculator has no script-coloured sections; dark-mode colours come from the stylesheet
+        window.applyDarkModeColors = function() {};
 
         window.saveA11ySetting = function(key, value) {
             localStorage.setItem('a11y_' + key, value);

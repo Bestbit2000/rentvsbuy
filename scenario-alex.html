@@ -6,9 +6,8 @@
     <title>James's Story - Institute and Faculty of Actuaries</title>
         <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tailwind.css">
     <noscript>
         <link rel="stylesheet" href="css/noscript.css">
     </noscript>
@@ -30,7 +29,7 @@
                     <img class="h-12 w-auto mr-3" src="images/PFP_logo_icon_dark.png" alt="PFP Logo">
                     <div class="hidden sm:flex flex-col">
                         <span class="font-bold text-sm leading-tight tracking-wider uppercase">PERSONAL FINANCIAL PLANNING WORKING GROUP</span>
-                        <span class="text-xs text-gray-300">from the Institute and Faculty of Actuaries</span>
+                        <span class="text-sm text-gray-300">from the Institute and Faculty of Actuaries</span>
                     </div>
                     <!-- Mobile abbreviated title -->
                     <div class="flex sm:hidden flex-col text-left">
@@ -40,9 +39,9 @@
 
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="index.html" class="text-white hover:text-gold transition px-3 py-2 font-medium" style="font-size: 0.95rem;">Home</a>
-                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:text-gold transition px-3 py-2 font-medium bg-transparent border-none cursor-pointer" style="font-size: 0.95rem;">Accessibility</button>
-                    <a href="index.html" class="close-btn" style="color: white; margin-left: 8px;" aria-label="Close">
+                    <a href="index.html" class="text-white hover:text-gold transition px-3 py-2 font-medium nav-link">Home</a>
+                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:text-gold transition px-3 py-2 font-medium bg-transparent border-none cursor-pointer nav-link js-only">Accessibility</button>
+                    <a href="index.html" class="close-btn close-btn-light close-btn-gap" aria-label="Close">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -51,10 +50,10 @@
 
                 <!-- Mobile Menu -->
                 <div class="md:hidden flex items-center space-x-4">
-                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:opacity-80 focus:outline-none p-2 flex items-center justify-center bg-transparent border-none cursor-pointer" aria-label="Accessibility" style="min-height: 44px; min-width: 44px;">
-                        <span class="text-xs font-medium">A</span>
+                    <button onclick="document.getElementById('a11y-overlay').classList.add('active')" class="text-white hover:opacity-80 p-2 flex items-center justify-center bg-transparent border-none cursor-pointer tap-target js-only" aria-label="Accessibility">
+                        <span class="text-sm font-medium">A</span>
                     </button>
-                    <a href="index.html" class="close-btn" style="color: white;" aria-label="Close">
+                    <a href="index.html" class="close-btn close-btn-light" aria-label="Close">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -93,7 +92,7 @@
                     </div>
                     <div>
                         <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-2">James, 21</h1>
-                        <h2 class="text-2xl text-gold font-medium mb-6">The "Unwilling Boomerang"</h2>
+                        <h2 class="text-2xl text-navy font-medium mb-6 inline-block border-b-4 border-gold pb-1">The "Unwilling Boomerang"</h2>
                         
                         <blockquote class="text-xl text-gray-700 italic border-l-4 border-gold pl-6 py-2">
                             "I love my parents, but I need to be able to order a pizza at midnight without answering twenty questions. My living situation is actively killing my social life."
@@ -120,7 +119,7 @@
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card">
                         <p class="text-sm text-gray-700 font-bold uppercase tracking-wider mb-1">Outgoings</p>
                         <p class="text-2xl font-bold text-navy">£800 <span class="text-sm font-normal text-gray-700"> per month rent</span></p>
-                        <p class="text-md text-orange-500 mt-2">£1,250 <span class="text-sm text-gray-700"> per month lifestyle</span></p>
+                        <p class="text-md text-orange-700 mt-2">£1,250 <span class="text-sm text-gray-700"> per month lifestyle</span></p>
                     </div>
 
                     <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 stat-card">
@@ -143,7 +142,7 @@
                              <div class="absolute inset-0 bg-gradient-to-t from-navy/80 to-transparent flex flex-col justify-end p-6">
                                  <div class="bg-white/90 backdrop-blur-sm inline-block rounded-lg px-4 py-2 w-max shadow-md border border-white/50">
                                      <span class="block text-3xl font-extrabold text-navy leading-none">38</span>
-                                     <span class="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mt-1">Purchase Age</span>
+                                     <span class="block text-sm font-bold text-gray-700 uppercase tracking-wider mt-1">Purchase Age</span>
                                  </div>
                              </div>
                         </div>
@@ -195,9 +194,9 @@
                                     <p class="text-sm text-gray-700 mb-2">If his parents stop charging the £800 per month rent.</p>
                                     <div class="bg-gray-50 rounded p-3 flex justify-between items-center">
                                         <span class="text-sm font-medium">New Purchase Age:</span>
-                                        <span class="text-lg font-bold text-green-600">27</span>
+                                        <span class="text-lg font-bold text-green-700">27</span>
                                     </div>
-                                    <p class="text-xs text-gray-700 mt-1">He buys 11 years earlier.</p>
+                                    <p class="text-sm text-gray-700 mt-1">He buys 11 years earlier.</p>
                                 </div>
 
                                 <div class="border-l-4 border-gold pl-4">
@@ -205,13 +204,13 @@
                                     <p class="text-sm text-gray-700 mb-2">A one-off lump sum contribution to his deposit.</p>
                                     <div class="bg-gray-50 rounded p-3 flex justify-between items-center mb-2">
                                         <span class="text-sm font-medium">New Purchase Age:</span>
-                                        <span class="text-lg font-bold text-green-600">36</span>
+                                        <span class="text-lg font-bold text-green-700">36</span>
                                     </div>
                                     <div class="bg-blue-50 rounded p-3 flex justify-between items-center">
                                         <span class="text-sm font-medium text-navy">Added Lifetime Wealth:</span>
                                         <span class="text-lg font-bold text-navy">+£67,000</span>
                                     </div>
-                                    <p class="text-xs text-gray-700 mt-2">A £10k gift grows to create nearly 7x that amount in lifetime wealth.</p>
+                                    <p class="text-sm text-gray-700 mt-2">A £10k gift grows to create nearly 7x that amount in lifetime wealth.</p>
                                 </div>
                             </div>
                         </div>
@@ -238,7 +237,7 @@
                                     <div class="bg-gray-50 rounded p-4 mb-4">
                                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
                                             <span class="text-sm font-medium">New Purchase Age:</span>
-                                            <span class="text-2xl font-bold text-green-600">27</span>
+                                            <span class="text-2xl font-bold text-green-700">27</span>
                                         </div>
                                         <div class="flex justify-between items-center">
                                             <span class="text-sm font-medium">Total Lifetime Wealth:</span>
@@ -249,7 +248,7 @@
                                     <p class="text-sm text-gray-700 italic bg-blue-50 p-3 rounded">
                                         "How you spend the money you have makes a significant impact on both overall wealth accumulation over your lifetime and when you can buy a house."
                                     </p>
-                                    <p class="text-xs text-gray-700 mt-3">By cutting back, he buys 11 years earlier and dramatically increases his final net worth from the base £1.35M.</p>
+                                    <p class="text-sm text-gray-700 mt-3">By cutting back, he buys 11 years earlier and dramatically increases his final net worth from the base £1.35M.</p>
                                 </div>
                             </div>
                         </div>
@@ -320,36 +319,36 @@
 
     <!-- Accessibility Component -->
     <div class="modal-overlay" id="a11y-overlay">
-        <div class="modal-card">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="a11y-overlay-title">
             <div class="modal-header">
-                <h2>♿ Accessibility options</h2>
-                <button class="close-modal" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
+                <h2 id="a11y-overlay-title">♿ Accessibility options</h2>
+                <button class="close-modal" aria-label="Close" onclick="document.getElementById('a11y-overlay').classList.remove('active')">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="a11y-row">
                     <label class="a11y-row-label" for="a11y_dark_toggle">Dark mode</label>
-                    <label class="a11y-switch" style="margin: 0;">
+                    <label class="a11y-switch">
                         <input type="checkbox" id="a11y_dark_toggle" onchange="document.body.classList.toggle('dark-mode', this.checked); window.applyDarkModeColors(this.checked); window.saveA11ySetting('dark', this.checked ? 'on' : 'off');">
                         <span class="a11y-slider"></span>
                     </label>
                 </div>
                 <div class="a11y-row">
                     <label class="a11y-row-label" for="a11y_font_toggle">Dyslexia-friendly font</label>
-                    <label class="a11y-switch" style="margin: 0;">
+                    <label class="a11y-switch">
                         <input type="checkbox" id="a11y_font_toggle" onchange="document.body.classList.toggle('dyslexia-font', this.checked); window.saveA11ySetting('font', this.checked ? 'on' : 'off');">
                         <span class="a11y-slider"></span>
                     </label>
                 </div>
                 <div class="a11y-row last-toggle">
                     <label class="a11y-row-label" for="a11y_motion_toggle">Reduce motion</label>
-                    <label class="a11y-switch" style="margin: 0;">
+                    <label class="a11y-switch">
                         <input type="checkbox" id="a11y_motion_toggle" onchange="document.body.classList.toggle('reduce-motion', this.checked); window.saveA11ySetting('motion', this.checked ? 'on' : 'off');">
                         <span class="a11y-slider"></span>
                     </label>
                 </div>
-                <div class="input-row-single" style="margin-bottom: 20px;">
+                <div class="input-row-single a11y-size-row">
                     <label>Text size</label>
-                    <div class="toggle-container">
+                    <div class="toggle-container" role="radiogroup" aria-label="Text size">
                         <input type="radio" name="a11y_size" id="a11y_size_normal" checked onchange="document.documentElement.classList.remove('text-large', 'text-xlarge'); window.saveA11ySetting('size', 'normal');">
                         <label for="a11y_size_normal">Normal</label>
                         <input type="radio" name="a11y_size" id="a11y_size_large" onchange="document.documentElement.classList.remove('text-xlarge'); document.documentElement.classList.add('text-large'); window.saveA11ySetting('size', 'large');">
@@ -359,7 +358,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="justify-content: flex-end;">
+            <div class="modal-footer modal-footer-end">
                 <button class="btn-primary" onclick="document.getElementById('a11y-overlay').classList.remove('active')">Done</button>
             </div>
         </div>
@@ -367,23 +366,8 @@
 
     <!-- Accessibility Settings Functions -->
     <script>
-        window.applyDarkModeColors = function(isDarkMode) {
-            if (isDarkMode) {
-                document.querySelectorAll('.bg-white:not(.bg-navy), section.bg-white:not(.bg-navy)').forEach(el => {
-                    el.style.backgroundColor = '#1e1e1e';
-                });
-                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
-                    el.style.backgroundColor = '#2a2a2a';
-                });
-            } else {
-                document.querySelectorAll('.bg-white, section.bg-white').forEach(el => {
-                    el.style.backgroundColor = '';
-                });
-                document.querySelectorAll('.bg-gray-50, section.bg-gray-50').forEach(el => {
-                    el.style.backgroundColor = '';
-                });
-            }
-        };
+        // Dark-mode section backgrounds come from the stylesheet (body.dark-mode rules)
+        window.applyDarkModeColors = function() {};
 
         window.saveA11ySetting = function(key, value) {
             localStorage.setItem('a11y_' + key, value);
@@ -439,5 +423,6 @@
             window.loadA11ySettings();
         }
     </script>
+    <script src="javascript/a11y.js"></script>
 </body>
 </html>
